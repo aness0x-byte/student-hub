@@ -1,0 +1,409 @@
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Manrope:wght@300;400;500;600;700&family=Urbanist:wght@300;400;500;600&display=swap");
+@import "tailwindcss";
+
+:root {
+  /* Fonts per Section 3 */
+  --font-sans: "Cairo", "Manrope", "Urbanist", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* 2.1 Dark Theme Color Tokens */
+  --bg-base:        #07070C;   /* page behind everything, near-black with blue cast */
+  --bg-deep-indigo: #1B1740;   /* ambient wash */
+  --bg-violet:      #3A2F66;   /* top glow in hero */
+
+  /* Glass surfaces */
+  --glass-1:        rgba(255, 255, 255, 0.04);  /* large container */
+  --glass-2:        rgba(255, 255, 255, 0.06);  /* cards */
+  --glass-3:        rgba(255, 255, 255, 0.10);  /* hover / floating chips */
+  --glass-fill-dark: rgba(10, 10, 16, 0.55);    /* dark tinted glass */
+
+  /* Borders - Always 1px hairlines per Section 4.2 */
+  --border-1:       rgba(255, 255, 255, 0.08);  /* default card border */
+  --border-2:       rgba(255, 255, 255, 0.14);  /* container / emphasized */
+  --border-3:       rgba(255, 255, 255, 0.22);  /* focus / hover */
+
+  /* Text Colors per Section 2.1 */
+  --text-primary:   #FFFFFF;
+  --text-secondary: rgba(255, 255, 255, 0.72);
+  --text-muted:     rgba(255, 255, 255, 0.50);
+  --text-faint:     rgba(255, 255, 255, 0.32);  /* axis labels, tiny captions */
+
+  /* Accents */
+  --accent-violet:       #5B2BE0;  /* solid primary button (Withdraw) */
+  --accent-violet-light: #A77BF3;  /* gradient start (Sign up pill) */
+  --accent-violet-mid:   #7F5AF0;  /* gradient end */
+  --accent-orb:          #6D5BD0;  /* liquid orb body */
+  --accent-teal:         #3FD0B0;  /* chart line */
+  --accent-teal-glow:    rgba(63, 208, 176, 0.35);
+
+  /* Status */
+  --positive-text:   #34D17A;
+  --positive-bg:     rgba(52, 209, 122, 0.16);
+  --positive-border: rgba(52, 209, 122, 0.30);
+
+  /* CTA on dark */
+  --cta-white-bg:   #FFFFFF;
+  --cta-white-text: #0B0B10;
+
+  /* 4.1 Radius scale */
+  --r-xs:   8px;     /* tiny badges, skeleton bars, slim button */
+  --r-sm:   12px;    /* small chips */
+  --r-md:   16px;    /* inner cards, floating chips */
+  --r-lg:   24px;    /* KPI cards, panels */
+  --r-xl:   32px;    /* outer dashboard container, hero frame */
+  --r-2xl:  40px;    /* device-scale frames */
+  --r-pill: 999px;   /* buttons, tabs, status pills, toggles */
+
+  /* 4.4 Shadows & Glow */
+  --shadow-card:  0 20px 60px rgba(0, 0, 0, 0.35);
+  --shadow-chip:  0 8px 24px rgba(0, 0, 0, 0.30);
+  --glow-violet:  0 0 80px rgba(109, 91, 208, 0.35);
+  --glow-teal:    0 0 24px rgba(63, 208, 176, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-variant-numeric: tabular-nums;
+  overflow-x: hidden;
+}
+
+/* 6.11 Ambient glow ribbon & starfield behind the UI */
+.bg-ambient-glow {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 30% at 85% 55%, rgba(63, 91, 255, 0.45), transparent 70%),
+    radial-gradient(35% 35% at 45% 45%, rgba(155, 100, 200, 0.35), transparent 70%),
+    radial-gradient(30% 20% at 20% 5%,  rgba(60, 100, 255, 0.35), transparent 70%),
+    #07070C;
+}
+
+.starfield {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1.5px 1.5px at 150px 80px, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1px 1px at 320px 240px, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1.5px 1.5px at 450px 120px, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1px 1px at 680px 380px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1.5px 1.5px at 890px 190px, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1px 1px at 1050px 420px, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1.5px 1.5px at 1280px 280px, rgba(255,255,255,0.35), transparent);
+  background-repeat: repeat;
+  background-size: 1300px 500px;
+}
+
+/* 6.1 Outer Container Frame */
+.frame {
+  border-radius: var(--r-xl);
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+  border: 1px solid var(--border-2);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* 4.3 Glass Cards */
+.glass {
+  background: var(--glass-2);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-lg);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.glass-card {
+  border-radius: var(--r-lg);
+  background: var(--glass-2);
+  border: 1px solid var(--border-1);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  transition: border-color 0.2s ease-out, transform 0.2s ease-out, background 0.2s ease-out;
+}
+
+.glass-card-hover:hover {
+  border-color: var(--border-3);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.glass-card-dark {
+  border-radius: var(--r-lg);
+  background: var(--glass-fill-dark);
+  border: 1px solid var(--border-1);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* 6.9 Floating Glass Chip (Ref B) */
+.chip {
+  padding: 14px 16px;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--border-1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-chip), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.glass-chip {
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-chip), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.glass-pill {
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--border-1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* 6.2 KPI Card */
+.kpi {
+  position: relative;
+  padding: 24px;
+  min-height: 135px;
+  border-radius: var(--r-lg);
+  background: var(--glass-2);
+  border: 1px solid var(--border-1);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.kpi__label  { font-size: 18px; font-weight: 400; color: #fff; }
+.kpi__value  { margin-top: 20px; font-size: 48px; line-height: 1.05; font-weight: 400; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.kpi__badge  { position: absolute; top: 20px; right: 20px; }
+
+/* 6.3 Status Badges */
+.badge-positive {
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--positive-text);
+  background: var(--positive-bg);
+  border: 1px solid var(--positive-border);
+}
+
+.badge-glass-positive {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  font-size: 11px;
+  font-weight: 500;
+  color: #34D17A;
+  background: rgba(52, 209, 122, 0.16);
+  border: 1px solid rgba(52, 209, 122, 0.30);
+}
+
+.badge-glass-violet {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  font-size: 11px;
+  font-weight: 500;
+  color: #A77BF3;
+  background: rgba(167, 123, 243, 0.16);
+  border: 1px solid rgba(167, 123, 243, 0.30);
+}
+
+.badge-glass-neutral {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-1);
+}
+
+/* 6.8 Button Variants per Spec */
+.btn-glass-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-pill);
+  background: #FFFFFF;
+  color: #0B0B10;
+  font-weight: 500;
+  height: 38px;
+  padding: 0 20px;
+  transition: all 0.16s ease;
+  box-shadow: 0 4px 18px rgba(255, 255, 255, 0.18);
+}
+.btn-glass-primary:hover {
+  background: #f4f4f5;
+  transform: scale(1.02);
+}
+.btn-glass-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-glass-gradient {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-pill);
+  background: linear-gradient(90deg, #A77BF3, #6B4BE8);
+  color: #FFFFFF;
+  font-weight: 500;
+  height: 36px;
+  padding: 0 22px;
+  box-shadow: 0 0 24px rgba(127, 90, 240, 0.45);
+  transition: all 0.16s ease;
+}
+.btn-glass-gradient:hover {
+  filter: brightness(1.1);
+  transform: scale(1.02);
+}
+.btn-glass-gradient:active {
+  transform: scale(0.98);
+}
+
+.btn-glass-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-1);
+  color: #FFFFFF;
+  font-weight: 400;
+  height: 36px;
+  padding: 0 20px;
+  backdrop-filter: blur(16px);
+  transition: all 0.16s ease;
+}
+.btn-glass-ghost:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: var(--border-2);
+}
+.btn-glass-ghost:active {
+  transform: scale(0.98);
+}
+
+.btn-solid {
+  height: 30px;
+  width: 100%;
+  border-radius: var(--r-xs);
+  background: #5B2BE0;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  border: 0;
+  box-shadow: 0 6px 20px rgba(91, 43, 224, 0.40);
+  transition: all 0.16s ease;
+}
+.btn-solid:hover {
+  filter: brightness(1.08);
+}
+.btn-solid:active {
+  transform: scale(0.98);
+}
+
+.btn-glass-solid {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-xs);
+  background: #5B2BE0;
+  color: #FFFFFF;
+  font-weight: 500;
+  height: 30px;
+  box-shadow: 0 6px 20px rgba(91, 43, 224, 0.40);
+  transition: all 0.16s ease;
+}
+.btn-glass-solid:hover {
+  filter: brightness(1.08);
+}
+.btn-glass-solid:active {
+  transform: scale(0.98);
+}
+
+/* 6.5 Chart Line & Glow */
+.chart-line {
+  stroke: #3FD0B0;
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 8px rgba(63, 208, 176, 0.45));
+}
+.chart-point {
+  fill: #fff;
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 4;
+}
+
+/* 6.10 Liquid Orb (Ref B) */
+.orb {
+  width: 540px;
+  height: 540px;
+  border-radius: 50%;
+  background:
+    radial-gradient(60% 50% at 40% 15%, rgba(155,136,255,0.95), rgba(109,91,208,0.6) 40%, transparent 70%),
+    radial-gradient(70% 70% at 50% 60%, #14102A 40%, #0A0818 100%);
+  box-shadow: 0 -20px 120px rgba(109,91,208,0.45);
+  filter: blur(0.3px);
+  animation: orbFloat 8s ease-in-out infinite;
+}
+
+@keyframes orbFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* 3.2 Typography Tokens */
+.num-xl { font-size: 48px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.num-md { font-size: 36px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.label  { font-size: 14px; color: var(--text-secondary); font-weight: 400; }
+.micro  { font-size: 10px; color: var(--text-faint); font-weight: 400; }
+
+/* Sleek Minimalist Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #07070C;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
