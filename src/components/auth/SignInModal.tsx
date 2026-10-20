@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/lib/store';
 import { UserRole } from '@/lib/types';
+import { X, ArrowRight } from 'lucide-react';
 
 export default function SignInModal() {
   const router = useRouter();
@@ -20,7 +21,6 @@ export default function SignInModal() {
   const [activeTab, setActiveTab] = useState<'CARDS' | 'CREDENTIALS'>('CARDS');
   const [redirectingTo, setRedirectingTo] = useState<{ role: UserRole; path: string; name: string } | null>(null);
 
-  // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isSignInModalOpen) {
@@ -33,7 +33,6 @@ export default function SignInModal() {
 
   if (!isSignInModalOpen) return null;
 
-  // Perform automatic sign in and redirect
   const handleAutoSignIn = (role: UserRole) => {
     let path = '/admin';
     let name = language === 'en' ? 'Elena Rostova (Exclusive Broker)' : 'إيلينا روستوفا (الوسيط والمدير العام)';
@@ -53,10 +52,9 @@ export default function SignInModal() {
       closeSignInModal();
       setRedirectingTo(null);
       router.push(path);
-    }, 700);
+    }, 500);
   };
 
-  // Smart email detection
   const detectedRole: UserRole = (() => {
     const lower = email.toLowerCase();
     if (lower.includes('admin') || lower.includes('elena') || lower.includes('broker')) {
@@ -75,56 +73,56 @@ export default function SignInModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-      {/* Frosted Backdrop */}
+      {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-[#07070C]/80 backdrop-blur-xl transition-opacity animate-in fade-in"
+        className="fixed inset-0 bg-black/40 backdrop-blur-md transition-opacity"
         onClick={closeSignInModal}
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-4xl rounded-3xl border border-[rgba(255,255,255,0.14)] bg-[#0A0A10]/95 backdrop-blur-3xl p-6 sm:p-8 shadow-[0_25px_80px_rgba(0,0,0,0.8)] z-10 space-y-6 animate-in zoom-in-95 duration-200 text-white">
+      <div className="relative w-full max-w-3xl rounded-[32px] bg-white border border-black/10 p-6 sm:p-8 z-10 space-y-6 text-[#1A1A1A] shadow-2xl">
         
         {/* Close Button */}
         <button
           onClick={closeSignInModal}
-          className={`absolute top-6 ${language === 'ar' ? 'left-6' : 'right-6'} rounded-full px-3 py-1 text-xs font-semibold bg-white/5 border border-white/10 text-[rgba(255,255,255,0.6)] hover:text-white hover:bg-white/10 transition-colors`}
+          className={`absolute top-6 ${language === 'ar' ? 'left-6' : 'right-6'} w-9 h-9 rounded-full bg-[#EDEDED] text-[#1A1A1A] flex items-center justify-center hover:bg-[#E4E4E4] transition-colors`}
           title={t('close')}
         >
-          {t('close')}
+          <X className="h-4 w-4 stroke-[2]" />
         </button>
 
         {/* Modal Header */}
-        <div className="text-center max-w-2xl mx-auto space-y-2">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.06)] px-4 py-1 text-xs font-semibold text-[#A77BF3]">
-            <span>{t('signInModalBadge')}</span>
-          </div>
-
-          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+        <div className="text-center max-w-xl mx-auto space-y-2">
+          <span className="pill-badge-black">
+            {t('signInModalBadge')}
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#1A1A1A]">
             {t('signInModalTitle')}
           </h2>
-
-          <p className="text-sm text-[rgba(255,255,255,0.7)]">
+          <p className="text-xs sm:text-sm text-[#5A5A5A] leading-relaxed">
             {t('signInModalSub')}
           </p>
+        </div>
 
-          {/* Mode Tabs */}
-          <div className="inline-flex items-center gap-1 p-1 rounded-full bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.08)] mt-2">
+        {/* Tab Toggle */}
+        <div className="flex justify-center">
+          <div className="flex items-center gap-1 p-1 rounded-full bg-[#EDEDED]">
             <button
               onClick={() => setActiveTab('CARDS')}
-              className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+              className={`rounded-full px-5 py-2 text-xs font-medium transition-all ${
                 activeTab === 'CARDS'
-                  ? 'bg-white text-[#07070C] shadow-sm'
-                  : 'text-[rgba(255,255,255,0.7)] hover:text-white'
+                  ? 'bg-[#262626] text-white'
+                  : 'text-[#5A5A5A] hover:text-[#1A1A1A]'
               }`}
             >
               {t('signInTabCards')}
             </button>
             <button
               onClick={() => setActiveTab('CREDENTIALS')}
-              className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+              className={`rounded-full px-5 py-2 text-xs font-medium transition-all ${
                 activeTab === 'CREDENTIALS'
-                  ? 'bg-white text-[#07070C] shadow-sm'
-                  : 'text-[rgba(255,255,255,0.7)] hover:text-white'
+                  ? 'bg-[#262626] text-white'
+                  : 'text-[#5A5A5A] hover:text-[#1A1A1A]'
               }`}
             >
               {t('signInTabCredentials')}
@@ -132,218 +130,140 @@ export default function SignInModal() {
           </div>
         </div>
 
-        {/* Redirecting Overlay */}
-        {redirectingTo && (
-          <div className="rounded-2xl border border-[#A77BF3]/40 bg-[#5B2BE0]/20 p-6 text-center space-y-3 animate-in fade-in">
-            <div className="flex items-center justify-center gap-3">
-              <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-[#A77BF3]" />
-              <span className="text-lg font-bold text-white">
-                {t('signInSigningInAs')} {redirectingTo.name}...
-              </span>
-            </div>
-            <p className="text-sm text-[rgba(255,255,255,0.8)]">
-              {t('signInRedirecting')} <strong className="text-[#3FD0B0] font-mono">{redirectingTo.path}</strong>
-            </p>
-            <div className="w-full max-w-md mx-auto h-1.5 rounded-full bg-white/10 overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-[#3FD0B0] to-[#A77BF3] animate-pulse w-full" />
-            </div>
-          </div>
-        )}
-
-        {/* TAB 1: 1-CLICK PERSONA CARDS */}
-        {activeTab === 'CARDS' && !redirectingTo && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
+        {/* Tab 1: 1-Click Cards */}
+        {activeTab === 'CARDS' && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
             
-            {/* USER 1: ADMIN & MIDDLEMAN */}
+            {/* Broker Persona */}
             <div 
               onClick={() => handleAutoSignIn('SUPER_ADMIN')}
-              className="glass-card p-6 border-[rgba(167,123,243,0.35)] hover:border-[rgba(167,123,243,0.7)] hover:scale-[1.02] cursor-pointer transition-all flex flex-col justify-between group shadow-[0_10px_30px_rgba(91,43,224,0.15)]"
+              className="bg-[#F2F2F2] rounded-[22px] p-5 border border-black/5 hover:border-black/20 transition-all cursor-pointer flex flex-col justify-between group"
             >
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-xl bg-[#5B2BE0]/20 text-[#A77BF3] border border-[#5B2BE0]/40">
-                    AD
-                  </span>
-                  <span className="badge-glass-violet text-[11px] font-bold">
-                    {t('signInAdminRoleBadge')}
-                  </span>
+                <div className="w-10 h-10 rounded-xl bg-[#262626] text-white flex items-center justify-center font-bold text-xs mb-3">
+                  SH
                 </div>
-
-                <h3 className="text-xl font-bold text-white">
-                  {t('signInAdminName')}
+                <h3 className="font-semibold text-sm text-[#1A1A1A]">
+                  {language === 'en' ? 'Elena Rostova' : 'إيلينا روستوفا'}
                 </h3>
-                <p className="text-xs font-semibold text-[#A77BF3] mt-0.5">
-                  {t('signInAdminSub')}
-                </p>
-
-                <p className="text-sm text-[rgba(255,255,255,0.7)] mt-3 leading-relaxed">
+                <span className="tag-micro !text-[9px] block text-[#8C8C8C] mt-0.5">
+                  {t('roleBroker')}
+                </span>
+                <p className="text-xs text-[#5A5A5A] mt-2 leading-relaxed">
                   {t('signInAdminDesc')}
                 </p>
-
-                <div className="mt-4 pt-3 border-t border-[rgba(255,255,255,0.08)] flex items-center justify-between text-xs text-[#3FD0B0]">
-                  <span>{t('assignedWorkspace')}</span>
-                  <span className="font-mono font-bold">/admin</span>
-                </div>
               </div>
 
-              <div className="mt-6">
-                <button
-                  type="button"
-                  className="w-full h-11 btn-glass-gradient text-sm font-bold shadow-[0_0_20px_rgba(127,90,240,0.4)] flex items-center justify-center cursor-pointer"
-                >
-                  <span>{t('signInAdminBtn')}</span>
-                </button>
+              <div className="mt-4 pt-3 border-t border-black/5 flex items-center justify-between text-xs font-medium text-[#1A1A1A]">
+                <span>{t('signInAdminBtn')}</span>
+                <ArrowRight className="h-3 w-3 stroke-[2]" />
               </div>
             </div>
 
-            {/* USER 2: COMPANY / STARTUP */}
+            {/* Company Persona */}
             <div 
               onClick={() => handleAutoSignIn('COMPANY')}
-              className="glass-card p-6 border-white/15 hover:border-white/35 hover:scale-[1.02] cursor-pointer transition-all flex flex-col justify-between group shadow-[0_10px_30px_rgba(0,0,0,0.3)]"
+              className="bg-[#F2F2F2] rounded-[22px] p-5 border border-black/5 hover:border-black/20 transition-all cursor-pointer flex flex-col justify-between group"
             >
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-xl bg-white/10 text-white border border-white/20">
-                    CO
-                  </span>
-                  <span className="badge-glass-neutral text-[11px] font-bold">
-                    {t('signInCompanyRoleBadge')}
-                  </span>
+                <div className="w-10 h-10 rounded-xl bg-white text-[#1A1A1A] flex items-center justify-center font-bold text-xs mb-3 border border-black/10">
+                  FI
                 </div>
-
-                <h3 className="text-xl font-bold text-white">
-                  {t('signInCompanyName')}
+                <h3 className="font-semibold text-sm text-[#1A1A1A]">
+                  {language === 'en' ? 'Marcus Vance' : 'ماركوس فانس'}
                 </h3>
-                <p className="text-xs font-semibold text-[rgba(255,255,255,0.7)] mt-0.5">
-                  {t('signInCompanySub')}
-                </p>
-
-                <p className="text-sm text-[rgba(255,255,255,0.7)] mt-3 leading-relaxed">
+                <span className="tag-micro !text-[9px] block text-[#8C8C8C] mt-0.5">
+                  {t('roleCompanyShort')}
+                </span>
+                <p className="text-xs text-[#5A5A5A] mt-2 leading-relaxed">
                   {t('signInCompanyDesc')}
                 </p>
-
-                <div className="mt-4 pt-3 border-t border-[rgba(255,255,255,0.08)] flex items-center justify-between text-xs text-[#3FD0B0]">
-                  <span>{t('assignedWorkspace')}</span>
-                  <span className="font-mono font-bold">/company</span>
-                </div>
               </div>
 
-              <div className="mt-6">
-                <button
-                  type="button"
-                  className="w-full h-11 btn-glass-ghost text-sm font-bold border-white/20 hover:border-white flex items-center justify-center cursor-pointer"
-                >
-                  <span>{t('signInCompanyBtn')}</span>
-                </button>
+              <div className="mt-4 pt-3 border-t border-black/5 flex items-center justify-between text-xs font-medium text-[#1A1A1A]">
+                <span>{t('signInCompanyBtn')}</span>
+                <ArrowRight className="h-3 w-3 stroke-[2]" />
               </div>
             </div>
 
-            {/* USER 3: STUDENT TALENT */}
+            {/* Student Persona */}
             <div 
               onClick={() => handleAutoSignIn('STUDENT')}
-              className="glass-card p-6 border-[rgba(63,208,176,0.3)] hover:border-[rgba(63,208,176,0.6)] hover:scale-[1.02] cursor-pointer transition-all flex flex-col justify-between group shadow-[0_10px_30px_rgba(63,208,176,0.1)]"
+              className="bg-[#F2F2F2] rounded-[22px] p-5 border border-black/5 hover:border-black/20 transition-all cursor-pointer flex flex-col justify-between group"
             >
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-xl bg-[#3FD0B0]/20 text-[#3FD0B0] border border-[#3FD0B0]/40">
-                    ST
-                  </span>
-                  <span className="badge-glass-positive text-[11px] font-bold">
-                    {t('signInStudentRoleBadge')}
-                  </span>
+                <div className="w-10 h-10 rounded-xl bg-white text-[#1A1A1A] flex items-center justify-center font-bold text-xs mb-3 border border-black/10">
+                  AC
                 </div>
-
-                <h3 className="text-xl font-bold text-white">
-                  {t('signInStudentName')}
+                <h3 className="font-semibold text-sm text-[#1A1A1A]">
+                  {language === 'en' ? 'Alex Chen' : 'أليكس تشين'}
                 </h3>
-                <p className="text-xs font-semibold text-[#3FD0B0] mt-0.5">
-                  {t('signInStudentSub')}
-                </p>
-
-                <p className="text-sm text-[rgba(255,255,255,0.7)] mt-3 leading-relaxed">
+                <span className="tag-micro !text-[9px] block text-[#8C8C8C] mt-0.5">
+                  {t('roleStudentShort')}
+                </span>
+                <p className="text-xs text-[#5A5A5A] mt-2 leading-relaxed">
                   {t('signInStudentDesc')}
                 </p>
-
-                <div className="mt-4 pt-3 border-t border-[rgba(255,255,255,0.08)] flex items-center justify-between text-xs text-[#3FD0B0]">
-                  <span>{t('assignedWorkspace')}</span>
-                  <span className="font-mono font-bold">/student</span>
-                </div>
               </div>
 
-              <div className="mt-6">
-                <button
-                  type="button"
-                  className="w-full h-11 btn-glass-primary text-sm font-bold flex items-center justify-center cursor-pointer"
-                >
-                  <span>{t('signInStudentBtn')}</span>
-                </button>
+              <div className="mt-4 pt-3 border-t border-black/5 flex items-center justify-between text-xs font-medium text-[#1A1A1A]">
+                <span>{t('signInStudentBtn')}</span>
+                <ArrowRight className="h-3 w-3 stroke-[2]" />
               </div>
             </div>
 
           </div>
         )}
 
-        {/* TAB 2: SMART EMAIL INPUT WITH AUTO-DETECTION */}
-        {activeTab === 'CREDENTIALS' && !redirectingTo && (
-          <form onSubmit={handleCredentialSubmit} className="max-w-xl mx-auto space-y-5 pt-2">
+        {/* Tab 2: Manual Credentials */}
+        {activeTab === 'CREDENTIALS' && (
+          <form onSubmit={handleCredentialSubmit} className="max-w-md mx-auto space-y-4 pt-2">
             <div>
-              <label className="text-sm font-medium text-white block mb-2">
+              <label className="text-xs font-medium text-[#5A5A5A] block mb-1">
                 {t('emailLabel')}
               </label>
               <input
                 type="email"
+                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={t('emailPlaceholder')}
-                required
-                dir="ltr"
-                className="w-full rounded-2xl border border-[rgba(255,255,255,0.15)] bg-[rgba(255,255,255,0.05)] px-4 py-3 text-sm text-white placeholder:text-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#A77BF3]"
+                placeholder="user@university.edu"
+                className="w-full rounded-full bg-[#EDEDED] text-xs px-4 py-2.5 text-[#1A1A1A] border-none focus:outline-none"
               />
-
-              {/* Dynamic Role Detection Pill */}
-              <div className="mt-3 flex items-center justify-between text-xs">
-                <span className="text-[rgba(255,255,255,0.6)]">{t('signInAutoDetection')}</span>
-                <span className={`px-3 py-1 rounded-full font-semibold border ${
-                  detectedRole === 'SUPER_ADMIN' 
-                    ? 'bg-[#5B2BE0]/30 text-[#A77BF3] border-[#5B2BE0]/50'
-                    : detectedRole === 'STUDENT'
-                    ? 'bg-[#3FD0B0]/20 text-[#3FD0B0] border-[#3FD0B0]/40'
-                    : 'bg-white/10 text-white border-white/20'
-                }`}>
-                  ← {t('signInRoutingTo')} {detectedRole === 'SUPER_ADMIN' ? t('signInAdminDest') : detectedRole === 'STUDENT' ? t('signInStudentDest') : t('signInCompanyDest')}
-                </span>
-              </div>
             </div>
 
             <div>
-              <label className="text-sm font-medium text-white block mb-2">
+              <label className="text-xs font-medium text-[#5A5A5A] block mb-1">
                 {t('passwordLabel')}
               </label>
               <input
                 type="password"
+                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
-                dir="ltr"
-                placeholder={t('passwordPlaceholder')}
-                className="w-full rounded-2xl border border-[rgba(255,255,255,0.15)] bg-[rgba(255,255,255,0.05)] px-4 py-3 text-sm text-white placeholder:text-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#A77BF3]"
+                placeholder="••••••••••••"
+                className="w-full rounded-full bg-[#EDEDED] text-xs px-4 py-2.5 text-[#1A1A1A] border-none focus:outline-none"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full h-12 btn-glass-gradient text-base font-semibold shadow-[0_0_24px_rgba(127,90,240,0.5)]"
+              className="pill-btn-dark !w-full !h-10 !text-xs mt-2"
             >
               <span>{t('signInSubmitBtn')}</span>
             </button>
           </form>
         )}
 
-        {/* Footer Note */}
-        <div className="pt-4 border-t border-[rgba(255,255,255,0.08)] flex items-center justify-between text-xs text-[rgba(255,255,255,0.5)]">
-          <span>{t('signInPrivacyFooter')}</span>
-          <span>{t('signInDirectWireFooter')}</span>
-        </div>
+        {/* Redirecting Overlay */}
+        {redirectingTo && (
+          <div className="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-[32px] flex flex-col items-center justify-center p-6 text-center space-y-3">
+            <div className="w-8 h-8 rounded-full border-2 border-black border-t-transparent animate-spin" />
+            <p className="text-sm font-semibold text-[#1A1A1A]">
+              {language === 'en' ? `Entering as ${redirectingTo.name}...` : `جارِ الدخول بصفتك ${redirectingTo.name}...`}
+            </p>
+          </div>
+        )}
 
       </div>
     </div>

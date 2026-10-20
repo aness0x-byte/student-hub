@@ -3,6 +3,7 @@
 import React from 'react';
 import { MatchmakingDeal, DealStatus } from '@/lib/types';
 import { useStore } from '@/lib/store';
+import { ArrowRight, ChevronRight, ExternalLink } from 'lucide-react';
 
 interface Props {
   onSelectDeal: (deal: MatchmakingDeal) => void;
@@ -11,13 +12,13 @@ interface Props {
 export default function KanbanBoard({ onSelectDeal }: Props) {
   const { deals, tasks, students, companies, updateDealStatus, language, t } = useStore();
 
-  const columns: { status: DealStatus; label: string; badgeClass: string }[] = [
-    { status: 'SUBMITTED', label: t('kanbanStage1'), badgeClass: 'badge-glass-neutral' },
-    { status: 'UNDER_ADMIN_REVIEW', label: t('kanbanStage2'), badgeClass: 'rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/20 px-3 py-0.5 text-xs font-semibold' },
-    { status: 'SHORTLISTED', label: t('kanbanStage3'), badgeClass: 'badge-glass-violet' },
-    { status: 'MATCHED_CONNECTED', label: t('kanbanStage4'), badgeClass: 'badge-glass-positive' },
-    { status: 'IN_PROGRESS', label: t('kanbanStage5'), badgeClass: 'rounded-full bg-blue-400/10 text-blue-300 border border-blue-400/20 px-3 py-0.5 text-xs font-semibold' },
-    { status: 'COMPLETED_COMMISSION_COLLECTED', label: t('kanbanStage6'), badgeClass: 'badge-glass-positive' },
+  const columns: { status: DealStatus; label: string }[] = [
+    { status: 'SUBMITTED', label: t('kanbanStage1') },
+    { status: 'UNDER_ADMIN_REVIEW', label: t('kanbanStage2') },
+    { status: 'SHORTLISTED', label: t('kanbanStage3') },
+    { status: 'MATCHED_CONNECTED', label: t('kanbanStage4') },
+    { status: 'IN_PROGRESS', label: t('kanbanStage5') },
+    { status: 'COMPLETED_COMMISSION_COLLECTED', label: t('kanbanStage6') },
   ];
 
   const getNextStatus = (current: DealStatus): DealStatus | null => {
@@ -32,8 +33,8 @@ export default function KanbanBoard({ onSelectDeal }: Props) {
   };
 
   return (
-    <div className="overflow-x-auto pb-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 min-w-[1200px]">
+    <div className="overflow-x-auto pb-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 min-w-[1100px]">
         {columns.map((col) => {
           const colDeals = deals.filter(d => d.status === col.status);
           const colTotalBudget = colDeals.reduce((sum, d) => sum + d.agreedClientBudget, 0);
@@ -41,19 +42,19 @@ export default function KanbanBoard({ onSelectDeal }: Props) {
           return (
             <div 
               key={col.status}
-              className="flex flex-col rounded-3xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] backdrop-blur-xl p-4 min-h-[520px]"
+              className="flex flex-col rounded-[24px] bg-white border border-black/5 p-4 min-h-[500px]"
             >
               {/* Column Header */}
-              <div className="flex items-center justify-between border-b border-[rgba(255,255,255,0.08)] pb-3 mb-4">
+              <div className="flex items-center justify-between border-b border-black/5 pb-3 mb-3.5">
                 <div>
-                  <span className={`${col.badgeClass}`}>
+                  <span className="text-xs font-semibold text-[#1A1A1A] block">
                     {col.label}
                   </span>
-                  <p className="text-xs text-[rgba(255,255,255,0.5)] mt-1.5 font-medium">
-                    {language === 'ar' ? `€${colTotalBudget} ${t('kanbanTotalBudget')}` : `${t('kanbanTotalBudget')}: €${colTotalBudget}`}
+                  <p className="text-[11px] text-[#8C8C8C] mt-0.5">
+                    ${colTotalBudget} {t('kanbanTotalBudget')}
                   </p>
                 </div>
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-xs font-bold text-white border border-white/15">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#EDEDED] text-xs font-semibold text-[#1A1A1A]">
                   {colDeals.length}
                 </span>
               </div>
@@ -61,7 +62,7 @@ export default function KanbanBoard({ onSelectDeal }: Props) {
               {/* Cards list */}
               <div className="flex-1 space-y-3 overflow-y-auto">
                 {colDeals.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-[rgba(255,255,255,0.1)] py-12 text-center text-xs text-[rgba(255,255,255,0.4)]">
+                  <div className="rounded-2xl border border-dashed border-[#C4C4C4] py-10 text-center text-xs text-[#8C8C8C]">
                     {t('kanbanNoDeals')}
                   </div>
                 ) : (
@@ -77,62 +78,65 @@ export default function KanbanBoard({ onSelectDeal }: Props) {
                     return (
                       <div
                         key={deal.id}
-                        className="glass-card p-4 hover:border-[rgba(255,255,255,0.25)] transition-all cursor-pointer group shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
+                        className="bg-[#F2F2F2] rounded-[18px] p-3.5 border border-black/5 hover:border-black/20 transition-all cursor-pointer group"
                         onClick={() => onSelectDeal(deal)}
                       >
                         {/* Reference & Commission */}
                         <div className="flex items-center justify-between text-xs">
-                          <span className="font-mono font-bold text-white bg-white/10 px-2.5 py-0.5 rounded-full border border-white/15">
+                          <span className="font-mono text-[11px] font-semibold text-[#1A1A1A] bg-white px-2 py-0.5 rounded-full">
                             {deal.dealReference}
                           </span>
-                          <span className="font-bold text-[#34D17A]">
-                            +€{deal.platformGrossMargin} {t('kanbanBrokerMargin')}
+                          <span className="font-semibold text-xs text-[#1A1A1A]">
+                            +${deal.platformGrossMargin}
                           </span>
                         </div>
 
                         {/* Title */}
-                        <h4 className="mt-2.5 text-sm font-bold text-white line-clamp-2 leading-snug group-hover:text-[#A77BF3] transition-colors">
+                        <h4 className="mt-2 text-xs font-medium text-[#1A1A1A] line-clamp-2 leading-snug">
                           {displayTitle}
                         </h4>
 
                         {/* Parties */}
-                        <div className="mt-3 space-y-1.5 text-xs text-[rgba(255,255,255,0.7)]">
+                        <div className="mt-2.5 space-y-1 text-[11px] text-[#5A5A5A]">
                           <div className="truncate">
-                            <span className="text-[rgba(255,255,255,0.45)]">{t('kanbanClientLabel')} </span>
-                            <span className="truncate">{company?.companyName}</span>
+                            <span className="text-[#8C8C8C]">{t('kanbanClientLabel')} </span>
+                            <span className="text-[#1A1A1A] font-medium">{company?.companyName}</span>
                           </div>
                           <div className="truncate">
-                            <span className="text-[rgba(255,255,255,0.45)]">{t('kanbanTalentLabel')} </span>
-                            <span className="truncate">{student?.fullName} ({student?.anonymousCode})</span>
+                            <span className="text-[#8C8C8C]">{t('kanbanTalentLabel')} </span>
+                            <span className="text-[#1A1A1A] font-medium">{student?.anonymousCode}</span>
                           </div>
                         </div>
 
-                        {/* Footer & Advance */}
-                        <div className="mt-4 pt-3 border-t border-[rgba(255,255,255,0.08)] flex items-center justify-between text-xs">
-                          <span className="font-light text-base text-white">
-                            €{deal.agreedClientBudget}
+                        {/* Budget & Advance action */}
+                        <div className="mt-3 pt-2.5 border-t border-black/5 flex items-center justify-between text-[11px]">
+                          <span className="font-semibold text-[#1A1A1A]">
+                            ${deal.agreedClientBudget}
                           </span>
 
-                          {nextStatus && (
+                          {nextStatus ? (
                             <button
+                              type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 updateDealStatus(deal.id, nextStatus);
                               }}
-                              className="btn-glass-ghost px-2.5 py-1 text-[11px] font-semibold border-white/15 hover:border-white"
-                              title={t('kanbanAdvanceTitle')}
+                              className="text-[10px] font-semibold text-[#1A1A1A] bg-white hover:bg-black hover:text-white px-2.5 py-1 rounded-full transition-all flex items-center gap-1 cursor-pointer"
                             >
                               <span>{t('nextStage')}</span>
+                              <ChevronRight className="h-3 w-3 stroke-[2]" />
                             </button>
+                          ) : (
+                            <span className="text-[10px] text-[#5A5A5A] font-medium">
+                              {language === 'en' ? 'Deal Settled' : 'تمت التسوية'}
+                            </span>
                           )}
                         </div>
-
                       </div>
                     );
                   })
                 )}
               </div>
-
             </div>
           );
         })}

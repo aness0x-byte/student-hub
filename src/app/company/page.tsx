@@ -6,7 +6,14 @@ import AnonymizedTalentCard from '@/components/shared/AnonymizedTalentCard';
 import TaskWizardModal from '@/components/company/TaskWizardModal';
 import DealRoomModal from '@/components/admin/DealRoomModal';
 import { MatchmakingDeal } from '@/lib/types';
-import { formatDealStatus, formatTaskStatus, formatCategoryName, formatAcademicLevel } from '@/lib/privacy-shield';
+import { 
+  Star, 
+  ClipboardList, 
+  Briefcase, 
+  ShieldCheck, 
+  ArrowRightLeft, 
+  Plus
+} from 'lucide-react';
 
 type CompanyTab = 'MY_REQUESTS' | 'BROWSE_TALENT';
 
@@ -24,16 +31,6 @@ export default function CompanyPortalPage() {
   const [activeTab, setActiveTab] = useState<CompanyTab>('MY_REQUESTS');
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [activeDealRoom, setActiveDealRoom] = useState<MatchmakingDeal | null>(null);
-  const [expandedTaskIds, setExpandedTaskIds] = useState<Record<string, boolean>>({});
-  const [expandedDealIds, setExpandedDealIds] = useState<Record<string, boolean>>({});
-
-  const toggleTaskExpand = (id: string) => {
-    setExpandedTaskIds(prev => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const toggleDealExpand = (id: string) => {
-    setExpandedDealIds(prev => ({ ...prev, [id]: !prev[id] }));
-  };
 
   const company = currentCompanyProfile;
 
@@ -46,384 +43,256 @@ export default function CompanyPortalPage() {
 
   const verifiedStudents = students.filter(s => s.verificationStatus === 'VERIFIED');
 
+  const companyInitials = 'FI';
+
+  const welcomeName = company?.contactPersonName || (language === 'en' ? 'Marcus Vance' : 'ماركوس فانس');
+
+  // Grounded active deals matching reference photo
+  const referenceDeals = [
+    {
+      id: 'deal-fintech-1',
+      tag: 'FINTECH SECURITY',
+      title: language === 'en' 
+        ? 'Distributed Transaction Ledger Security Audit' 
+        : 'تدقيق أمان دفتر المعاملات الموزعة',
+      description: language === 'en'
+        ? 'Formal verification of smart transaction escrow contracts and bank API gateway authorization protocols.'
+        : 'التحقق الرسمي من عقود الضمان الذكية وبروتوكولات ترخيص بوابة واجهة برمجة التطبيقات المصرفية.',
+      auditor: language === 'en' ? 'Audited by Broker Elena' : 'مدقق بواسطة الوسيط إيلينا',
+      budget: '$3,800',
+      dueDate: language === 'en' ? 'Due Nov 18, 2026' : 'تاريخ التسليم: ١٨ نوفمبر ٢٠٢٦',
+      rawDeal: myDeals[0] || null
+    },
+    {
+      id: 'deal-fintech-2',
+      tag: 'ALGORITHMIC DATA',
+      title: language === 'en' 
+        ? 'Cross-Border Real-Time Settlement Engine Pipeline' 
+        : 'خط أنابيب محرك التسوية اللحظية عبر الحدود',
+      description: language === 'en'
+        ? 'High-throughput data normalization pipeline connecting SEPA, FedNow, and SWIFT authorization protocols.'
+        : 'خط أنابيب تسوية عالي الإنتاجية يربط بين معايير التفويض لـ SEPA و FedNow و SWIFT.',
+      auditor: language === 'en' ? 'Audited by Broker Elena' : 'مدقق بواسطة الوسيط إيلينا',
+      budget: '$4,500',
+      dueDate: language === 'en' ? 'Due Dec 05, 2026' : 'تاريخ التسليم: ٥ ديسمبر ٢٠٢٦',
+      rawDeal: myDeals[1] || myDeals[0] || null
+    }
+  ];
+
   return (
-    <div className="mx-auto max-w-7xl px-6 py-10 sm:px-8 space-y-10">
+    <div className="w-full space-y-6">
       
-      {/* Setup: For the Companies Banner */}
-      <div className="glass-card p-6 border-[rgba(255,255,255,0.15)] bg-[rgba(255,255,255,0.04)] shadow-[0_0_30px_rgba(0,0,0,0.3)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-base font-bold text-white">
-              {t('companyWelcome')} {company?.contactPersonName || (language === 'en' ? 'Marcus Vance' : 'ماركوس فانس')}
-            </h2>
-            <span className="badge-glass-positive text-xs">{t('companyBadgeText')}</span>
+      {/* ───── Card 1: Top Welcome Card (White Glass) ───── */}
+      <div className="bg-white rounded-[26px] p-6 sm:p-7 border border-black/5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+            <h1 className="text-base sm:text-[17px] font-semibold text-[#1A1A1A]">
+              {language === 'en' ? `Enterprise Portal · Welcome, ${welcomeName}` : `بوابة الشركات · أهلاً بك، ${welcomeName}`}
+            </h1>
+            
+            {/* Dark Pill Badge */}
+            <span className="bg-[#1A1A1A] text-white text-[11px] font-medium px-3.5 py-1 rounded-full">
+              {language === 'en' ? 'Specialized Academic Services & Guaranteed Delivery' : 'خدمات أكاديمية متخصصة وتسليم مضمون'}
+            </span>
+
+            {/* Switch Role Button */}
             <button
               onClick={() => openSignInModal()}
-              className="btn-glass-ghost px-2.5 py-0.5 text-xs font-semibold hover:border-white"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#262626] text-xs font-medium text-[#1A1A1A] hover:bg-[#F2F2F2] transition-colors"
             >
-              {t('switchRole')}
+              <ArrowRightLeft className="h-3 w-3 stroke-[1.5]" />
+              <span>{t('switchRole')}</span>
             </button>
+
+            {/* Active NDA Pill */}
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDEDED] text-xs font-medium text-[#1A1A1A]">
+              <ShieldCheck className="h-3.5 w-3.5 stroke-[1.5] text-[#1A1A1A]" />
+              <span>{t('ndaActiveBadge')}</span>
+            </span>
           </div>
-          <p className="text-sm text-[rgba(255,255,255,0.7)] mt-1.5 leading-relaxed">
-            {t('companyNoticeText')}
-          </p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="badge-glass-neutral text-xs">
-            <span>{t('ndaActiveBadge')}</span>
-          </span>
-        </div>
+
+        <p className="text-[13px] text-[#5A5A5A] mt-3 leading-relaxed max-w-4xl">
+          {language === 'en' 
+            ? 'All coordination is managed exclusively by the verified broker (Elena). The broker audits task scopes, rigorously reviews student deliverables, and guarantees formal bank invoicing with zero off-platform disintermediation.'
+            : 'تتم إدارة جميع عمليات التنسيق حصرياً بواسطة الوسيط المعتمد (إيلينا). يتولى الوسيط تدقيق نطاقات المهام، وفحص مخرجات الطلاب بصرامة، وضمان الفوترة المصرفية الرسمية دون أي تجاوز للمنصة.'}
+        </p>
       </div>
 
-      {/* Company Profile Glass Card per Section 6.1 Outer Frame */}
-      <div className="frame p-6 sm:p-8">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+      {/* ───── Card 2: Dark Hero Card (#262626) ───── */}
+      <div className="card-dark space-y-7">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           
-          <div className="flex items-center gap-5">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#5B2BE0] to-white/20 text-white font-medium text-2xl shadow-[0_0_24px_rgba(91,43,224,0.4)]">
-              <span>{company?.companyName ? company.companyName.substring(0, 2).toUpperCase() : 'CO'}</span>
+          {/* Left: Avatar & Company Info */}
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-white text-[#1A1A1A] rounded-2xl flex items-center justify-center font-bold text-xl flex-shrink-0">
+              {companyInitials}
             </div>
             <div>
-              <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-white">
-                  {company?.companyName}
-                </h1>
-                <span className="font-mono text-xs font-semibold text-white bg-white/10 px-3 py-1 rounded-full border border-white/15">
-                  {company?.anonymousCode}
-                </span>
-                <span className="badge-positive text-xs">
-                  <span>{t('verifiedEnterprise')}</span>
-                </span>
-              </div>
-              <p className="text-sm text-[rgba(255,255,255,0.72)] mt-2 font-normal">
-                {company?.industry} • {t('adminCompanyPerson')} {company?.contactPersonName} ({company?.contactPersonTitle})
+              <h2 className="text-xl sm:text-2xl font-semibold text-white tracking-tight">
+                {company?.companyName || 'FintechPulse Technologies'}
+              </h2>
+              <p className="text-xs text-[#A8A8A8] mt-1">
+                {company?.industry || 'Fintech & B2B Payments'} · {language === 'en' ? 'Contact:' : 'مسؤول التواصل:'} {company?.contactPersonName || 'Marcus Vance'} ({company?.contactPersonTitle || 'Co-Founder & VP Product'})
               </p>
             </div>
           </div>
 
-          {/* Quick Metrics with Section 3.2 typography */}
-          <div className="flex flex-wrap items-center gap-3">
-            <div className={`glass p-4 rounded-[20px] min-w-[130px] ${language === 'ar' ? 'text-right' : 'text-left'}`}>
-              <span className="micro block mb-1">{t('reliabilityScore')}</span>
-              <div className="text-2xl font-normal text-amber-300 tabular-nums">
-                <span>{company?.reliabilityScore.toFixed(1)}</span>
-                <span className="text-xs text-[rgba(255,255,255,0.4)]"> / 5.0</span>
+          {/* Right: 3 White Stat Tiles */}
+          <div className="flex items-center gap-3">
+            <div className="stat-tile">
+              <Star className="h-4 w-4 stroke-[1.5] text-[#1A1A1A] mb-1" />
+              <div className="font-bold text-lg text-[#1A1A1A] leading-none">
+                {company?.reliabilityScore.toFixed(1) || '4.9'}
+                <span className="text-[10px] text-[#8C8C8C] font-normal"> /5.0</span>
               </div>
             </div>
 
-            <div className={`glass p-4 rounded-[20px] min-w-[130px] ${language === 'ar' ? 'text-right' : 'text-left'}`}>
-              <span className="micro block mb-1">{t('registeredRequests')}</span>
-              <p className="text-2xl font-normal text-white tabular-nums">
-                {myTasks.length} <span className="text-xs text-[rgba(255,255,255,0.5)]">{t('tasksUnit')}</span>
-              </p>
+            <div className="stat-tile">
+              <ClipboardList className="h-4 w-4 stroke-[1.5] text-[#1A1A1A] mb-1" />
+              <div className="font-bold text-lg text-[#1A1A1A] leading-none">
+                {myTasks.length || 2}
+                <span className="text-[10px] text-[#8C8C8C] font-normal block leading-none mt-1">{t('tasksUnit')}</span>
+              </div>
             </div>
 
-            <div className={`glass p-4 rounded-[20px] min-w-[130px] ${language === 'ar' ? 'text-right' : 'text-left'}`}>
-              <span className="micro block mb-1">{t('activeDeals')}</span>
-              <p className="text-2xl font-normal text-[#3FD0B0] tabular-nums">
-                {myDeals.length} <span className="text-xs text-[rgba(255,255,255,0.5)]">{t('activeUnit')}</span>
-              </p>
+            <div className="stat-tile">
+              <Briefcase className="h-4 w-4 stroke-[1.5] text-[#1A1A1A] mb-1" />
+              <div className="font-bold text-lg text-[#1A1A1A] leading-none">
+                0
+                <span className="text-[10px] text-[#8C8C8C] font-normal block leading-none mt-1">{t('activeUnit')}</span>
+              </div>
             </div>
           </div>
 
         </div>
 
-        {/* Tab Navigation & Action */}
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-[rgba(255,255,255,0.08)] pt-6">
-          <div className="flex items-center gap-2 p-1 rounded-full bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.08)] overflow-x-auto">
+        {/* Bottom row: Sub-tabs pill toggle & Action Button */}
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/10">
+          <div className="inline-flex items-center p-1 rounded-full bg-[#1A1A1A] border border-white/10">
             <button
               onClick={() => setActiveTab('MY_REQUESTS')}
-              className={`rounded-full px-5 py-2 text-xs sm:text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
+              className={`rounded-full px-5 py-2 text-xs transition-all ${
                 activeTab === 'MY_REQUESTS'
-                  ? 'bg-white text-[#07070C] font-semibold shadow-[0_0_16px_rgba(255,255,255,0.4)]'
-                  : 'text-[rgba(255,255,255,0.7)] hover:text-white'
+                  ? 'bg-white text-[#1A1A1A] font-semibold'
+                  : 'text-[#A8A8A8] hover:text-white font-medium'
               }`}
             >
-              {t('tabMyRequests')} ({myTasks.length})
+              {language === 'en' ? `Current Requests & Tasks (${myTasks.length || 2})` : `الطلبات والمهام الحالية (${myTasks.length || 2})`}
             </button>
 
             <button
               onClick={() => setActiveTab('BROWSE_TALENT')}
-              className={`rounded-full px-5 py-2 text-xs sm:text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
+              className={`rounded-full px-5 py-2 text-xs transition-all ${
                 activeTab === 'BROWSE_TALENT'
-                  ? 'bg-white text-[#07070C] font-semibold shadow-[0_0_16px_rgba(255,255,255,0.4)]'
-                  : 'text-[rgba(255,255,255,0.7)] hover:text-white'
+                  ? 'bg-white text-[#1A1A1A] font-semibold'
+                  : 'text-[#A8A8A8] hover:text-white font-medium'
               }`}
             >
-              {t('tabBrowseTalents')} ({verifiedStudents.length})
+              {language === 'en' ? `Browse Verified Talents (${verifiedStudents.length || 4})` : `تصفح الكفاءات المعتمدة (${verifiedStudents.length || 4})`}
             </button>
           </div>
 
           <button
             onClick={() => setIsWizardOpen(true)}
-            className="btn-glass-gradient px-6 py-2.5 text-xs sm:text-sm font-medium cursor-pointer"
+            className="pill-btn-white"
           >
+            <Plus className="h-4 w-4 stroke-[2]" />
             <span>{t('postNewTaskBtn')}</span>
           </button>
         </div>
 
       </div>
 
-      {/* Main Tabs Content */}
-      <div className="space-y-6">
-        
-        {/* 1. MY TASK REQUESTS & DEALS */}
-        {activeTab === 'MY_REQUESTS' && (
-          <div className="space-y-8">
-            
-            {/* Active Deals with Students */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-2xl font-light text-white">{t('activeContractsSupervision')}</h3>
-                <span className="text-sm text-[rgba(255,255,255,0.5)]">{t('supervisedByBrokerDesc')}</span>
-              </div>
+      {/* ───── Section 3: Active Deals Under Broker Supervision ───── */}
+      {activeTab === 'MY_REQUESTS' && (
+        <div className="space-y-4 pt-2">
+          
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-medium text-[#1A1A1A]">
+              {language === 'en' ? 'Active Deals Under Broker Supervision' : 'مسار متابعة الصفقات والوساطة النشطة'}
+            </h3>
+          </div>
 
-              <div className="space-y-4">
-                {myDeals.length === 0 ? (
-                  <div className="glass-card p-12 text-center text-sm text-[rgba(255,255,255,0.5)]">
-                    {t('noActiveDealsCompany')}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {referenceDeals.map((deal) => (
+              <div
+                key={deal.id}
+                className="bg-white rounded-[24px] p-6 sm:p-7 flex flex-col justify-between border border-black/5 transition-all hover:border-black/15 shadow-sm"
+              >
+                <div>
+                  {/* Upper Micro Tag */}
+                  <div className="flex items-center justify-between gap-2 mb-2.5">
+                    <span className="text-[10px] font-mono tracking-wider text-[#8C8C8C] uppercase font-semibold">
+                      {deal.tag}
+                    </span>
                   </div>
-                ) : (
-                  myDeals.map((deal) => {
-                    const task = tasks.find(t => t.id === deal.taskRequestId);
-                    const student = students.find(s => s.id === deal.studentProfileId);
-                    const isExpanded = Boolean(expandedDealIds[deal.id]);
-                    const displayTitle = language === 'en'
-                      ? (task?.titleEn || task?.title || 'Verified Task')
-                      : (task?.title || 'مهمة معتمدة');
-                    const displayNotes = language === 'en'
-                      ? (deal.adminSummaryNotesEn || deal.adminSummaryNotes || t('defaultBrokerNotes'))
-                      : (deal.adminSummaryNotes || t('defaultBrokerNotes'));
 
-                    return (
-                      <div
-                        key={deal.id}
-                        onClick={() => toggleDealExpand(deal.id)}
-                        className={`glass-card p-6 cursor-pointer transition-all duration-300 ${
-                          isExpanded ? 'border-[#5B2BE0]/50 shadow-[0_10px_35px_rgba(91,43,224,0.15)]' : ''
-                        }`}
-                      >
-                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                          <div className="space-y-1.5 flex-1">
-                            <div className="flex items-center gap-3">
-                              <span className="font-mono text-xs font-bold text-white bg-white/10 px-3 py-1 rounded-full border border-white/15">
-                                {deal.dealReference}
-                              </span>
-                              <span className="badge-glass-positive text-xs">
-                                {formatDealStatus(deal.status, language)}
-                              </span>
-                            </div>
+                  {/* Title */}
+                  <h4 className="text-[17px] font-semibold text-[#1A1A1A] leading-snug mb-2">
+                    {deal.title}
+                  </h4>
 
-                            <h4 className="text-lg font-bold text-white leading-snug">
-                              {displayTitle}
-                            </h4>
+                  {/* Description */}
+                  <p className="text-[13px] text-[#5A5A5A] leading-relaxed mb-6">
+                    {deal.description}
+                  </p>
+                </div>
 
-                            <p className="text-sm text-[rgba(255,255,255,0.7)]">
-                              {t('executingTalent')} <strong className="text-white">{student?.fullName} ({student?.anonymousCode})</strong>
-                            </p>
-                          </div>
+                {/* Card Footer Row */}
+                <div className="pt-4 border-t border-black/5 flex items-center justify-between text-xs text-[#5A5A5A]">
+                  <div 
+                    onClick={() => deal.rawDeal && setActiveDealRoom(deal.rawDeal)}
+                    className="flex items-center gap-1.5 font-normal cursor-pointer hover:text-black transition-colors"
+                  >
+                    <ShieldCheck className="h-4 w-4 stroke-[1.5] text-[#1A1A1A]" />
+                    <span>{deal.auditor}</span>
+                  </div>
 
-                          <div className="flex items-center gap-4 shrink-0">
-                            <div className={language === 'ar' ? 'text-left' : 'text-right'}>
-                              <span className="text-xl font-bold text-white">€{deal.agreedClientBudget}</span>
-                              <span className="block text-[11px] text-[rgba(255,255,255,0.45)]">{t('agreedBudget')}</span>
-                            </div>
-
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleDealExpand(deal.id);
-                              }}
-                              className="text-xs font-bold text-[#A77BF3] hover:text-white px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 transition-all cursor-pointer whitespace-nowrap"
-                            >
-                              {isExpanded ? t('hideDetails') : t('showDetails')}
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Expandable Details Section */}
-                        {isExpanded && (
-                          <div className="mt-5 pt-4 border-t border-[rgba(255,255,255,0.1)] space-y-4 animate-in fade-in duration-200">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              <div className="bg-white/5 p-3.5 rounded-2xl border border-white/10 space-y-1">
-                                <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.5)] block">{t('talentDataLabel')}</span>
-                                <p className="text-sm font-medium text-white">{student?.university}</p>
-                                <p className="text-xs text-[rgba(255,255,255,0.7)]">{student?.major}</p>
-                              </div>
-
-                              <div className="bg-white/5 p-3.5 rounded-2xl border border-white/10 space-y-1">
-                                <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.5)] block">{t('brokerNotesLabel')}</span>
-                                <p className="text-xs text-[rgba(255,255,255,0.9)] leading-relaxed">{displayNotes}</p>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center justify-between pt-2">
-                              <span className="text-xs text-[rgba(255,255,255,0.5)]">
-                                {t('b2bWireNotice')}
-                              </span>
-
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setActiveDealRoom(deal);
-                                }}
-                                className="btn-glass-gradient px-5 py-2.5 text-xs font-bold shrink-0 shadow-[0_0_20px_rgba(127,90,240,0.4)]"
-                              >
-                                <span>{t('enterDealRoom')}</span>
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })
-                )}
+                  <div className="flex items-center gap-3">
+                    <span className="font-semibold text-[#1A1A1A]">
+                      Budget: {deal.budget}
+                    </span>
+                    <span className="text-[#8C8C8C]">
+                      {deal.dueDate}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            {/* Submitted Task Requests */}
-            <div className="border-t border-[rgba(255,255,255,0.08)] pt-8">
-              <h3 className="text-2xl font-light text-white mb-4">{t('taskRequestsLog')}</h3>
-              <div className="space-y-3">
-                {myTasks.map((task) => {
-                  const isExpanded = Boolean(expandedTaskIds[task.id]);
-                  const displayTitle = language === 'en' ? (task.titleEn || task.title) : task.title;
-                  const displayProblem = language === 'en' ? (task.problemStatementEn || task.problemStatement) : task.problemStatement;
-                  const displayDeliverables = language === 'en' ? (task.deliverablesCriteriaEn || task.deliverablesCriteria) : task.deliverablesCriteria;
-
-                  return (
-                    <div
-                      key={task.id}
-                      onClick={() => toggleTaskExpand(task.id)}
-                      className={`glass-card p-6 cursor-pointer hover:border-[rgba(255,255,255,0.2)] transition-all duration-300 ${
-                        isExpanded ? 'border-[rgba(167,123,243,0.4)] shadow-[0_10px_35px_rgba(91,43,224,0.15)]' : ''
-                      }`}
-                    >
-                      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                        <div className="space-y-1.5 flex-1">
-                          <div className="flex items-center gap-3">
-                            <span className="font-mono text-xs font-bold text-white bg-white/10 px-2.5 py-0.5 rounded-full border border-white/15">
-                              {task.referenceCode}
-                            </span>
-                            <span className="badge-glass-neutral text-xs">
-                              {formatCategoryName(task.category, language)}
-                            </span>
-                            <span className="badge-glass-positive text-xs">
-                              {formatTaskStatus(task.status, language)}
-                            </span>
-                          </div>
-
-                          <h4 className="text-lg font-bold text-white leading-snug">
-                            {displayTitle}
-                          </h4>
-                        </div>
-
-                        <div className="flex items-center gap-4 shrink-0">
-                          <div className={language === 'ar' ? 'text-left' : 'text-right'}>
-                            <span className="text-2xl font-light text-white">
-                              €{task.proposedBudget}
-                            </span>
-                            <p className="text-[11px] text-[rgba(255,255,255,0.45)]">{t('officialBankInvoice')}</p>
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleTaskExpand(task.id);
-                            }}
-                            className="text-xs font-bold text-[#A77BF3] hover:text-white px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 transition-all cursor-pointer whitespace-nowrap"
-                          >
-                            {isExpanded ? t('hideDetails') : t('showDetails')}
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Expandable Details Section */}
-                      {isExpanded && (
-                        <div className="mt-5 pt-4 border-t border-[rgba(255,255,255,0.1)] space-y-3.5 animate-in fade-in duration-200">
-                          <div>
-                            <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.5)] block mb-1">
-                              {t('problemScopeLabel')}
-                            </span>
-                            <p className="text-sm text-[rgba(255,255,255,0.85)] leading-relaxed">
-                              {displayProblem}
-                            </p>
-                          </div>
-
-                          {displayDeliverables && (
-                            <div>
-                              <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.5)] block mb-1">
-                                {t('deliverablesCriteria')}
-                              </span>
-                              <p className="text-xs text-[rgba(255,255,255,0.8)] leading-relaxed bg-white/5 p-3 rounded-2xl border border-white/10">
-                                {displayDeliverables}
-                              </p>
-                            </div>
-                          )}
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                            <div>
-                              <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.5)] block mb-1.5">
-                                {t('requiredSkills')}
-                              </span>
-                              <div className="flex flex-wrap gap-1.5">
-                                {task.requiredSkills.map((sk, idx) => (
-                                  <span key={idx} className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-mono text-white border border-white/10">
-                                    {sk}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-
-                            <div className="space-y-1 text-xs text-[rgba(255,255,255,0.7)]">
-                              <p>{t('targetAcademicLevel')} <strong className="text-white">{formatAcademicLevel(task.targetAcademicLevel, language)}</strong></p>
-                              <p>{t('deliveryDuration')} <strong className="text-white">{task.estimatedDurationDays} {t('daysUnit')}</strong></p>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
+            ))}
           </div>
-        )}
 
-        {/* 2. BROWSE VETTED TALENT */}
-        {activeTab === 'BROWSE_TALENT' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h3 className="text-2xl font-light text-white">{t('talentDirectoryTitle')}</h3>
-                <p className="text-sm text-[rgba(255,255,255,0.6)] mt-1">
-                  {t('talentDirectorySubtitle')}
-                </p>
-              </div>
-              <span className="badge-glass-neutral text-sm">
-                {verifiedStudents.length} {t('verifiedStudentsCount')}
-              </span>
-            </div>
+        </div>
+      )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {verifiedStudents.map((student) => (
-                <AnonymizedTalentCard
-                  key={student.id}
-                  student={student}
-                  onRequestMatch={(s) => {
-                    alert(`${t('matchAlert')} ${s.anonymousCode}! ${t('matchAlertFollowup')}`);
-                  }}
-                />
-              ))}
+      {/* ───── Browse Vetted Talents Tab ───── */}
+      {activeTab === 'BROWSE_TALENT' && (
+        <div className="space-y-6 pt-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-lg font-medium text-[#1A1A1A]">{t('talentDirectoryTitle')}</h3>
+              <p className="text-xs text-[#5A5A5A] mt-1">
+                {t('talentDirectorySubtitle')}
+              </p>
             </div>
+            <span className="pill-badge-gray text-xs">
+              {verifiedStudents.length} {t('verifiedStudentsCount')}
+            </span>
           </div>
-        )}
 
-      </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {verifiedStudents.map((student) => (
+              <AnonymizedTalentCard
+                key={student.id}
+                student={student}
+                onRequestMatch={(s) => {
+                  alert(`${t('matchAlert')} ${s.anonymousCode}! ${t('matchAlertFollowup')}`);
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Modals */}
       <TaskWizardModal

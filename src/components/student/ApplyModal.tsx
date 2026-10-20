@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { CompanyTaskRequest } from '@/lib/types';
 import { useStore } from '@/lib/store';
+import { X, Check, ShieldCheck } from 'lucide-react';
 
 interface Props {
   task: CompanyTaskRequest | null;
@@ -40,44 +41,48 @@ export default function ApplyModal({ task, isOpen, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-xl rounded-3xl border border-[rgba(255,255,255,0.15)] bg-[#0C0C16]/95 p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-white max-h-[92vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-lg rounded-[32px] bg-white border border-black/10 p-6 sm:p-8 text-[#1A1A1A] max-h-[92vh] overflow-y-auto shadow-2xl">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className={`absolute ${language === 'ar' ? 'left-6' : 'right-6'} top-6 rounded-full px-3 py-1 text-xs font-semibold bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition-colors`}
+          className={`absolute ${language === 'ar' ? 'left-6' : 'right-6'} top-6 w-9 h-9 rounded-full bg-[#EDEDED] text-[#1A1A1A] flex items-center justify-center hover:bg-[#E4E4E4] transition-colors`}
         >
-          {t('close')}
+          <X className="h-4 w-4 stroke-[2]" />
         </button>
 
         {isSubmitted ? (
           <div className="py-10 text-center">
-            <h3 className="mt-4 text-2xl font-light text-white">
+            <div className="w-12 h-12 rounded-full bg-[#262626] text-white flex items-center justify-center mx-auto mb-4">
+              <Check className="h-6 w-6 stroke-[2]" />
+            </div>
+            <h3 className="text-xl font-semibold text-[#1A1A1A]">
               {t('applySuccessTitle')}
             </h3>
-            <p className="mt-2 text-sm text-[rgba(255,255,255,0.7)] max-w-sm mx-auto leading-relaxed">
-              {t('applySuccessSub')} (<strong className="text-white font-mono">{task.referenceCode}</strong>).
+            <p className="mt-2 text-xs text-[#5A5A5A] max-w-sm mx-auto leading-relaxed">
+              {t('applySuccessSub')} (<strong className="text-[#1A1A1A] font-mono">{task.referenceCode}</strong>).
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="border-b border-white/10 pb-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="border-b border-black/5 pb-4">
               <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-bold text-white bg-white/10 px-3 py-1 rounded-full border border-white/15">
+                <span className="font-mono text-xs font-semibold text-[#1A1A1A] bg-[#EDEDED] px-2.5 py-0.5 rounded-full">
                   {task.referenceCode}
                 </span>
-                <span className="text-xs text-[rgba(255,255,255,0.6)]">
-                  {t('applyNetReward')} <strong className="text-[#34D17A]">€{Math.round(task.proposedBudget * 0.8)}</strong> • {t('applyTurnaround')} {task.estimatedDurationDays} {t('daysUnit')}
+                <span className="text-xs text-[#5A5A5A]">
+                  {t('applyNetReward')} <strong className="text-[#1A1A1A]">${Math.round(task.proposedBudget * 0.8)}</strong> • {t('applyTurnaround')} {task.estimatedDurationDays} {t('daysUnit')}
                 </span>
               </div>
-              <h2 className="mt-2 text-xl font-bold text-white">
+              <h2 className="mt-2 text-lg font-semibold text-[#1A1A1A]">
                 {t('applyTaskTitlePrefix')} {displayTitle}
               </h2>
             </div>
 
             {/* Privacy Reminder */}
-            <div className="glass-card p-4 text-xs text-[rgba(255,255,255,0.8)] flex items-start gap-3 border-[#3FD0B0]/20 bg-[#3FD0B0]/5">
+            <div className="p-3.5 rounded-2xl bg-[#EDEDED]/60 text-xs text-[#5A5A5A] flex items-start gap-2.5">
+              <ShieldCheck className="h-4 w-4 stroke-[1.5] text-[#1A1A1A] shrink-0 mt-0.5" />
               <span className="leading-relaxed">
                 {t('applyGuaranteeNotice')}
               </span>
@@ -85,7 +90,7 @@ export default function ApplyModal({ task, isOpen, onClose }: Props) {
 
             {/* Pitch Textarea */}
             <div>
-              <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
+              <label className="block text-xs font-medium text-[#5A5A5A] mb-1">
                 {t('applyPitchLabel')}
               </label>
               <textarea
@@ -94,40 +99,29 @@ export default function ApplyModal({ task, isOpen, onClose }: Props) {
                 required
                 rows={4}
                 placeholder={t('applyPitchPlaceholder')}
-                className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
+                className="w-full rounded-2xl bg-[#EDEDED] p-3.5 text-xs text-[#1A1A1A] border-none focus:outline-none resize-none leading-relaxed"
               />
             </div>
 
-            {/* Portfolio / Attachment Link */}
+            {/* Portfolio Link */}
             <div>
-              <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
+              <label className="block text-xs font-medium text-[#5A5A5A] mb-1">
                 {t('applyPortfolioLabel')}
               </label>
               <input
                 type="url"
                 value={portfolioUrl}
                 onChange={(e) => setPortfolioUrl(e.target.value)}
-                placeholder="https://..."
-                dir="ltr"
-                className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
+                placeholder="https://github.com/..."
+                className="w-full rounded-full bg-[#EDEDED] px-4 py-2.5 text-xs text-[#1A1A1A] border-none focus:outline-none"
               />
-              <p className="mt-1 text-xs text-[rgba(255,255,255,0.45)]">
-                {t('applyPortfolioTip')}
-              </p>
             </div>
 
             {/* Submit Button */}
-            <div className="flex items-center justify-between pt-4 border-t border-white/10">
-              <button
-                type="button"
-                onClick={onClose}
-                className="btn-glass-ghost px-5 py-2 text-xs font-semibold"
-              >
-                {t('cancel')}
-              </button>
+            <div className="pt-2">
               <button
                 type="submit"
-                className="btn-glass-primary px-6 py-2.5 text-xs font-bold"
+                className="pill-btn-dark !w-full !h-10 !text-xs"
               >
                 <span>{t('applySubmitBtn')}</span>
               </button>

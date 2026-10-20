@@ -13,37 +13,40 @@ export default function RefADashboardOverview({ onSettleClick }: Props) {
   const { language, t, ledger, deals, tasks, students, companies } = useStore();
   const [timeframe, setTimeframe] = useState<ChartTimeframe>('WEEKLY');
 
-  // Spline paths for each timeframe per Section 6.5
-  const splineData: Record<ChartTimeframe, { path: string; activeX: number; activeY: number; activeVal: string; xLabelsAr: string[]; xLabelsEn: string[] }> = {
+  const splineData: Record<ChartTimeframe, { path: string; secondaryPath: string; activeX: number; activeY: number; activeVal: string; xLabelsAr: string[]; xLabelsEn: string[] }> = {
     DAILY: {
       path: 'M 10 140 Q 90 120, 160 90 T 310 110 T 460 50 T 610 80 T 750 30',
+      secondaryPath: 'M 10 155 Q 90 140, 160 120 T 310 135 T 460 85 T 610 110 T 750 70',
       activeX: 460,
       activeY: 50,
-      activeVal: '€4,850',
+      activeVal: '$4,850',
       xLabelsAr: ['12:00ص', '04:00ص', '08:00ص', '12:00م', '04:00م', '08:00م'],
-      xLabelsEn: ['12:00 AM', '04:00 AM', '08:00 AM', '12:00 PM', '04:00 PM', '08:00 PM'],
+      xLabelsEn: ['12 AM', '4 AM', '8 AM', '12 PM', '4 PM', '8 PM'],
     },
     WEEKLY: {
       path: 'M 10 150 Q 100 130, 180 80 T 340 100 T 500 40 T 640 60 T 750 20',
+      secondaryPath: 'M 10 165 Q 100 150, 180 110 T 340 125 T 500 75 T 640 90 T 750 55',
       activeX: 500,
       activeY: 40,
-      activeVal: '€9,432',
+      activeVal: '$9,432',
       xLabelsAr: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'],
       xLabelsEn: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu'],
     },
     MONTHLY: {
       path: 'M 10 160 Q 120 140, 220 95 T 390 70 T 540 35 T 670 45 T 750 15',
+      secondaryPath: 'M 10 175 Q 120 160, 220 125 T 390 100 T 540 65 T 670 75 T 750 50',
       activeX: 540,
       activeY: 35,
-      activeVal: '€28,600',
+      activeVal: '$28,600',
       xLabelsAr: ['الأسبوع 1', 'الأسبوع 2', 'الأسبوع 3', 'الأسبوع 4'],
-      xLabelsEn: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+      xLabelsEn: ['W1', 'W2', 'W3', 'W4'],
     },
     YEARLY: {
       path: 'M 10 170 Q 130 150, 240 110 T 420 80 T 570 25 T 690 30 T 750 10',
+      secondaryPath: 'M 10 180 Q 130 165, 240 130 T 420 110 T 570 55 T 690 65 T 750 40',
       activeX: 570,
       activeY: 25,
-      activeVal: '€112,400',
+      activeVal: '$112,400',
       xLabelsAr: ['الربع 1', 'الربع 2', 'الربع 3', 'الربع 4'],
       xLabelsEn: ['Q1', 'Q2', 'Q3', 'Q4'],
     },
@@ -57,75 +60,72 @@ export default function RefADashboardOverview({ onSettleClick }: Props) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
       
-      {/* 6.4 Balance column (1fr in 1fr · 2.4fr · 1fr) -> 3.5 cols */}
-      <div className="lg:col-span-3 glass-card p-6 flex flex-col justify-between">
-        <div className="space-y-6">
-          
-          {/* Stat Group 1: Total Liquid Balance with Withdraw button */}
+      {/* Balance Column (3 cols) */}
+      <div className="lg:col-span-3 bg-white rounded-[24px] p-6 border border-black/5 flex flex-col justify-between">
+        <div className="space-y-5">
+          {/* Liquid Invoiced Balance */}
           <div>
             <div className="flex items-center justify-between text-xs mb-1">
-              <span className="text-[rgba(255,255,255,0.72)] font-normal">{t('totalLiquidBalance')}</span>
-              <span className="text-[#34D17A] text-[11px] font-medium">+14.2%</span>
+              <span className="text-[#5A5A5A]">{t('totalLiquidBalance')}</span>
+              <span className="text-[#1A1A1A] font-semibold">+14.2%</span>
             </div>
-            <div className="num-md text-white font-normal tabular-nums">
-              €{totalInvoiced}
+            <div className="text-2xl font-bold text-[#1A1A1A] tabular-nums">
+              ${totalInvoiced.toLocaleString()}
             </div>
             <div className="mt-3">
               <button
                 type="button"
                 onClick={onSettleClick}
-                className="btn-solid cursor-pointer"
+                className="pill-btn-dark !w-full !h-8 !text-xs"
               >
                 {t('wireSettlementBtn')}
               </button>
             </div>
           </div>
 
-          <div className="h-[1px] bg-[rgba(255,255,255,0.10)]" />
+          <div className="h-[1px] bg-black/5" />
 
-          {/* Stat Group 2: Commission Margin */}
+          {/* Commission Margin */}
           <div>
             <div className="flex items-center justify-between text-xs mb-1">
-              <span className="text-[rgba(255,255,255,0.72)] font-normal">{t('collectedMargins')}</span>
-              <span className="text-[#A77BF3] text-[11px] font-medium">20%</span>
+              <span className="text-[#5A5A5A]">{t('collectedMargins')}</span>
+              <span className="text-[#1A1A1A] font-medium">20%</span>
             </div>
-            <div className="num-md text-[#A77BF3] font-normal tabular-nums">
-              €{totalCommission}
+            <div className="text-xl font-bold text-[#1A1A1A] tabular-nums">
+              ${totalCommission.toLocaleString()}
             </div>
           </div>
 
-          <div className="h-[1px] bg-[rgba(255,255,255,0.10)]" />
+          <div className="h-[1px] bg-black/5" />
 
-          {/* Stat Group 3: Active Escrow Pipeline */}
+          {/* Active Escrow Pipeline */}
           <div>
             <div className="flex items-center justify-between text-xs mb-1">
-              <span className="text-[rgba(255,255,255,0.72)] font-normal">{t('activeDealPipeline')}</span>
-              <span className="text-[rgba(255,255,255,0.45)] text-[11px] font-medium">{deals.length}</span>
+              <span className="text-[#5A5A5A]">{t('activeDealPipeline')}</span>
+              <span className="text-[#8C8C8C]">{deals.length}</span>
             </div>
-            <div className="num-md text-[#3FD0B0] font-normal tabular-nums">
-              €{deals.reduce((s, d) => s + d.agreedClientBudget, 0)}
+            <div className="text-xl font-bold text-[#1A1A1A] tabular-nums">
+              ${deals.reduce((s, d) => s + d.agreedClientBudget, 0).toLocaleString()}
             </div>
           </div>
-
         </div>
       </div>
 
-      {/* 6.5 Revenue Overview Chart (2.4fr in grid) -> 6.5 cols */}
-      <div className="lg:col-span-6 glass-card p-6 flex flex-col justify-between relative overflow-hidden">
-        
-        {/* Card Header: Title Left, Segmented Tabs Right */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+      {/* Revenue Spline Chart (6 cols) */}
+      <div className="lg:col-span-6 bg-white rounded-[24px] p-6 border border-black/5 flex flex-col justify-between relative overflow-hidden">
+        {/* Header: Title Left, Segmented Tabs Right */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
           <div>
-            <h3 className="text-lg font-normal text-white tracking-tight">
+            <h3 className="text-base font-semibold text-[#1A1A1A]">
               {t('cashFlowOverviewTitle')}
             </h3>
-            <span className="micro text-[rgba(255,255,255,0.45)]">
+            <span className="text-xs text-[#8C8C8C]">
               {t('cashFlowOverviewSub')}
             </span>
           </div>
 
-          {/* Segmented Tabs (Daily · Weekly · Monthly · Yearly) */}
-          <div className="flex items-center gap-1 p-1 rounded-full bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.08)]">
+          {/* Segmented Timeframe Tabs */}
+          <div className="flex items-center gap-1 p-1 rounded-full bg-[#EDEDED]">
             {(['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'] as ChartTimeframe[]).map((tf) => {
               const labels: Record<ChartTimeframe, string> = {
                 DAILY: t('daily'),
@@ -139,10 +139,10 @@ export default function RefADashboardOverview({ onSettleClick }: Props) {
                   key={tf}
                   type="button"
                   onClick={() => setTimeframe(tf)}
-                  className={`px-3 py-1 rounded-full text-xs font-normal transition-all cursor-pointer ${
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-white text-[#0B0B10] font-medium shadow-[0_2px_8px_rgba(255,255,255,0.3)]'
-                      : 'text-[rgba(255,255,255,0.50)] hover:text-white'
+                      ? 'bg-[#262626] text-white'
+                      : 'text-[#5A5A5A] hover:text-[#1A1A1A]'
                   }`}
                 >
                   {labels[tf]}
@@ -152,126 +152,92 @@ export default function RefADashboardOverview({ onSettleClick }: Props) {
           </div>
         </div>
 
+        {/* Legend */}
+        <div className="flex items-center gap-4 text-xs text-[#5A5A5A] mb-2">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#0F0F0F]" />
+            <span>{language === 'ar' ? 'التدفق الفعلي' : 'Actual Flow'}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#A0A0A0]" />
+            <span>{language === 'ar' ? 'المتوقع' : 'Projected'}</span>
+          </div>
+        </div>
+
         {/* Spline Chart SVG Area */}
         <div className="relative w-full h-[180px] my-auto">
-          
-          {/* Y-axis labels per Section 6.5 */}
-          <div className={`absolute top-0 bottom-6 flex flex-col justify-between text-[10px] text-[rgba(255,255,255,0.35)] select-none ${language === 'ar' ? 'right-0' : 'left-0'}`}>
-            <span>€6,000</span>
-            <span>€4,000</span>
-            <span>€2,000</span>
-            <span>€0</span>
-          </div>
-
           {/* SVG Canvas for Spline */}
-          <svg className={`w-full h-[150px] overflow-visible ${language === 'ar' ? 'pl-12 pr-12' : 'pl-12 pr-12'}`} viewBox="0 0 760 180" preserveAspectRatio="none">
-            {/* Smooth Spline Curve in #3FD0B0 */}
+          <svg className="w-full h-[150px] overflow-visible" viewBox="0 0 760 180" preserveAspectRatio="none">
+            {/* Secondary line (Projected in #A0A0A0) */}
+            <path
+              d={currentChart.secondaryPath}
+              stroke="#A0A0A0"
+              strokeWidth="2"
+              fill="none"
+              strokeDasharray="4 4"
+            />
+
+            {/* Primary line (Actual in #0F0F0F) */}
             <path
               d={currentChart.path}
-              className="chart-line"
-              style={{ transition: 'd 0.4s ease-in-out' }}
+              stroke="#0F0F0F"
+              strokeWidth="2"
+              fill="none"
+              strokeLinecap="round"
             />
 
-            {/* Glowing Active Point */}
+            {/* Active Point Circle */}
             <circle
               cx={currentChart.activeX}
               cy={currentChart.activeY}
-              r="6"
-              className="chart-point"
-            />
-            {/* Soft teal glow ring */}
-            <circle
-              cx={currentChart.activeX}
-              cy={currentChart.activeY}
-              r="12"
-              fill="none"
-              stroke="#3FD0B0"
-              strokeWidth="1.5"
-              opacity="0.6"
+              r="5"
+              fill="#FFFFFF"
+              stroke="#0F0F0F"
+              strokeWidth="3"
             />
           </svg>
 
-          {/* Value pill over active point */}
-          <div
-            className="absolute -top-1 pointer-events-none -translate-x-1/2 transform text-[11px] font-medium text-white px-2 py-0.5 rounded-full bg-[rgba(63,208,176,0.2)] border border-[#3FD0B0]/40 backdrop-blur-md"
+          {/* Active Value Tooltip Pill */}
+          <div 
+            className="absolute -top-1 transform -translate-x-1/2 bg-[#262626] text-white text-[11px] font-semibold px-2.5 py-1 rounded-md"
             style={{ left: `${(currentChart.activeX / 760) * 100}%` }}
           >
             {currentChart.activeVal}
           </div>
 
           {/* X-axis labels */}
-          <div className="flex items-center justify-between text-[10px] text-[rgba(255,255,255,0.35)] pt-2 border-t border-[rgba(255,255,255,0.06)] px-2">
-            {xLabels.map((xl, i) => (
-              <span key={i}>{xl}</span>
+          <div className="flex justify-between items-center text-[11px] text-[#5A5A5A] mt-2 px-2">
+            {xLabels.map((lbl, idx) => (
+              <span key={idx}>{lbl}</span>
             ))}
           </div>
-
         </div>
-
-        {/* Footer info note */}
-        <div className="pt-3 border-t border-[rgba(255,255,255,0.08)] flex items-center justify-between text-[11px] text-[rgba(255,255,255,0.50)]">
-          <span>{t('activePeak')} {currentChart.activeVal}</span>
-          <span className="text-[#3FD0B0]">{t('liveUpdate')}</span>
-        </div>
-
       </div>
 
-      {/* 6.6 Skeleton / Stakeholders list column (1fr in grid) -> 3 cols */}
-      <div className="lg:col-span-3 p-5 rounded-[24px] bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)] flex flex-col justify-between">
-        <div className="space-y-4">
-          
-          {/* Section 1 */}
-          <div>
-            <div className="flex items-center justify-between text-xs text-white mb-2 font-normal">
-              <span>{t('enterpriseClients')}</span>
-              <span className="micro text-[rgba(255,255,255,0.5)]">{companies.length}</span>
+      {/* Stakeholders Card (3 cols) */}
+      <div className="lg:col-span-3 bg-white rounded-[24px] p-6 border border-black/5 flex flex-col justify-between">
+        <div>
+          <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3">
+            {language === 'ar' ? 'أطراف الوساطة المعتمدة' : 'Verified Stakeholders'}
+          </h4>
+          <div className="space-y-2.5">
+            <div className="p-3 rounded-2xl bg-[#EDEDED] flex items-center justify-between text-xs">
+              <span className="text-[#5A5A5A]">{language === 'ar' ? 'شركات نشطة' : 'Active Companies'}</span>
+              <strong className="text-[#1A1A1A]">{companies.length}</strong>
             </div>
-            <div className="space-y-1.5">
-              <div className="h-2 rounded-[8px] bg-[rgba(255,255,255,0.06)] w-[85%]" />
-              <div className="h-2 rounded-[8px] bg-[rgba(255,255,255,0.04)] w-[100%]" />
+            <div className="p-3 rounded-2xl bg-[#EDEDED] flex items-center justify-between text-xs">
+              <span className="text-[#5A5A5A]">{language === 'ar' ? 'طلاب معتمدون' : 'Verified Students'}</span>
+              <strong className="text-[#1A1A1A]">{students.length}</strong>
             </div>
-          </div>
-
-          {/* Section 2 */}
-          <div>
-            <div className="flex items-center justify-between text-xs text-white mb-2 font-normal">
-              <span>{t('verifiedTalents')}</span>
-              <span className="micro text-[rgba(255,255,255,0.5)]">{students.length}</span>
-            </div>
-            <div className="space-y-1.5">
-              <div className="h-2 rounded-[8px] bg-[rgba(255,255,255,0.06)] w-[70%]" />
-              <div className="h-2 rounded-[8px] bg-[rgba(255,255,255,0.04)] w-[95%]" />
+            <div className="p-3 rounded-2xl bg-[#EDEDED] flex items-center justify-between text-xs">
+              <span className="text-[#5A5A5A]">{language === 'ar' ? 'عقود جارية' : 'Ongoing Escrows'}</span>
+              <strong className="text-[#1A1A1A]">{deals.length}</strong>
             </div>
           </div>
-
-          {/* Section 3 */}
-          <div>
-            <div className="flex items-center justify-between text-xs text-white mb-2 font-normal">
-              <span>{t('postedTasks')}</span>
-              <span className="micro text-[rgba(255,255,255,0.5)]">{tasks.length}</span>
-            </div>
-            <div className="space-y-1.5">
-              <div className="h-2 rounded-[8px] bg-[rgba(255,255,255,0.06)] w-[90%]" />
-              <div className="h-2 rounded-[8px] bg-[rgba(255,255,255,0.04)] w-[65%]" />
-            </div>
-          </div>
-
-          {/* Section 4 */}
-          <div>
-            <div className="flex items-center justify-between text-xs text-white mb-2 font-normal">
-              <span>{t('bankingSettlements')}</span>
-              <span className="micro text-[#34D17A]">100%</span>
-            </div>
-            <div className="space-y-1.5">
-              <div className="h-2 rounded-[8px] bg-[rgba(255,255,255,0.06)] w-[75%]" />
-              <div className="h-2 rounded-[8px] bg-[rgba(255,255,255,0.04)] w-[100%]" />
-            </div>
-          </div>
-
         </div>
 
-        <div className="pt-3 border-t border-[rgba(255,255,255,0.06)] text-[10px] text-[rgba(255,255,255,0.40)]">
-          {language === 'ar' ? 'مؤشرات النشاط الإداري والمالي المباشر' : 'Live operational and financial indicators'}
+        <div className="pt-4 border-t border-black/5 text-[11px] text-[#8C8C8C]">
+          {language === 'ar' ? 'إشراف مباشر بنسبة 100% من قبل الوسيط الحصري' : '100% supervised by Elena Rostova'}
         </div>
       </div>
 

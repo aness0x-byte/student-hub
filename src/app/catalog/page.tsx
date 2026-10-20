@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useStore } from '@/lib/store';
 import AnonymizedTalentCard from '@/components/shared/AnonymizedTalentCard';
 import { formatAcademicLevel } from '@/lib/privacy-shield';
+import { Search } from 'lucide-react';
 
 export default function TalentCatalogPage() {
   const { students, language, t } = useStore();
@@ -27,42 +28,42 @@ export default function TalentCatalogPage() {
   });
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8 space-y-10">
+    <div className="w-full space-y-6">
       
       {/* Header */}
-      <div className="text-center max-w-3xl mx-auto space-y-4">
-        <div className="badge-glass-positive px-4 py-1.5 text-sm font-semibold">
-          <span>{t('catalogHeroBadge')}</span>
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-light tracking-tight text-white">
+      <div className="text-center max-w-2xl mx-auto space-y-3 pt-2">
+        <span className="pill-badge-black">
+          {t('catalogHeroBadge')}
+        </span>
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#1A1A1A]">
           {t('catalogHeroTitle')}
         </h1>
-        <p className="text-base sm:text-lg text-[rgba(255,255,255,0.7)] leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#5A5A5A] leading-relaxed">
           {t('catalogHeroSubtitle')}
         </p>
       </div>
 
-      {/* Filter Toolbar (Glass Pill Bar) */}
-      <div className="glass-card p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      {/* Filter Toolbar */}
+      <div className="bg-white rounded-[24px] p-4 border border-black/5 flex flex-col md:flex-row items-center justify-between gap-3">
         <div className="relative w-full md:w-80">
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t('catalogSearchPlaceholder')}
-            className="w-full rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.06)] px-5 py-2.5 text-sm text-white placeholder:text-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#A77BF3]"
+            className="w-full rounded-full bg-[#EDEDED] text-xs px-5 py-2.5 text-[#1A1A1A] placeholder:text-[#8C8C8C] border-none focus:outline-none"
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <div className="text-sm text-[rgba(255,255,255,0.6)] font-semibold">
-            <span>{t('catalogFilterLabel')}</span>
-          </div>
+        <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+          <span className="text-xs text-[#5A5A5A] font-medium">
+            {t('catalogFilterLabel')}
+          </span>
 
           <select
             value={levelFilter}
             onChange={(e) => setLevelFilter(e.target.value)}
-            className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[#07070C] px-5 py-2.5 text-sm text-white focus:outline-none focus:border-[#A77BF3] cursor-pointer"
+            className="rounded-full bg-[#EDEDED] text-xs px-4 py-2 text-[#1A1A1A] border-none focus:outline-none cursor-pointer"
           >
             <option value="ALL">{t('catalogAllLevels')}</option>
             <option value="LICENCE_3">{formatAcademicLevel('LICENCE_3', language)}</option>
@@ -74,7 +75,7 @@ export default function TalentCatalogPage() {
           <select
             value={skillFilter}
             onChange={(e) => setSkillFilter(e.target.value)}
-            className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[#07070C] px-5 py-2.5 text-sm text-white focus:outline-none focus:border-[#A77BF3] cursor-pointer"
+            className="rounded-full bg-[#EDEDED] text-xs px-4 py-2 text-[#1A1A1A] border-none focus:outline-none cursor-pointer"
           >
             <option value="ALL">{t('catalogAllSkills')}</option>
             {allSkills.map((sk) => (
@@ -85,7 +86,7 @@ export default function TalentCatalogPage() {
       </div>
 
       {/* Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {filtered.map((student) => (
           <AnonymizedTalentCard
             key={student.id}
@@ -98,7 +99,7 @@ export default function TalentCatalogPage() {
       </div>
 
       {filtered.length === 0 && (
-        <div className="glass-card py-20 text-center text-sm text-[rgba(255,255,255,0.5)]">
+        <div className="bg-white rounded-[24px] p-12 text-center text-xs text-[#8C8C8C] border border-black/5">
           {t('catalogNoResults')}
         </div>
       )}

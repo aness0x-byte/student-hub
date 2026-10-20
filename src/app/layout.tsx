@@ -6,8 +6,8 @@ import Footer from '@/components/Footer';
 import SignInModal from '@/components/auth/SignInModal';
 
 export const metadata: Metadata = {
-  title: 'ستودنت هب | منصة الوسيط الحصري للمهام والخدمات الجامعية',
-  description: 'منصة وساطة معتمدة تربط طلاب الجامعات النخبة بالشركات الناشئة لطلب الخدمات واكتساب الخبرة والمقابل المالي دون تواصل مباشر.',
+  title: 'StudentHub | Exclusive Broker Platform for University Services',
+  description: 'Certified brokerage platform connecting elite university students with startups for services and experience without direct contact.',
 };
 
 export default function RootLayout({
@@ -16,16 +16,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ar" dir="rtl" className="h-full antialiased dark">
-      <body className="min-h-full flex flex-col bg-[#07070C] text-white selection:bg-[#7F5AF0]/40 selection:text-white font-sans">
-        <div className="bg-ambient-glow" />
-        <div className="starfield" />
+    <html lang="ar" dir="rtl" className="h-full antialiased">
+      <body className="min-h-full flex flex-col font-sans">
         <StoreProvider>
-          <Navbar />
-          <main className="flex-1 relative z-10">
-            {children}
-          </main>
-          <Footer />
+          <div className="glass-outer-shell">
+            <div className="glass-frame">
+              <Navbar />
+              <main className="flex-1 w-full">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </div>
           <SignInModal />
         </StoreProvider>
       </body>

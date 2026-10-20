@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useStore } from '@/lib/store';
 import { AcademicLevel } from '@/lib/types';
 import { formatAcademicLevel } from '@/lib/privacy-shield';
+import { X, ArrowRight, ArrowLeft, Check } from 'lucide-react';
 
 interface Props {
   isOpen: boolean;
@@ -118,27 +119,30 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
       setEstimatedDurationDays('');
       setProposedBudget('');
       onClose();
-    }, 1800);
+    }, 1500);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl rounded-3xl border border-[rgba(255,255,255,0.15)] bg-[#0C0C16]/95 p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-white max-h-[92vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-2xl rounded-[32px] bg-white border border-black/10 p-6 sm:p-8 text-[#1A1A1A] max-h-[92vh] overflow-y-auto shadow-2xl">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className={`absolute ${language === 'ar' ? 'left-6' : 'right-6'} top-6 rounded-full px-3 py-1 text-xs font-semibold bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition-colors`}
+          className={`absolute ${language === 'ar' ? 'left-6' : 'right-6'} top-6 w-9 h-9 rounded-full bg-[#EDEDED] text-[#1A1A1A] flex items-center justify-center hover:bg-[#E4E4E4] transition-colors`}
         >
-          {t('close')}
+          <X className="h-4 w-4 stroke-[2]" />
         </button>
 
         {isSubmitted ? (
           <div className="py-12 text-center">
-            <h3 className="mt-4 text-2xl font-light text-white">
+            <div className="w-12 h-12 rounded-full bg-[#262626] text-white flex items-center justify-center mx-auto mb-4">
+              <Check className="h-6 w-6 stroke-[2]" />
+            </div>
+            <h3 className="text-xl font-semibold text-[#1A1A1A]">
               {t('taskWizardSuccessTitle')}
             </h3>
-            <p className="mt-2 text-sm text-[rgba(255,255,255,0.7)] max-w-md mx-auto leading-relaxed">
+            <p className="mt-2 text-xs text-[#5A5A5A] max-w-md mx-auto leading-relaxed">
               {t('taskWizardSuccessSub')}
             </p>
           </div>
@@ -146,16 +150,16 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
           <div>
             
             {/* Header & Stepper */}
-            <div className="border-b border-white/10 pb-5 mb-5">
+            <div className="border-b border-black/5 pb-4 mb-5">
               <div className="flex items-center gap-2">
-                <span className="badge-glass-violet text-xs font-mono">
+                <span className="pill-badge-black !text-[10px] !py-0.5">
                   {language === 'en' ? `Step ${step} of 3` : `الخطوة ${step} من 3`}
                 </span>
-                <span className="text-xs text-[rgba(255,255,255,0.6)] font-medium">
+                <span className="text-xs text-[#5A5A5A]">
                   {currentCompanyProfile?.companyName}
                 </span>
               </div>
-              <h2 className="mt-2 text-xl font-bold text-white">
+              <h2 className="mt-2 text-lg font-semibold text-[#1A1A1A]">
                 {step === 1 && t('taskWizardStep1Title')}
                 {step === 2 && t('taskWizardStep2Title')}
                 {step === 3 && t('taskWizardStep3Title')}
@@ -163,9 +167,9 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
 
               {/* Progress bar */}
               <div className="mt-3 flex gap-2">
-                <div className={`h-1.5 flex-1 rounded-full transition-all ${step >= 1 ? 'bg-[#5B2BE0]' : 'bg-white/10'}`} />
-                <div className={`h-1.5 flex-1 rounded-full transition-all ${step >= 2 ? 'bg-[#5B2BE0]' : 'bg-white/10'}`} />
-                <div className={`h-1.5 flex-1 rounded-full transition-all ${step >= 3 ? 'bg-[#5B2BE0]' : 'bg-white/10'}`} />
+                <div className={`h-1.5 flex-1 rounded-full transition-all ${step >= 1 ? 'bg-[#262626]' : 'bg-[#EDEDED]'}`} />
+                <div className={`h-1.5 flex-1 rounded-full transition-all ${step >= 2 ? 'bg-[#262626]' : 'bg-[#EDEDED]'}`} />
+                <div className={`h-1.5 flex-1 rounded-full transition-all ${step >= 3 ? 'bg-[#262626]' : 'bg-[#EDEDED]'}`} />
               </div>
             </div>
 
@@ -173,7 +177,7 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
             {step === 1 && (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
+                  <label className="block text-xs font-medium text-[#5A5A5A] mb-1">
                     {t('taskWizardTitleLabel')}
                   </label>
                   <input
@@ -182,32 +186,30 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
                     onChange={(e) => setTitle(e.target.value)}
                     required
                     placeholder={t('taskWizardTitlePlaceholder')}
-                    className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
+                    className="w-full rounded-full bg-[#EDEDED] px-4 py-2.5 text-xs text-[#1A1A1A] border-none focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
+                  <label className="block text-xs font-medium text-[#5A5A5A] mb-1">
                     {t('taskWizardCategoryLabel')}
                   </label>
                   <select
                     value={selectedMajor}
                     onChange={(e) => setSelectedMajor(e.target.value)}
                     required
-                    className="w-full rounded-2xl border border-white/15 bg-[#07070C] px-4 py-2.5 text-xs text-white focus:border-[#A77BF3] focus:outline-none cursor-pointer"
+                    className="w-full rounded-full bg-[#EDEDED] px-4 py-2.5 text-xs text-[#1A1A1A] border-none focus:outline-none cursor-pointer"
                   >
                     <option value="">{t('taskWizardCategoryPlaceholder')}</option>
                     {academicMajors.map((major) => (
-                      <option key={major} value={major}>
-                        {major}
-                      </option>
+                      <option key={major} value={major}>{major}</option>
                     ))}
                   </select>
                 </div>
 
                 {selectedMajor === customTrigger && (
-                  <div className="animate-in fade-in duration-200">
-                    <label className="block text-xs font-semibold text-[#A77BF3] mb-1">
+                  <div>
+                    <label className="block text-xs font-medium text-[#5A5A5A] mb-1">
                       {t('taskWizardCustomCategoryLabel')}
                     </label>
                     <input
@@ -216,45 +218,44 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
                       onChange={(e) => setCustomCategory(e.target.value)}
                       required
                       placeholder={t('taskWizardCustomCategoryPlaceholder')}
-                      className="w-full rounded-2xl border border-[#A77BF3]/50 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
+                      className="w-full rounded-full bg-[#EDEDED] px-4 py-2.5 text-xs text-[#1A1A1A] border-none focus:outline-none"
                     />
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
+                  <label className="block text-xs font-medium text-[#5A5A5A] mb-1">
                     {t('taskWizardProblemLabel')}
                   </label>
                   <textarea
+                    rows={3}
                     value={problemStatement}
                     onChange={(e) => setProblemStatement(e.target.value)}
                     required
-                    rows={4}
                     placeholder={t('taskWizardProblemPlaceholder')}
-                    className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
+                    className="w-full rounded-2xl bg-[#EDEDED] p-4 text-xs text-[#1A1A1A] border-none focus:outline-none leading-relaxed resize-none"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                    {t('taskWizardDeliverablesLabel')}
-                  </label>
-                  <textarea
-                    value={deliverablesCriteria}
-                    onChange={(e) => setDeliverablesCriteria(e.target.value)}
-                    rows={2}
-                    placeholder={t('taskWizardDeliverablesPlaceholder')}
-                    className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
-                  />
+                <div className="pt-2 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    disabled={!title.trim() || !problemStatement.trim() || !effectiveCategory}
+                    className="pill-btn-dark !h-9 !px-6 disabled:opacity-40"
+                  >
+                    <span>{t('taskWizardNext')}</span>
+                    <ArrowRight className="h-3.5 w-3.5 stroke-[2]" />
+                  </button>
                 </div>
               </div>
             )}
 
-            {/* Step 2: Requirements */}
+            {/* Step 2: Skills & Duration */}
             {step === 2 && (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
+                  <label className="block text-xs font-medium text-[#5A5A5A] mb-1">
                     {t('taskWizardSkillsLabel')}
                   </label>
                   <input
@@ -263,49 +264,84 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
                     onChange={(e) => setSkillsString(e.target.value)}
                     required
                     placeholder={t('taskWizardSkillsPlaceholder')}
-                    className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
+                    className="w-full rounded-full bg-[#EDEDED] px-4 py-2.5 text-xs text-[#1A1A1A] border-none focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                    {t('taskWizardAcademicLevelLabel')}
+                  <label className="block text-xs font-medium text-[#5A5A5A] mb-1">
+                    {t('taskWizardDeliverablesLabel')}
                   </label>
-                  <select
-                    value={targetAcademicLevel}
-                    onChange={(e) => setTargetAcademicLevel(e.target.value as AcademicLevel)}
-                    className="w-full rounded-2xl border border-white/15 bg-[#07070C] px-4 py-2.5 text-xs text-white focus:border-[#A77BF3] focus:outline-none cursor-pointer"
+                  <textarea
+                    rows={3}
+                    value={deliverablesCriteria}
+                    onChange={(e) => setDeliverablesCriteria(e.target.value)}
+                    placeholder={t('taskWizardDeliverablesPlaceholder')}
+                    className="w-full rounded-2xl bg-[#EDEDED] p-4 text-xs text-[#1A1A1A] border-none focus:outline-none leading-relaxed resize-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-[#5A5A5A] mb-1">
+                      {t('taskWizardAcademicLevelLabel')}
+                    </label>
+                    <select
+                      value={targetAcademicLevel}
+                      onChange={(e) => setTargetAcademicLevel(e.target.value as AcademicLevel)}
+                      className="w-full rounded-full bg-[#EDEDED] px-4 py-2.5 text-xs text-[#1A1A1A] border-none focus:outline-none cursor-pointer"
+                    >
+                      <option value="LICENCE_3">{formatAcademicLevel('LICENCE_3', language)}</option>
+                      <option value="MASTER_1">{formatAcademicLevel('MASTER_1', language)}</option>
+                      <option value="MASTER_2">{formatAcademicLevel('MASTER_2', language)}</option>
+                      <option value="ENGINEERING_CYCLE">{formatAcademicLevel('ENGINEERING_CYCLE', language)}</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-[#5A5A5A] mb-1">
+                      {t('taskWizardDurationLabel')}
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={90}
+                      value={estimatedDurationDays}
+                      onChange={(e) => setEstimatedDurationDays(e.target.value ? Number(e.target.value) : '')}
+                      required
+                      placeholder="e.g. 10"
+                      className="w-full rounded-full bg-[#EDEDED] px-4 py-2.5 text-xs text-[#1A1A1A] border-none focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2 flex justify-between">
+                  <button
+                    type="button"
+                    onClick={handlePrev}
+                    className="pill-btn-outline !h-9 !px-5"
                   >
-                    <option value="LICENCE_3">{formatAcademicLevel('LICENCE_3', language)}</option>
-                    <option value="MASTER_1">{formatAcademicLevel('MASTER_1', language)}</option>
-                    <option value="MASTER_2">{formatAcademicLevel('MASTER_2', language)}</option>
-                    <option value="ENGINEERING_CYCLE">{formatAcademicLevel('ENGINEERING_CYCLE', language)}</option>
-                  </select>
-                </div>
+                    <span>{t('taskWizardPrev')}</span>
+                  </button>
 
-                <div>
-                  <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                    {t('taskWizardDurationLabel')}
-                  </label>
-                  <input
-                    type="number"
-                    min={1}
-                    max={60}
-                    value={estimatedDurationDays}
-                    onChange={(e) => setEstimatedDurationDays(e.target.value ? Number(e.target.value) : '')}
-                    required
-                    placeholder={t('taskWizardDurationPlaceholder')}
-                    className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
-                  />
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    disabled={!skillsString.trim() || !estimatedDurationDays}
+                    className="pill-btn-dark !h-9 !px-6 disabled:opacity-40"
+                  >
+                    <span>{t('taskWizardNext')}</span>
+                    <ArrowRight className="h-3.5 w-3.5 stroke-[2]" />
+                  </button>
                 </div>
               </div>
             )}
 
-            {/* Step 3: Budget & Terms */}
+            {/* Step 3: Budget & Review */}
             {step === 3 && (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
+                  <label className="block text-xs font-medium text-[#5A5A5A] mb-1">
                     {t('taskWizardBudgetLabel')}
                   </label>
                   <input
@@ -315,71 +351,49 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
                     value={proposedBudget}
                     onChange={(e) => setProposedBudget(e.target.value ? Number(e.target.value) : '')}
                     required
-                    placeholder={t('taskWizardBudgetPlaceholder')}
-                    className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-bold text-white focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
+                    placeholder="e.g. 750"
+                    className="w-full rounded-full bg-[#EDEDED] px-4 py-2.5 text-xs text-[#1A1A1A] border-none focus:outline-none text-base font-semibold"
                   />
                 </div>
 
-                {/* Live Split Calculation */}
-                {Number(proposedBudget) > 0 && (
-                  <div className="rounded-2xl border border-white/15 bg-white/5 p-4 space-y-2 text-xs">
-                    <div className="flex items-center justify-between text-[#34D17A]">
-                      <span>{t('taskWizardPayout80')}</span>
-                      <strong className="font-mono text-sm">€{Math.round(Number(proposedBudget) * 0.8)}</strong>
+                {/* Broker Fee & Student Payout Breakdown */}
+                {Boolean(proposedBudget) && (
+                  <div className="p-4 rounded-2xl bg-[#EDEDED]/50 space-y-2 text-xs">
+                    <div className="flex justify-between py-1 border-b border-black/5">
+                      <span className="text-[#5A5A5A]">{t('taskWizardPayout80')}</span>
+                      <span className="font-semibold text-[#1A1A1A]">${Math.round(Number(proposedBudget) * 0.8)}</span>
                     </div>
-                    <div className="flex items-center justify-between text-[#A77BF3]">
-                      <span>{t('taskWizardMargin20')}</span>
-                      <strong className="font-mono text-sm">€{Math.round(Number(proposedBudget) * 0.2)}</strong>
+
+                    <div className="flex justify-between py-1 border-b border-black/5">
+                      <span className="text-[#5A5A5A]">{t('taskWizardMargin20')}</span>
+                      <span className="font-semibold text-[#1A1A1A]">${Math.round(Number(proposedBudget) * 0.2)}</span>
+                    </div>
+
+                    <div className="flex justify-between py-1">
+                      <span className="text-[#5A5A5A]">{t('taskWizardEscrowNotice')}</span>
+                      <span className="font-bold text-[#1A1A1A]">${proposedBudget}</span>
                     </div>
                   </div>
                 )}
 
-                <div className="glass-card p-4 text-xs text-[rgba(255,255,255,0.75)] space-y-1.5 border-[#3FD0B0]/20 bg-[#3FD0B0]/5">
-                  <p className="font-semibold text-white">{t('landingNotice')}</p>
-                  <p>{t('taskWizardEscrowNotice')}</p>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                <div className="pt-2 flex justify-between">
                   <button
                     type="button"
                     onClick={handlePrev}
-                    className="btn-glass-ghost px-5 py-2 text-xs font-semibold"
+                    className="pill-btn-outline !h-9 !px-5"
                   >
-                    {t('taskWizardPrev')}
+                    <span>{t('taskWizardPrev')}</span>
                   </button>
+
                   <button
                     type="submit"
-                    className="btn-glass-primary px-6 py-2.5 text-xs font-bold"
+                    disabled={!proposedBudget}
+                    className="pill-btn-dark !h-9 !px-6 disabled:opacity-40"
                   >
                     <span>{t('taskWizardSubmit')}</span>
                   </button>
                 </div>
               </form>
-            )}
-
-            {/* Stepper Navigation (Steps 1 & 2) */}
-            {step < 3 && (
-              <div className="flex items-center justify-between pt-5 border-t border-white/10 mt-6">
-                {step > 1 ? (
-                  <button
-                    type="button"
-                    onClick={handlePrev}
-                    className="btn-glass-ghost px-5 py-2 text-xs font-semibold"
-                  >
-                    {t('taskWizardPrev')}
-                  </button>
-                ) : (
-                  <div />
-                )}
-
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="btn-glass-primary px-6 py-2.5 text-xs font-bold"
-                >
-                  <span>{t('taskWizardNext')}</span>
-                </button>
-              </div>
             )}
 
           </div>

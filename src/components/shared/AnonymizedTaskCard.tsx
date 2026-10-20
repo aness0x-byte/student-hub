@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { CompanyTaskRequest } from '@/lib/types';
 import { formatAcademicLevel, formatCategoryName } from '@/lib/privacy-shield';
 import { useStore } from '@/lib/store';
+import { ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react';
 
 interface Props {
   task: CompanyTaskRequest;
@@ -27,57 +28,54 @@ export default function AnonymizedTaskCard({
 
   return (
     <div 
-      onClick={() => setIsExpanded(!isExpanded)}
-      className={`glass-card glass-card-hover p-6 flex flex-col justify-between cursor-pointer transition-all duration-300 ${
-        isExpanded ? 'border-[rgba(167,123,243,0.4)] shadow-[0_12px_40px_rgba(91,43,224,0.2)]' : ''
+      className={`bg-white rounded-[24px] p-6 flex flex-col justify-between border border-black/5 transition-all ${
+        isExpanded ? 'border-black/20' : 'hover:border-black/15'
       }`}
     >
       <div>
         {/* Top Header: Code, Category, Budget */}
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-mono text-xs font-bold text-white bg-white/10 px-3 py-1 rounded-full border border-white/15">
+            <span className="font-mono text-xs font-semibold text-[#1A1A1A] bg-[#EDEDED] px-2.5 py-0.5 rounded-full">
               {task.referenceCode}
             </span>
-            <span className="badge-glass-neutral text-xs">
+            <span className="tag-micro">
               {formatCategoryName(task.category, language)}
             </span>
           </div>
 
-          <span className="badge-positive font-bold text-sm shrink-0 tabular-nums">
-            €{task.proposedBudget}
+          <span className="font-semibold text-base text-[#1A1A1A] tabular-nums">
+            ${task.proposedBudget}
           </span>
         </div>
 
         {/* Task Title */}
-        <h3 className="text-base sm:text-lg font-medium text-white hover:text-[#A77BF3] transition-colors leading-snug">
+        <h3 className="text-[16px] sm:text-[17px] font-medium text-[#1A1A1A] leading-snug">
           {displayTitle}
         </h3>
 
         {/* Quick summary line when collapsed */}
-        <div className="mt-3 flex items-center justify-between text-xs text-[rgba(255,255,255,0.6)]">
-          <span>{t('durationLabel')} <strong className="text-white font-medium">{task.estimatedDurationDays} {t('daysUnit')}</strong></span>
+        <div className="mt-3 flex items-center justify-between text-xs text-[#5A5A5A]">
+          <span>{t('durationLabel')} <strong className="text-[#1A1A1A] font-medium">{task.estimatedDurationDays} {t('daysUnit')}</strong></span>
           <button
             type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsExpanded(!isExpanded);
-            }}
-            className="text-xs font-semibold text-[#A77BF3] hover:text-white px-3 py-1 rounded-full bg-white/5 border border-white/10 transition-all cursor-pointer"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="pill-btn-outline !h-7 !px-3 !text-[11px]"
           >
             {isExpanded ? t('hideDetails') : t('showDetails')}
+            {isExpanded ? <ChevronUp className="h-3 w-3 stroke-[1.5]" /> : <ChevronDown className="h-3 w-3 stroke-[1.5]" />}
           </button>
         </div>
 
         {/* Expandable Details Section */}
         {isExpanded && (
-          <div className="mt-4 pt-4 border-t border-[rgba(255,255,255,0.1)] space-y-3.5 animate-in fade-in duration-200">
+          <div className="mt-4 pt-3.5 border-t border-black/5 space-y-3">
             {/* Problem Statement */}
             <div>
-              <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.5)] block mb-1">
+              <span className="text-[11px] font-medium text-[#8C8C8C] block mb-1">
                 {t('scopeAndProblem')}
               </span>
-              <p className="text-sm text-[rgba(255,255,255,0.85)] leading-relaxed">
+              <p className="text-[13px] text-[#1A1A1A] leading-relaxed">
                 {displayProblem}
               </p>
             </div>
@@ -85,10 +83,10 @@ export default function AnonymizedTaskCard({
             {/* Deliverables Criteria */}
             {displayDeliverables && (
               <div>
-                <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.5)] block mb-1">
+                <span className="text-[11px] font-medium text-[#8C8C8C] block mb-1">
                   {t('deliverablesCriteria')}
                 </span>
-                <p className="text-xs text-[rgba(255,255,255,0.75)] leading-relaxed bg-white/5 p-2.5 rounded-xl border border-white/10">
+                <p className="text-xs text-[#5A5A5A] leading-relaxed bg-[#EDEDED]/50 p-2.5 rounded-xl">
                   {displayDeliverables}
                 </p>
               </div>
@@ -96,9 +94,9 @@ export default function AnonymizedTaskCard({
 
             {/* Target Academic Level */}
             {task.targetAcademicLevel && (
-              <div className="text-xs text-[rgba(255,255,255,0.7)] flex items-center gap-1.5">
-                <span className="text-[rgba(255,255,255,0.5)]">{t('requiredAcademicLevel')}</span>
-                <span className="font-semibold text-white">
+              <div className="text-xs text-[#5A5A5A] flex items-center gap-1.5">
+                <span className="text-[#8C8C8C]">{t('requiredAcademicLevel')}</span>
+                <span className="font-medium text-[#1A1A1A]">
                   {formatAcademicLevel(task.targetAcademicLevel, language)}
                 </span>
               </div>
@@ -106,14 +104,14 @@ export default function AnonymizedTaskCard({
 
             {/* Required Skills */}
             <div>
-              <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.5)] block mb-1.5">
+              <span className="text-[11px] font-medium text-[#8C8C8C] block mb-1.5">
                 {t('requiredSkills')}
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {task.requiredSkills.map((skill, idx) => (
                   <span 
                     key={idx}
-                    className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-mono text-[rgba(255,255,255,0.9)] border border-white/10"
+                    className="rounded-full bg-[#EDEDED] px-2.5 py-0.5 text-xs text-[#1A1A1A]"
                   >
                     {skill}
                   </span>
@@ -125,31 +123,28 @@ export default function AnonymizedTaskCard({
       </div>
 
       {/* Card Action Footer */}
-      <div className="mt-5 pt-3 border-t border-[rgba(255,255,255,0.08)] flex items-center justify-between">
-        <span className="text-xs text-[rgba(255,255,255,0.45)]">
-          {t('underBrokerSupervision')}
-        </span>
+      <div className="mt-5 pt-3.5 border-t border-black/5 flex items-center justify-between">
+        <div className="flex items-center gap-1.5 text-xs text-[#5A5A5A]">
+          <ShieldCheck className="h-4 w-4 stroke-[1.5] text-[#1A1A1A]" />
+          <span>{t('underBrokerSupervision')}</span>
+        </div>
 
         {isAdmin ? (
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onSmartMatch?.(task);
-            }}
-            className="btn-glass-gradient px-4 py-2 text-xs font-semibold shadow-[0_0_16px_rgba(127,90,240,0.4)]"
+            onClick={() => onSmartMatch?.(task)}
+            className="pill-btn-dark !h-8 !px-4 !text-xs"
           >
-            <span>{t('smartMatch')}</span>
+            {t('smartMatch')}
           </button>
         ) : (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onApply?.(task);
-            }}
-            className="btn-glass-primary px-4 py-2 text-xs font-semibold"
-          >
-            <span>{t('apply')}</span>
-          </button>
+          onApply && (
+            <button
+              onClick={() => onApply(task)}
+              className="pill-btn-dark !h-8 !px-4 !text-xs"
+            >
+              {t('apply')}
+            </button>
+          )
         )}
       </div>
     </div>

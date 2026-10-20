@@ -15,8 +15,20 @@ import {
   formatTaskStatus, 
   formatApplicationStatus 
 } from '@/lib/privacy-shield';
+import { 
+  ShieldCheck, 
+  ArrowRightLeft, 
+  Search, 
+  SlidersHorizontal,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  Layers,
+  FileText,
+  Users
+} from 'lucide-react';
 
-type AdminTab = 'KANBAN' | 'COMPANY_REQUESTS' | 'STUDENT_APPLICATIONS' | 'STUDENTS_CRM' | 'COMPANIES_CRM' | 'LEDGER';
+type AdminTab = 'KANBAN' | 'COMPANY_REQUESTS' | 'STUDENT_APPLICATIONS' | 'STUDENTS_CRM' | 'LEDGER';
 
 export default function AdminDashboardPage() {
   const { 
@@ -29,7 +41,6 @@ export default function AdminDashboardPage() {
     applications, 
     ledger,
     moderateTaskRequest,
-    createMatchDeal,
     openSignInModal
   } = useStore();
 
@@ -72,236 +83,171 @@ export default function AdminDashboardPage() {
   });
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-10 sm:px-8 space-y-10">
+    <div className="w-full space-y-6">
       
-      {/* Header: Title & Middleman Identity */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-8 border-b border-[rgba(255,255,255,0.08)]">
-        <div>
+      {/* ───── Card 1: Top Welcome Card (White Glass) ───── */}
+      <div className="bg-white rounded-[26px] p-6 sm:p-7 border border-black/5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-3xl sm:text-4xl font-light tracking-tight text-white">
-              {t('adminHeaderTitle')}
+            <h1 className="text-base sm:text-[17px] font-medium text-[#1A1A1A]">
+              {language === 'en' ? 'Admin Operations Room · Elena Rostova' : 'غرفة عمليات الإدارة · إيلينا روستوفا'}
             </h1>
-            <span className="badge-glass-violet px-3 py-1 font-bold text-xs flex items-center">
-              <span>{t('adminAssignedDesk')}</span>
+            
+            {/* Dark Pill Badge */}
+            <span className="pill-badge-black">
+              {language === 'en' ? 'Central Brokerage & Tri-Party Escrow Desk' : 'منصة الوساطة المركزية وإدارة الضمان الثلاثي'}
             </span>
 
+            {/* Switch Role Button */}
             <button
               onClick={() => openSignInModal()}
-              className="btn-glass-ghost px-3 py-1 text-xs font-semibold hover:border-[#A77BF3]"
-              title={t('switchRole')}
+              className="pill-btn-outline"
             >
+              <ArrowRightLeft className="h-3 w-3 stroke-[1.5]" />
               <span>{t('switchRole')}</span>
             </button>
+
+            {/* Anti-Circumvention Pill */}
+            <span className="pill-badge-gray">
+              <ShieldCheck className="h-3.5 w-3.5 stroke-[1.5] text-[#1A1A1A]" />
+              <span>{t('antiCircumventionActive')}</span>
+            </span>
           </div>
-          <p className="text-base text-[rgba(255,255,255,0.7)] mt-2 max-w-2xl leading-relaxed font-normal">
-            {t('adminHeaderSubtitle')}
-          </p>
         </div>
 
-        {/* Quick Middleman Stat Badges */}
-        <div className="flex items-center gap-3">
-          <div className="badge-glass-neutral text-sm">
-            <span>{t('antiCircumventionActive')}</span>
-          </div>
-          <div className="badge-glass-violet text-sm">
-            <span>{t('fixedCommission')}</span>
-          </div>
-        </div>
+        <p className="text-[13px] text-[#5A5A5A] mt-3 leading-relaxed max-w-4xl">
+          {language === 'en' 
+            ? 'Supervising direct B2B transactions between verified enterprises and top university talents. Zero off-platform communication, fully audited code & deliverables, and formal bank transfers.'
+            : 'إشراف كامل على المعاملات بين الشركات والطلاب النخبة مع منع أي تواصل خارجي وضمان تسليم المخرجات والفوترة الرسمية.'}
+        </p>
       </div>
 
-      {/* Section 5.2 Dashboard Grid (Ref A) - Frame Container */}
-      <div className="frame p-6 sm:p-8 space-y-6">
-        
-        {/* Row 1: 3 equal KPI columns */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {/* KPI 1 */}
-          <div className="kpi">
-            <div className="kpi__badge">
-              <span className="badge-glass-neutral">{language === 'ar' ? 'فواتير رسمية' : 'B2B Wires'}</span>
-            </div>
-            <div className="kpi__label">
-              {t('totalInvoiced')}
-            </div>
-            <div className="kpi__value text-white">
-              €{totalInvoiced}
-            </div>
-            <div className="micro mt-3 text-[rgba(255,255,255,0.40)]">
-              {t('totalInvoicedSub')}
-            </div>
-          </div>
-
-          {/* KPI 2 */}
-          <div className="kpi">
-            <div className="kpi__badge">
-              <span className="badge-positive">{language === 'ar' ? '80% صافي المستحق' : '80% Net Payout'}</span>
-            </div>
-            <div className="kpi__label">
-              {t('studentPayouts')}
-            </div>
-            <div className="kpi__value text-[#34D17A]">
-              €{totalStudentPayouts}
-            </div>
-            <div className="micro mt-3 text-[rgba(255,255,255,0.40)]">
-              {t('studentPayoutsSub')}
-            </div>
-          </div>
-
-          {/* KPI 3 */}
-          <div className="kpi">
-            <div className="kpi__badge">
-              <span className="badge-glass-violet">{language === 'ar' ? '20% عائد الوساطة' : '20% Margin'}</span>
-            </div>
-            <div className="kpi__label">
-              {t('brokerCommission')}
-            </div>
-            <div className="kpi__value text-[#A77BF3]">
-              €{totalCommission}
-            </div>
-            <div className="micro mt-3 text-[rgba(255,255,255,0.40)]">
-              {t('brokerCommissionSub')}
-            </div>
-          </div>
-        </div>
-
-        {/* Row 2: 1fr · 2.4fr · 1fr (Balance Column · Revenue Overview · Stakeholders List) */}
-        <RefADashboardOverview onSettleClick={() => setActiveTab('LEDGER')} />
-
-      </div>
-
-      {/* Middleman Tri-Party Visual Architecture Banner */}
-      <div className="glass-card p-6 border-[rgba(255,255,255,0.12)]">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
+      {/* ───── Card 2: Dark Hero Card (#262626) ───── */}
+      <div className="card-dark space-y-7">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           
-          {/* Node 1: Startups */}
-          <div className="rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] p-5 flex flex-col justify-between">
-            <div>
-              <div className="mb-2">
-                <h3 className="text-base font-bold text-white">{t('tripartyTitle1')}</h3>
-              </div>
-              <p className="text-sm text-[rgba(255,255,255,0.65)] leading-relaxed">
-                <strong>{t('tripartyRole1')}</strong> {t('tripartyDesc1')}
-              </p>
+          {/* Left: Avatar & Platform Info */}
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-white text-[#1A1A1A] rounded-2xl flex items-center justify-center font-bold text-xl flex-shrink-0">
+              SH
             </div>
-            <div className="mt-4 pt-3 border-t border-[rgba(255,255,255,0.06)] flex items-center justify-between text-xs text-[rgba(255,255,255,0.5)]">
-              <span>{t('tripartyRegisteredRequests')}</span>
-              <strong className="text-white text-sm">{tasks.length}</strong>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl sm:text-2xl font-semibold text-white tracking-tight">
+                  {language === 'en' ? 'StudentHub Brokerage Operations' : 'عمليات وساطة ستودنت هب'}
+                </h2>
+                <span className="font-mono text-xs text-[#A8A8A8] bg-white/10 px-2.5 py-0.5 rounded-full">
+                  HUB-ESCROW
+                </span>
+              </div>
+              <p className="text-xs text-[#A8A8A8] mt-1">
+                {language === 'en' 
+                  ? 'Exclusive Mediation · 20% Fixed Commission · Verified Deliverables' 
+                  : 'وساطة حصرية · عمولة ثابتة 20% · مخرجات معتمدة'}
+              </p>
             </div>
           </div>
 
-          {/* Node 2: Elena The Middleman */}
-          <div className="rounded-2xl bg-gradient-to-b from-[#5B2BE0]/30 to-[#7F5AF0]/10 border border-[#A77BF3]/40 p-5 shadow-[0_0_30px_rgba(91,43,224,0.25)] flex flex-col justify-between">
-            <div>
-              <div className="mb-2">
-                <h3 className="text-base font-bold text-white">{t('tripartyTitle2')}</h3>
+          {/* Right: 3 White Stat Tiles */}
+          <div className="flex items-center gap-3">
+            <div className="stat-tile">
+              <span className="tag-micro !text-[9px] block mb-1 text-[#8C8C8C]">{language === 'en' ? 'Invoiced' : 'المفوتر'}</span>
+              <div className="font-bold text-base text-[#1A1A1A] leading-none">
+                ${totalInvoiced.toLocaleString()}
               </div>
-              <p className="text-sm text-[rgba(255,255,255,0.85)] leading-relaxed">
-                <strong>{t('tripartyRole2')}</strong> {t('tripartyDesc2')}
-              </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-[#3FD0B0]">
-              <span>{t('tripartyDataProtection')}</span>
-              <span className="badge-glass-positive text-xs">{t('footerProtectedBadge')}</span>
-            </div>
-          </div>
 
-          {/* Node 3: Students */}
-          <div className="rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] p-5 flex flex-col justify-between">
-            <div>
-              <div className="mb-2">
-                <h3 className="text-base font-bold text-white">{t('tripartyTitle3')}</h3>
+            <div className="stat-tile">
+              <span className="tag-micro !text-[9px] block mb-1 text-[#8C8C8C]">{language === 'en' ? 'Commission' : 'العمولة'}</span>
+              <div className="font-bold text-base text-[#1A1A1A] leading-none">
+                ${totalCommission.toLocaleString()}
               </div>
-              <p className="text-sm text-[rgba(255,255,255,0.65)] leading-relaxed">
-                <strong>{t('tripartyRole3')}</strong> {t('tripartyDesc3')}
-              </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-[rgba(255,255,255,0.06)] flex items-center justify-between text-xs text-[rgba(255,255,255,0.5)]">
-              <span>{t('tripartyVerifiedTalents')}</span>
-              <strong className="text-white text-sm">{students.length}</strong>
+
+            <div className="stat-tile">
+              <span className="tag-micro !text-[9px] block mb-1 text-[#8C8C8C]">{language === 'en' ? 'Escrows' : 'الضمان'}</span>
+              <div className="font-bold text-base text-[#1A1A1A] leading-none">
+                {deals.length}
+                <span className="text-[10px] text-[#8C8C8C] font-normal block mt-0.5">{t('activeUnit')}</span>
+              </div>
             </div>
           </div>
 
         </div>
+
+        {/* Bottom row: Sub-tabs pill toggle */}
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/10">
+          <div className="flex items-center gap-1.5 p-1 rounded-full bg-white/10 overflow-x-auto">
+            <button
+              onClick={() => setActiveTab('KANBAN')}
+              className={`rounded-full px-5 py-2 text-xs font-medium transition-all whitespace-nowrap ${
+                activeTab === 'KANBAN'
+                  ? 'bg-white text-[#1A1A1A] font-semibold'
+                  : 'text-[#A8A8A8] hover:text-white'
+              }`}
+            >
+              {language === 'en' ? `Pipeline Kanban (${deals.length})` : `مسار الصفقات (${deals.length})`}
+            </button>
+
+            <button
+              onClick={() => setActiveTab('LEDGER')}
+              className={`rounded-full px-5 py-2 text-xs font-medium transition-all whitespace-nowrap ${
+                activeTab === 'LEDGER'
+                  ? 'bg-white text-[#1A1A1A] font-semibold'
+                  : 'text-[#A8A8A8] hover:text-white'
+              }`}
+            >
+              {language === 'en' ? 'Financial Ledger' : 'دفتر الحسابات'}
+            </button>
+
+            <button
+              onClick={() => setActiveTab('COMPANY_REQUESTS')}
+              className={`rounded-full px-5 py-2 text-xs font-medium transition-all whitespace-nowrap ${
+                activeTab === 'COMPANY_REQUESTS'
+                  ? 'bg-white text-[#1A1A1A] font-semibold'
+                  : 'text-[#A8A8A8] hover:text-white'
+              }`}
+            >
+              {language === 'en' ? `Company Requests (${tasks.length})` : `طلبات الشركات (${tasks.length})`}
+            </button>
+
+            <button
+              onClick={() => setActiveTab('STUDENT_APPLICATIONS')}
+              className={`rounded-full px-5 py-2 text-xs font-medium transition-all whitespace-nowrap ${
+                activeTab === 'STUDENT_APPLICATIONS'
+                  ? 'bg-white text-[#1A1A1A] font-semibold'
+                  : 'text-[#A8A8A8] hover:text-white'
+              }`}
+            >
+              {language === 'en' ? `Applications (${applications.length})` : `التقديمات (${applications.length})`}
+            </button>
+
+            <button
+              onClick={() => setActiveTab('STUDENTS_CRM')}
+              className={`rounded-full px-5 py-2 text-xs font-medium transition-all whitespace-nowrap ${
+                activeTab === 'STUDENTS_CRM'
+                  ? 'bg-white text-[#1A1A1A] font-semibold'
+                  : 'text-[#A8A8A8] hover:text-white'
+              }`}
+            >
+              {language === 'en' ? `Talents CRM (${students.length})` : `إدارة الكفاءات (${students.length})`}
+            </button>
+          </div>
+        </div>
+
       </div>
 
-      {/* Navigation Tabs (Glass Pills) - Pure Text */}
-      <div className="flex items-center gap-2 p-1.5 rounded-full bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] overflow-x-auto">
-        <button
-          onClick={() => setActiveTab('KANBAN')}
-          className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === 'KANBAN'
-              ? 'bg-[#5B2BE0] text-white shadow-[0_0_20px_rgba(91,43,224,0.5)] font-semibold'
-              : 'text-[rgba(255,255,255,0.65)] hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <span>{t('tabActiveDeals')} ({deals.length})</span>
-        </button>
+      {/* ───── Cashflow & Revenue Overview Chart ───── */}
+      <RefADashboardOverview onSettleClick={() => setActiveTab('LEDGER')} />
 
-        <button
-          onClick={() => setActiveTab('COMPANY_REQUESTS')}
-          className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === 'COMPANY_REQUESTS'
-              ? 'bg-white text-[#07070C] shadow-[0_0_20px_rgba(255,255,255,0.3)] font-bold'
-              : 'text-[rgba(255,255,255,0.65)] hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <span>{t('tabCompanyRequests')} ({tasks.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('STUDENT_APPLICATIONS')}
-          className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === 'STUDENT_APPLICATIONS'
-              ? 'bg-[#3FD0B0] text-[#07070C] shadow-[0_0_20px_rgba(63,208,176,0.4)] font-bold'
-              : 'text-[rgba(255,255,255,0.65)] hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <span>{t('tabStudentApplications')} ({applications.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('STUDENTS_CRM')}
-          className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === 'STUDENTS_CRM'
-              ? 'bg-white text-[#07070C] font-bold'
-              : 'text-[rgba(255,255,255,0.65)] hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <span>{t('tabTalentDirectory')} ({students.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('COMPANIES_CRM')}
-          className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === 'COMPANIES_CRM'
-              ? 'bg-white text-[#07070C] font-bold'
-              : 'text-[rgba(255,255,255,0.65)] hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <span>{t('tabCompanyDirectory')} ({companies.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('LEDGER')}
-          className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
-            activeTab === 'LEDGER'
-              ? 'bg-gradient-to-r from-[#A77BF3] to-[#6B4BE8] text-white font-bold shadow-[0_0_20px_rgba(167,123,243,0.5)]'
-              : 'text-[rgba(255,255,255,0.65)] hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <span>{t('tabCommissionLedger')} ({ledger.length})</span>
-        </button>
-      </div>
-
-      {/* Main Tab Views */}
-      <div className="space-y-6">
-        
-        {/* 1. KANBAN PIPELINE */}
+      {/* ───── Main Tab Views ───── */}
+      <div className="pt-2">
         {activeTab === 'KANBAN' && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-xl font-light text-white">{t('adminKanbanHeading')}</h3>
-                <p className="text-sm text-[rgba(255,255,255,0.6)]">
+                <h3 className="text-lg font-medium text-[#1A1A1A]">{t('adminKanbanHeading')}</h3>
+                <p className="text-xs text-[#5A5A5A] mt-0.5">
                   {t('adminKanbanSub')}
                 </p>
               </div>
@@ -310,17 +256,22 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* 2. INCOMING COMPANY SERVICE REQUESTS */}
+        {activeTab === 'LEDGER' && (
+          <div className="space-y-4">
+            <CommissionLedgerTable />
+          </div>
+        )}
+
         {activeTab === 'COMPANY_REQUESTS' && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div>
-              <h3 className="text-xl font-light text-white">{t('adminCompanyRequestsHeading')}</h3>
-              <p className="text-sm text-[rgba(255,255,255,0.6)]">
+              <h3 className="text-lg font-medium text-[#1A1A1A]">{t('adminCompanyRequestsHeading')}</h3>
+              <p className="text-xs text-[#5A5A5A] mt-0.5">
                 {t('adminCompanyRequestsSub')}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-3">
               {tasks.map((task) => {
                 const company = companies.find(c => c.id === task.companyProfileId);
                 const isExpanded = Boolean(expandedTaskIds[task.id]);
@@ -330,98 +281,62 @@ export default function AdminDashboardPage() {
                 return (
                   <div 
                     key={task.id} 
-                    onClick={() => toggleTaskExpand(task.id)}
-                    className={`glass-card p-6 cursor-pointer hover:border-[rgba(255,255,255,0.2)] transition-all duration-300 ${
-                      isExpanded ? 'border-[#5B2BE0]/40 shadow-[0_10px_35px_rgba(91,43,224,0.15)]' : ''
-                    }`}
+                    className="bg-white rounded-[22px] p-5 sm:p-6 border border-black/5"
                   >
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                      <div className="space-y-2 flex-1">
-                        <div className="flex flex-wrap items-center gap-3">
-                          <span className="font-mono text-xs font-bold text-white bg-white/10 px-3 py-1 rounded-full border border-white/15">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                      <div className="space-y-1.5 flex-1">
+                        <div className="flex flex-wrap items-center gap-2.5">
+                          <span className="font-mono text-xs font-semibold text-[#1A1A1A] bg-[#EDEDED] px-2.5 py-0.5 rounded-full">
                             {task.referenceCode}
                           </span>
-                          <span className="text-base font-bold text-white">
+                          <span className="font-medium text-sm text-[#1A1A1A]">
                             {company?.companyName}
                           </span>
-                          <span className="text-sm text-[rgba(255,255,255,0.5)]">
-                            ({company?.contactPersonName})
-                          </span>
-                          <span className="badge-glass-neutral text-xs">
+                          <span className="tag-micro">
                             {formatCategoryName(task.category, language)}
                           </span>
-                          <span className="badge-glass-positive text-xs">
+                          <span className="text-[11px] font-medium text-[#5A5A5A] px-2.5 py-0.5 rounded-full bg-[#EDEDED]">
                             {formatTaskStatus(task.status, language)}
                           </span>
                         </div>
 
-                        <h4 className="text-lg font-semibold text-white mt-1">
+                        <h4 className="text-[16px] font-medium text-[#1A1A1A]">
                           {displayTitle}
                         </h4>
                       </div>
 
                       <div className="flex flex-wrap items-center gap-3 shrink-0">
-                        <div className={language === 'ar' ? 'text-left ml-2' : 'text-right mr-2'}>
-                          <span className="text-xl font-bold text-white">€{task.proposedBudget}</span>
-                        </div>
+                        <span className="text-xl font-semibold text-[#1A1A1A]">${task.proposedBudget}</span>
 
                         <button
                           type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleTaskExpand(task.id);
-                          }}
-                          className="text-xs font-bold text-[#A77BF3] hover:text-white px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 transition-all cursor-pointer whitespace-nowrap"
+                          onClick={() => toggleTaskExpand(task.id)}
+                          className="pill-btn-outline !h-8 !px-3"
                         >
                           {isExpanded ? t('hideDetails') : t('showDetails')}
+                          {isExpanded ? <ChevronUp className="h-3.5 w-3.5 stroke-[1.5]" /> : <ChevronDown className="h-3.5 w-3.5 stroke-[1.5]" />}
                         </button>
 
                         <button
                           type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedTaskForMatch(task);
-                          }}
-                          className="btn-glass-gradient px-4 py-2 text-xs font-semibold shadow-[0_0_20px_rgba(127,90,240,0.4)]"
+                          onClick={() => setSelectedTaskForMatch(task)}
+                          className="pill-btn-dark !h-8 !px-4"
                         >
+                          <Sparkles className="h-3 w-3 stroke-[1.8]" />
                           <span>{t('smartMatch')}</span>
                         </button>
                       </div>
                     </div>
 
-                    {/* Expandable Details */}
                     {isExpanded && (
-                      <div className="mt-5 pt-4 border-t border-[rgba(255,255,255,0.1)] space-y-3.5 animate-in fade-in duration-200">
-                        <div>
-                          <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.5)] block mb-1">
-                            {t('adminTaskScopeLabel')}
-                          </span>
-                          <p className="text-sm text-[rgba(255,255,255,0.85)] leading-relaxed">
-                            {displayProblem}
-                          </p>
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-4 text-xs text-[rgba(255,255,255,0.6)]">
-                          <span>{t('requiredSkills')}: <strong className="text-white">{task.requiredSkills.join(', ')}</strong></span>
+                      <div className="mt-4 pt-3.5 border-t border-black/5 space-y-3 text-xs">
+                        <p className="text-[13px] text-[#5A5A5A] leading-relaxed">{displayProblem}</p>
+                        <div className="flex flex-wrap items-center gap-4 text-[#5A5A5A]">
+                          <span>{t('requiredSkills')}: <strong className="text-[#1A1A1A]">{task.requiredSkills.join(', ')}</strong></span>
                           <span>•</span>
-                          <span>{t('durationLabel')}: <strong className="text-white">{task.estimatedDurationDays} {t('daysUnit')}</strong></span>
+                          <span>{t('adminStudentRewardLabel')} <strong className="text-[#1A1A1A]">${Math.round(task.proposedBudget * 0.8)}</strong></span>
                           <span>•</span>
-                          <span>{t('adminStudentRewardLabel')} <strong className="text-[#34D17A]">€{Math.round(task.proposedBudget * 0.8)}</strong></span>
-                          <span>•</span>
-                          <span>{t('adminBrokerReturnLabel')} <strong className="text-[#A77BF3]">€{Math.round(task.proposedBudget * 0.2)}</strong></span>
-                        </div>
-
-                        <div className={`pt-2 flex ${language === 'ar' ? 'justify-end' : 'justify-end'}`}>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              moderateTaskRequest(task.id, 'APPROVED_ACTIVE', !task.isPubliclyVisible);
-                            }}
-                            className="btn-glass-ghost px-4 py-1.5 text-xs font-medium"
-                          >
-                            {task.isPubliclyVisible ? t('adminHideFromPublic') : t('adminPublishToPublic')}
-                          </button>
+                          <span>{t('adminBrokerReturnLabel')} <strong className="text-[#1A1A1A]">${Math.round(task.proposedBudget * 0.2)}</strong></span>
                         </div>
                       </div>
                     )}
@@ -432,19 +347,18 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* 3. STUDENT APPLICATIONS */}
         {activeTab === 'STUDENT_APPLICATIONS' && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div>
-              <h3 className="text-xl font-light text-white">{t('adminStudentAppsHeading')}</h3>
-              <p className="text-sm text-[rgba(255,255,255,0.6)]">
+              <h3 className="text-lg font-medium text-[#1A1A1A]">{t('adminStudentAppsHeading')}</h3>
+              <p className="text-xs text-[#5A5A5A] mt-0.5">
                 {t('adminStudentAppsSub')}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-3">
               {applications.length === 0 ? (
-                <div className="glass-card p-12 text-center text-sm text-[rgba(255,255,255,0.5)]">
+                <div className="bg-white rounded-[24px] p-8 text-center text-sm text-[#8C8C8C] border border-black/5">
                   {t('adminNoApps')}
                 </div>
               ) : (
@@ -452,88 +366,49 @@ export default function AdminDashboardPage() {
                   const student = students.find(s => s.id === app.studentProfileId);
                   const task = tasks.find(t => t.id === app.taskRequestId);
                   const isExpanded = Boolean(expandedAppIds[app.id]);
-                  const displayTaskTitle = language === 'en' ? (task?.titleEn || task?.title) : task?.title;
                   const displayPitch = language === 'en' ? (app.pitchStatementEn || app.pitchStatement) : app.pitchStatement;
 
                   return (
                     <div 
                       key={app.id} 
-                      onClick={() => toggleAppExpand(app.id)}
-                      className={`glass-card p-6 cursor-pointer border-[rgba(255,255,255,0.12)] hover:border-[rgba(255,255,255,0.25)] transition-all duration-300 ${
-                        isExpanded ? 'border-[#3FD0B0]/40 shadow-[0_10px_35px_rgba(63,208,176,0.15)]' : ''
-                      }`}
+                      className="bg-white rounded-[22px] p-5 sm:p-6 border border-black/5"
                     >
-                      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                         <div className="space-y-1.5 flex-1">
-                          <div className="flex flex-wrap items-center gap-3">
-                            <span className="font-mono text-xs font-bold text-white bg-white/10 px-3 py-1 rounded-full border border-white/15">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs font-semibold text-[#1A1A1A] bg-[#EDEDED] px-2.5 py-0.5 rounded-full">
                               {student?.anonymousCode}
                             </span>
-                            <span className="text-base font-bold text-white">
-                              {student?.fullName}
+                            <span className="tag-micro">
+                              {student?.major}
                             </span>
-                            <span className="text-sm text-[rgba(255,255,255,0.6)]">
-                              • {student?.university}
-                            </span>
-                            <span className="badge-glass-positive text-xs">
+                            <span className="text-[11px] font-medium text-[#5A5A5A] px-2.5 py-0.5 rounded-full bg-[#EDEDED]">
                               {formatApplicationStatus(app.status, language)}
                             </span>
                           </div>
 
-                          <p className="text-base font-medium text-white">
-                            <strong>{t('adminAppForTask')}</strong> {task?.referenceCode} - {displayTaskTitle}
-                          </p>
+                          <h4 className="text-[16px] font-medium text-[#1A1A1A]">
+                            {language === 'en' ? `Application for: ${task?.titleEn || task?.title}` : `تقديم على: ${task?.title}`}
+                          </h4>
                         </div>
 
-                        <div className="flex items-center gap-3 shrink-0">
+                        <div className="flex items-center gap-3">
+                          <span className="text-base font-semibold text-[#1A1A1A]">
+                            {task?.proposedBudget ? `$${task.proposedBudget}` : ''}
+                          </span>
                           <button
                             type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleAppExpand(app.id);
-                            }}
-                            className="text-xs font-bold text-[#3FD0B0] hover:text-white px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 transition-all cursor-pointer whitespace-nowrap"
+                            onClick={() => toggleAppExpand(app.id)}
+                            className="pill-btn-outline !h-8 !px-3"
                           >
                             {isExpanded ? t('hideDetails') : t('showDetails')}
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (!task || !student) return;
-                              const deal = createMatchDeal({
-                                taskRequestId: task.id,
-                                studentProfileId: student.id,
-                                agreedBudget: task.proposedBudget,
-                                studentPayout: Math.round(task.proposedBudget * 0.8),
-                                adminNotes: language === 'ar'
-                                  ? `تم قبول عرض الطالب يدويًا: ${student.anonymousCode} (${student.fullName}).`
-                                  : `Student proposal accepted manually: ${student.anonymousCode} (${student.fullName}).`,
-                              });
-                              alert(`${deal.dealReference}: ${t('adminDealCreatedAlert')}`);
-                              setActiveTab('KANBAN');
-                            }}
-                            className="btn-glass-gradient px-5 py-2.5 text-xs font-semibold shadow-[0_0_24px_rgba(127,90,240,0.4)]"
-                          >
-                            <span>{t('adminApproveAndLaunchDeal')}</span>
                           </button>
                         </div>
                       </div>
 
-                      {/* Expandable Application Details */}
                       {isExpanded && (
-                        <div className="mt-4 pt-4 border-t border-[rgba(255,255,255,0.1)] space-y-3 animate-in fade-in duration-200">
-                          <div className="rounded-2xl bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] p-4 text-sm text-[rgba(255,255,255,0.85)] leading-relaxed max-w-3xl">
-                            <span className="text-[#A77BF3] font-semibold block mb-1">{t('adminStudentPitchLabel')}</span>
-                            "{displayPitch}"
-                          </div>
-
-                          <div className="flex flex-wrap items-center gap-4 text-xs text-[rgba(255,255,255,0.6)] pt-1">
-                            <span>{t('adminClientBudgetLabel')} <strong className="text-white">€{task?.proposedBudget}</strong></span>
-                            <span>{t('adminStudentRewardLabel')} <strong className="text-[#34D17A]">€{task ? Math.round(task.proposedBudget * 0.8) : 0}</strong></span>
-                            <span>{t('adminBrokerReturnLabel')} <strong className="text-[#A77BF3]">€{task ? Math.round(task.proposedBudget * 0.2) : 0}</strong></span>
-                          </div>
+                        <div className="mt-4 pt-3.5 border-t border-black/5 space-y-2 text-xs">
+                          <p className="text-[13px] text-[#5A5A5A] leading-relaxed">{displayPitch}</p>
                         </div>
                       )}
                     </div>
@@ -544,186 +419,74 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* 4. STUDENT TALENT CRM */}
         {activeTab === 'STUDENTS_CRM' && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h3 className="text-xl font-light text-white">{t('adminStudentCrmHeading')}</h3>
-                <p className="text-sm text-[rgba(255,255,255,0.6)]">
+                <h3 className="text-lg font-medium text-[#1A1A1A]">{t('adminStudentCrmHeading')}</h3>
+                <p className="text-xs text-[#5A5A5A] mt-0.5">
                   {t('adminStudentCrmSub')}
                 </p>
               </div>
 
-              {/* Filters */}
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <div className="relative flex-1 sm:w-64">
-                  <input
-                    type="text"
-                    value={studentSearch}
-                    onChange={(e) => setStudentSearch(e.target.value)}
-                    placeholder={t('adminSearchStudentPlaceholder')}
-                    className="w-full rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.06)] px-4 py-2 text-sm text-white placeholder:text-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#A77BF3]"
-                  />
-                </div>
-
-                <select
-                  value={studentLevelFilter}
-                  onChange={(e) => setStudentLevelFilter(e.target.value)}
-                  className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[#07070C] px-4 py-2 text-sm text-white focus:outline-none focus:border-[#A77BF3] cursor-pointer"
-                >
-                  <option value="ALL">{t('adminAllLevels')}</option>
-                  <option value="LICENCE_3">{t('adminLicence3')}</option>
-                  <option value="MASTER_1">{t('adminMaster1')}</option>
-                  <option value="MASTER_2">{t('adminMaster2')}</option>
-                  <option value="ENGINEERING_CYCLE">{t('adminEngineering')}</option>
-                </select>
+              {/* Search Bar */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={studentSearch}
+                  onChange={(e) => setStudentSearch(e.target.value)}
+                  placeholder={language === 'en' ? 'Search talent...' : 'بحث عن طالب...'}
+                  className="rounded-full bg-[#EDEDED] text-xs px-4 py-2 text-[#1A1A1A] border-none focus:outline-none w-48"
+                />
               </div>
             </div>
 
-            {/* Table */}
-            <div className="glass-card overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className={`w-full text-sm ${language === 'ar' ? 'text-right' : 'text-left'}`}>
-                  <thead className="bg-[rgba(255,255,255,0.04)] text-xs uppercase tracking-wider text-[rgba(255,255,255,0.5)] border-b border-[rgba(255,255,255,0.08)]">
-                    <tr>
-                      <th className="py-3.5 px-6 font-semibold">{t('adminThTalent')}</th>
-                      <th className="py-3.5 px-6 font-semibold">{t('adminThUniversityMajor')}</th>
-                      <th className="py-3.5 px-6 font-semibold">{t('adminThLevel')}</th>
-                      <th className="py-3.5 px-6 font-semibold">{t('adminThSkills')}</th>
-                      <th className="py-3.5 px-6 font-semibold">{t('adminThRating')}</th>
-                      <th className="py-3.5 px-6 font-semibold">{t('adminThVerification')}</th>
-                      <th className={`py-3.5 px-6 font-semibold ${language === 'ar' ? 'text-left' : 'text-right'}`}>{t('adminThActions')}</th>
-                    </tr>
-                  </thead>
-
-                  <tbody className="divide-y divide-[rgba(255,255,255,0.06)] text-[rgba(255,255,255,0.8)]">
-                    {filteredStudents.map((student) => (
-                      <tr key={student.id} className="hover:bg-white/[0.03] transition-colors">
-                        <td className="py-4 px-6">
-                          <div className="font-bold text-white text-base">
-                            {student.fullName}
-                          </div>
-                          <span className="font-mono text-xs text-[rgba(255,255,255,0.5)]">
-                            {student.anonymousCode}
-                          </span>
-                        </td>
-
-                        <td className="py-4 px-6">
-                          <div className="font-medium text-white">
-                            {student.university}
-                          </div>
-                          <div className="text-xs text-[rgba(255,255,255,0.5)] line-clamp-1">
-                            {student.major}
-                          </div>
-                        </td>
-
-                        <td className="py-4 px-6 font-medium text-[rgba(255,255,255,0.7)]">
-                          {formatAcademicLevel(student.academicLevel, language)}
-                        </td>
-
-                        <td className="py-4 px-6">
-                          <div className="flex flex-wrap gap-1.5 max-w-[220px]">
-                            {student.skills.slice(0, 3).map((sk, i) => (
-                              <span key={i} className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-mono text-white">
-                                {sk}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-
-                        <td className="py-4 px-6">
-                          <div className="font-bold text-amber-300">
-                            <span>{student.internalAdminRating.toFixed(1)} / 5</span>
-                          </div>
-                        </td>
-
-                        <td className="py-4 px-6">
-                          {student.verificationStatus === 'VERIFIED' ? (
-                            <span className="badge-glass-positive text-xs">
-                              <span>{t('adminVerifiedAcademic')}</span>
-                            </span>
-                          ) : (
-                            <span className="badge-glass-neutral text-xs">
-                              {t('adminPendingReview')}
-                            </span>
-                          )}
-                        </td>
-
-                        <td className={`py-4 px-6 ${language === 'ar' ? 'text-left' : 'text-right'}`}>
-                          <button
-                            onClick={() => setSelectedStudentForVetting(student)}
-                            className="btn-glass-ghost px-4 py-1.5 text-xs font-medium"
-                          >
-                            {t('adminReviewAndVerify')}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 5. COMPANY CRM */}
-        {activeTab === 'COMPANIES_CRM' && (
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-xl font-light text-white">{t('adminCompanyCrmHeading')}</h3>
-              <p className="text-sm text-[rgba(255,255,255,0.6)]">
-                {t('adminCompanyCrmSub')}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {companies.map((company) => {
-                const companyTasks = tasks.filter(t => t.companyProfileId === company.id);
-                return (
-                  <div key={company.id} className="glass-card p-6 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <span className="font-mono text-xs font-bold text-white bg-white/10 px-3 py-1 rounded-full border border-white/15">
-                            {company.anonymousCode}
-                          </span>
-                          <h4 className="mt-3 text-lg font-bold text-white">
-                            {company.companyName}
-                          </h4>
-                          <p className="text-sm text-[rgba(255,255,255,0.6)] mt-0.5">
-                            {company.industry} • {t('adminCompanyTeam')} {company.companySize}
-                          </p>
-                        </div>
-
-                        <div className="text-sm font-bold text-amber-300 bg-amber-400/10 px-2.5 py-1 rounded-full border border-amber-400/20">
-                          <span>{company.reliabilityScore.toFixed(1)} / 5</span>
-                        </div>
-                      </div>
-
-                      <div className="mt-5 rounded-2xl bg-[rgba(255,255,255,0.04)] p-4 text-sm text-[rgba(255,255,255,0.8)] border border-[rgba(255,255,255,0.08)] space-y-1.5">
-                        <p><strong>{t('adminCompanyPerson')}</strong> {company.contactPersonName} ({company.contactPersonTitle})</p>
-                        <p><strong>{t('adminCompanyPhone')}</strong> <span dir="ltr">{company.contactPhone}</span></p>
-                        <p><strong>{t('adminCompanyWebsite')}</strong> <span className="text-[#3FD0B0] underline" dir="ltr">{company.corporateWebsite}</span></p>
-                      </div>
-                    </div>
-
-                    <div className="mt-6 pt-4 border-t border-[rgba(255,255,255,0.08)] flex justify-between items-center text-sm text-[rgba(255,255,255,0.6)]">
-                      <span>{t('adminCompanyTasksSubmitted')} <strong className="text-white">{companyTasks.length}</strong></span>
-                      <span className="badge-glass-positive text-xs">{t('adminActiveClient')}</span>
-                    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredStudents.map((s) => (
+                <div key={s.id} className="bg-white rounded-[22px] p-5 border border-black/5 flex items-center justify-between">
+                  <div>
+                    <span className="font-mono text-xs font-semibold text-[#1A1A1A] bg-[#EDEDED] px-2.5 py-0.5 rounded-full">
+                      {s.anonymousCode}
+                    </span>
+                    <h4 className="text-sm font-semibold text-[#1A1A1A] mt-2">{s.fullName}</h4>
+                    <p className="text-xs text-[#5A5A5A]">{s.university} · {s.major}</p>
                   </div>
-                );
-              })}
+
+                  <button
+                    onClick={() => setSelectedStudentForVetting(s)}
+                    className="pill-btn-dark !h-8 !px-4 !text-xs"
+                  >
+                    {t('verifyTalentBtn')}
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         )}
+      </div>
 
-        {/* 6. COMMISSION LEDGER */}
-        {activeTab === 'LEDGER' && (
-          <CommissionLedgerTable />
-        )}
+      {/* ───── Middleman Tri-Party Architecture Visual Cards ───── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+        <div className="bg-white rounded-[24px] p-5 border border-black/5">
+          <span className="tag-micro">{t('tripartyTitle1')}</span>
+          <p className="text-xs text-[#5A5A5A] mt-2 leading-relaxed">
+            <strong>{t('tripartyRole1')}</strong> {t('tripartyDesc1')}
+          </p>
+        </div>
 
+        <div className="bg-[#262626] text-white rounded-[24px] p-5">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#A8A8A8]">{t('tripartyTitle2')}</span>
+          <p className="text-xs text-[#DADADA] mt-2 leading-relaxed">
+            <strong>{t('tripartyRole2')}</strong> {t('tripartyDesc2')}
+          </p>
+        </div>
+
+        <div className="bg-white rounded-[24px] p-5 border border-black/5">
+          <span className="tag-micro">{t('tripartyTitle3')}</span>
+          <p className="text-xs text-[#5A5A5A] mt-2 leading-relaxed">
+            <strong>{t('tripartyRole3')}</strong> {t('tripartyDesc3')}
+          </p>
+        </div>
       </div>
 
       {/* Modals */}
@@ -731,7 +494,6 @@ export default function AdminDashboardPage() {
         task={selectedTaskForMatch}
         isOpen={Boolean(selectedTaskForMatch)}
         onClose={() => setSelectedTaskForMatch(null)}
-        onDealCreated={() => setActiveTab('KANBAN')}
       />
 
       <DealRoomModal

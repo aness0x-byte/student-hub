@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { MatchmakingDeal, DealStatus } from '@/lib/types';
 import { useStore } from '@/lib/store';
+import { X, Send, ShieldCheck } from 'lucide-react';
 
 interface Props {
   deal: MatchmakingDeal | null;
@@ -48,7 +49,7 @@ export default function DealRoomModal({ deal, isOpen, onClose }: Props) {
 
   const currentStageIndex = pipelineStages.findIndex(s => s.status === deal.status);
   const displayTitle = language === 'en'
-    ? (task?.titleEn || task?.title || 'Verified Micro-Task')
+    ? (task?.titleEn || task?.title || 'Verified Task')
     : (task?.title || 'مهمة وساطة مصغرة');
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -69,189 +70,195 @@ export default function DealRoomModal({ deal, isOpen, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl rounded-3xl border border-[rgba(255,255,255,0.15)] bg-[#0C0C16]/95 p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] max-h-[94vh] flex flex-col text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-4xl rounded-[32px] bg-white border border-black/10 p-6 sm:p-8 shadow-2xl max-h-[92vh] flex flex-col text-[#1A1A1A]">
         
         {/* Top Header */}
-        <div className="flex items-start justify-between border-b border-white/10 pb-5 shrink-0">
+        <div className="flex items-start justify-between border-b border-black/5 pb-4 shrink-0">
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold text-white bg-white/10 px-3 py-1 rounded-full border border-white/15">
+              <span className="font-mono text-xs font-semibold text-[#1A1A1A] bg-[#EDEDED] px-2.5 py-0.5 rounded-full">
                 {deal.dealReference}
               </span>
-              <span className="badge-glass-positive text-xs">
+              <span className="pill-badge-black !text-[10px] !py-0.5">
                 {t('dealRoomProtected')}
               </span>
             </div>
-            <h2 className="mt-2 text-xl font-light text-white">
+            <h2 className="mt-2 text-lg sm:text-xl font-semibold text-[#1A1A1A]">
               {t('dealRoomTitle')} {displayTitle}
             </h2>
           </div>
 
           <button
             onClick={onClose}
-            className="rounded-full px-3 py-1 text-xs font-semibold bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition-colors"
+            className="w-9 h-9 rounded-full bg-[#EDEDED] text-[#1A1A1A] flex items-center justify-center hover:bg-[#E4E4E4] transition-colors"
           >
-            {t('close')}
+            <X className="h-4 w-4 stroke-[2]" />
           </button>
         </div>
 
-        {/* Pipeline Stepper (Admin Interactive) */}
-        <div className="mt-4 p-4 rounded-2xl glass-card shrink-0">
-          <div className="flex items-center justify-between text-xs text-[rgba(255,255,255,0.7)] mb-3 font-semibold">
-            <span>{t('dealRoomStagesTitle')}</span>
+        {/* Pipeline Stepper */}
+        <div className="mt-4 p-4 rounded-2xl bg-[#EDEDED]/50 shrink-0">
+          <div className="text-xs text-[#5A5A5A] mb-2 flex items-center justify-between">
+            <span className="font-medium">{t('dealRoomStagesTitle')}</span>
             {currentRole === 'SUPER_ADMIN' && (
-              <span className="text-[11px] text-[#A77BF3] font-normal">
-                {t('dealRoomStageAdvanceTip')}
-              </span>
+              <span className="text-[11px] text-[#8C8C8C]">{t('dealRoomStageAdvanceTip')}</span>
             )}
           </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-6 gap-2">
+          
+          <div className="flex items-center justify-between gap-1 overflow-x-auto pb-1">
             {pipelineStages.map((stage, idx) => {
-              const isPast = idx < currentStageIndex;
+              const isPassed = idx <= currentStageIndex;
               const isCurrent = idx === currentStageIndex;
+
               return (
                 <button
                   key={stage.status}
                   disabled={currentRole !== 'SUPER_ADMIN'}
                   onClick={() => handleAdvanceStatus(stage.status)}
-                  className={`rounded-xl px-3 py-2 text-xs font-semibold text-center transition-all ${
+                  className={`flex-1 min-w-[100px] text-center p-2 rounded-xl text-[11px] transition-all ${
                     isCurrent
-                      ? 'bg-[#5B2BE0] text-white shadow-[0_0_16px_rgba(91,43,224,0.5)] border border-[#A77BF3]'
-                      : isPast
-                      ? 'bg-white/10 text-white/90 border border-white/15 hover:bg-white/15'
-                      : 'bg-white/5 text-white/40 border border-white/5 hover:border-white/15'
-                  }`}
+                      ? 'bg-[#262626] text-white font-semibold'
+                      : isPassed
+                      ? 'bg-[#E4E4E4] text-[#1A1A1A] font-medium'
+                      : 'bg-white text-[#8C8C8C] border border-black/5'
+                  } ${currentRole === 'SUPER_ADMIN' ? 'cursor-pointer hover:opacity-80' : 'cursor-default'}`}
                 >
-                  <div className="truncate">{stage.label}</div>
+                  <span className="block truncate">{stage.label}</span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Financial & Participant Metadata */}
-        <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3 shrink-0">
-          <div className="glass-card p-3.5">
-            <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.6)]">
-              {t('dealRoomClient')}
-            </span>
-            <p className="mt-1 font-bold text-white text-xs truncate">
-              {company?.companyName}
-            </p>
-            <p className="text-[11px] text-[rgba(255,255,255,0.5)] truncate">
-              {company?.contactPersonName} • {company?.contactPhone}
-            </p>
-          </div>
-
-          <div className="glass-card p-3.5 border-[#3FD0B0]/20">
-            <span className="text-[11px] font-semibold text-[#3FD0B0]">
-              {t('dealRoomTalent')}
-            </span>
-            <p className="mt-1 font-bold text-[#34D17A] text-xs truncate">
-              {student?.fullName} ({student?.anonymousCode})
-            </p>
-            <p className="text-[11px] text-[rgba(255,255,255,0.5)] truncate">
-              {student?.university} • {student?.phone}
-            </p>
-          </div>
-
-          <div className="glass-card p-3.5 border-[#A77BF3]/30 bg-[#5B2BE0]/10">
-            <span className="text-[11px] font-semibold text-[#A77BF3]">
-              {t('dealRoomDistribution')}
-            </span>
-            <div className="mt-1 flex items-center justify-between text-xs font-bold">
-              <span className="text-white">{t('dealRoomTotal')} €{deal.agreedClientBudget}</span>
-              <span className="text-[#34D17A]">{t('dealRoomTalentNet')} €{deal.agreedStudentPayout}</span>
-              <span className="text-[#A77BF3]">{t('dealRoomMargin')} €{deal.platformGrossMargin}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Middle Section: Facilitation Message Log */}
-        <div className="mt-4 flex-1 overflow-y-auto rounded-2xl glass-card p-4 space-y-3 min-h-[220px]">
-          <div className="text-center">
-            <span className="badge-glass-neutral text-xs py-1 px-4">
-              {t('dealRoomChannelBadge')}
-            </span>
-          </div>
-
-          {visibleMessages.length === 0 ? (
-            <p className="text-center text-xs text-[rgba(255,255,255,0.4)] py-8">
-              {t('dealRoomNoMessages')}
-            </p>
-          ) : (
-            visibleMessages.map((msg) => (
-              <div 
-                key={msg.id}
-                className={`rounded-2xl p-3.5 text-xs leading-relaxed max-w-[85%] ${
-                  msg.isInternalNote
-                    ? `${language === 'ar' ? 'mr-auto' : 'ml-auto'} border border-amber-400/40 bg-amber-500/10 text-amber-200`
-                    : msg.senderRole === 'SUPER_ADMIN'
-                    ? 'border border-[#A77BF3]/40 bg-[#5B2BE0]/20 text-white'
-                    : msg.senderRole === 'COMPANY'
-                    ? 'border border-white/15 bg-white/5 text-white'
-                    : 'border border-[#3FD0B0]/40 bg-[#3FD0B0]/10 text-white'
-                }`}
-              >
-                <div className="flex items-center justify-between gap-2 mb-1.5 text-[11px] font-bold">
-                  <span>{msg.senderName}</span>
-                  {msg.isInternalNote && (
-                    <span className="rounded-full bg-amber-400/20 px-2 py-0.5 text-amber-300 border border-amber-400/30 text-[10px]">
-                      {t('dealRoomSecretNoteBadge')}
-                    </span>
-                  )}
-                  <span className="text-[rgba(255,255,255,0.4)] font-normal text-[10px]">
-                    {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </div>
-
-                <p className="text-xs text-[rgba(255,255,255,0.85)]">{msg.messageContent}</p>
-
-                {msg.fileAttachment && (
-                  <div className="mt-2 text-[11px] font-mono text-[#A77BF3] underline">
-                    <span>{t('dealRoomAttachment')} {msg.fileAttachment}</span>
-                  </div>
-                )}
+        {/* Two-Column Area */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-4 flex-1 min-h-0 overflow-y-auto">
+          
+          {/* Left: Financial & Protocol Details */}
+          <div className="space-y-4">
+            <div className="p-4 rounded-2xl bg-[#EDEDED]/50 space-y-3 text-xs">
+              <h4 className="font-semibold text-xs text-[#1A1A1A]">{t('dealRoomDistribution')}</h4>
+              
+              <div className="flex justify-between py-1 border-b border-black/5">
+                <span className="text-[#5A5A5A]">{t('dealRoomClient')}</span>
+                <span className="font-medium text-[#1A1A1A]">{company?.companyName}</span>
               </div>
-            ))
-          )}
-        </div>
 
-        {/* Input Bar */}
-        <form onSubmit={handleSendMessage} className="mt-4 pt-3 shrink-0 border-t border-white/10">
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder={t('dealRoomPlaceholder')}
-              className="flex-1 rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
-            />
-            <button
-              type="submit"
-              className="btn-glass-primary px-5 py-2.5 text-xs font-bold"
-            >
-              <span>{t('dealRoomSend')}</span>
-            </button>
+              <div className="flex justify-between py-1 border-b border-black/5">
+                <span className="text-[#5A5A5A]">{t('dealRoomTalent')}</span>
+                <span className="font-medium text-[#1A1A1A]">{student?.anonymousCode}</span>
+              </div>
+
+              <div className="flex justify-between py-1 border-b border-black/5">
+                <span className="text-[#5A5A5A]">{t('dealRoomTotal')}</span>
+                <span className="font-semibold text-[#1A1A1A]">${deal.agreedClientBudget}</span>
+              </div>
+
+              <div className="flex justify-between py-1 border-b border-black/5">
+                <span className="text-[#5A5A5A]">{t('dealRoomTalentNet')}</span>
+                <span className="font-semibold text-[#1A1A1A]">${deal.agreedStudentPayout}</span>
+              </div>
+
+              <div className="flex justify-between py-1">
+                <span className="text-[#5A5A5A]">{t('dealRoomMargin')}</span>
+                <span className="font-semibold text-[#1A1A1A]">+${deal.platformGrossMargin}</span>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white border border-black/5 space-y-2">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-[#1A1A1A]">
+                <ShieldCheck className="h-4 w-4 stroke-[1.5]" />
+                <span>{t('dealRoomChannelBadge')}</span>
+              </div>
+              <p className="text-[11px] text-[#5A5A5A] leading-relaxed">
+                {language === 'en' 
+                  ? 'Elena audits deliverables, enforces non-circumvention, and handles formal invoice processing directly.' 
+                  : 'تتولى إيلينا تدقيق المخرجات، وفرض بروتوكول منع التحايل، وإصدار الفواتير المصرفية الرسمية مباشرة.'}
+              </p>
+            </div>
           </div>
 
-          {currentRole === 'SUPER_ADMIN' && (
-            <div className="mt-2 flex items-center gap-2 text-xs text-amber-300 font-medium">
-              <input
-                type="checkbox"
-                id="internalNoteToggle"
-                checked={isInternalNote}
-                onChange={(e) => setIsInternalNote(e.target.checked)}
-                className="rounded border-amber-300 bg-black/40 text-amber-400 focus:ring-amber-500"
-              />
-              <label htmlFor="internalNoteToggle" className="cursor-pointer">
-                {t('dealRoomSecretToggle')}
-              </label>
+          {/* Right: Facilitation Messaging Feed */}
+          <div className="md:col-span-2 flex flex-col rounded-2xl bg-[#EDEDED]/30 border border-black/5 p-4 min-h-[300px]">
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+              {visibleMessages.length === 0 ? (
+                <div className="h-full flex items-center justify-center text-xs text-[#8C8C8C] text-center p-6">
+                  {t('dealRoomNoMessages')}
+                </div>
+              ) : (
+                visibleMessages.map((msg) => {
+                  const isMine = msg.senderRole === currentRole;
+                  const isInternal = msg.isInternalNote;
+
+                  return (
+                    <div
+                      key={msg.id}
+                      className={`flex flex-col ${isMine ? 'items-end' : 'items-start'}`}
+                    >
+                      <div className="flex items-center gap-1.5 text-[10px] text-[#8C8C8C] mb-1">
+                        <span>{msg.senderName}</span>
+                        {isInternal && (
+                          <span className="pill-badge-black !text-[9px] !py-0.5">
+                            {t('dealRoomSecretNoteBadge')}
+                          </span>
+                        )}
+                        <span>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                      </div>
+
+                      <div
+                        className={`rounded-2xl p-3 text-xs max-w-md leading-relaxed ${
+                          isInternal
+                            ? 'bg-[#262626] text-white'
+                            : isMine
+                            ? 'bg-[#1A1A1A] text-white'
+                            : 'bg-white text-[#1A1A1A] border border-black/5'
+                        }`}
+                      >
+                        {msg.messageContent}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
-          )}
-        </form>
+
+            {/* Input Bar */}
+            <form onSubmit={handleSendMessage} className="mt-4 pt-3 border-t border-black/5 space-y-2">
+              {currentRole === 'SUPER_ADMIN' && (
+                <div className="flex items-center gap-2 text-xs text-[#5A5A5A]">
+                  <input
+                    type="checkbox"
+                    id="internalNote"
+                    checked={isInternalNote}
+                    onChange={(e) => setIsInternalNote(e.target.checked)}
+                    className="rounded text-black"
+                  />
+                  <label htmlFor="internalNote" className="cursor-pointer">
+                    {t('dealRoomSecretToggle')}
+                  </label>
+                </div>
+              )}
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder={t('dealRoomPlaceholder')}
+                  className="flex-1 rounded-full bg-white text-xs px-4 py-2.5 text-[#1A1A1A] border border-black/10 focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  className="pill-btn-dark !h-9 !px-4"
+                >
+                  <Send className="h-3.5 w-3.5 stroke-[1.8]" />
+                  <span>{t('dealRoomSend')}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+        </div>
 
       </div>
     </div>
