@@ -15,8 +15,9 @@ export default function CompanyPortalPage() {
     currentCompanyProfile, 
     tasks, 
     students, 
-    deals,
+    deals, 
     openSignInModal,
+    language,
     t
   } = useStore();
 
@@ -53,7 +54,7 @@ export default function CompanyPortalPage() {
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-base font-bold text-white">
-              {t('companyWelcome')} {company?.contactPersonName || (t('daysUnit') === 'days' ? 'Marcus Vance' : 'ماركوس فانس')}
+              {t('companyWelcome')} {company?.contactPersonName || (language === 'en' ? 'Marcus Vance' : 'ماركوس فانس')}
             </h2>
             <span className="badge-glass-positive text-xs">{t('companyBadgeText')}</span>
             <button
@@ -95,14 +96,14 @@ export default function CompanyPortalPage() {
                 </span>
               </div>
               <p className="text-sm text-[rgba(255,255,255,0.72)] mt-2 font-normal">
-                {company?.industry} • {t('daysUnit') === 'days' ? 'Contact:' : 'المسؤول:'} {company?.contactPersonName} ({company?.contactPersonTitle})
+                {company?.industry} • {t('adminCompanyPerson')} {company?.contactPersonName} ({company?.contactPersonTitle})
               </p>
             </div>
           </div>
 
           {/* Quick Metrics with Section 3.2 typography */}
           <div className="flex flex-wrap items-center gap-3">
-            <div className="glass p-4 rounded-[20px] min-w-[130px] text-right">
+            <div className={`glass p-4 rounded-[20px] min-w-[130px] ${language === 'ar' ? 'text-right' : 'text-left'}`}>
               <span className="micro block mb-1">{t('reliabilityScore')}</span>
               <div className="text-2xl font-normal text-amber-300 tabular-nums">
                 <span>{company?.reliabilityScore.toFixed(1)}</span>
@@ -110,14 +111,14 @@ export default function CompanyPortalPage() {
               </div>
             </div>
 
-            <div className="glass p-4 rounded-[20px] min-w-[130px] text-right">
+            <div className={`glass p-4 rounded-[20px] min-w-[130px] ${language === 'ar' ? 'text-right' : 'text-left'}`}>
               <span className="micro block mb-1">{t('registeredRequests')}</span>
               <p className="text-2xl font-normal text-white tabular-nums">
                 {myTasks.length} <span className="text-xs text-[rgba(255,255,255,0.5)]">{t('tasksUnit')}</span>
               </p>
             </div>
 
-            <div className="glass p-4 rounded-[20px] min-w-[130px] text-right">
+            <div className={`glass p-4 rounded-[20px] min-w-[130px] ${language === 'ar' ? 'text-right' : 'text-left'}`}>
               <span className="micro block mb-1">{t('activeDeals')}</span>
               <p className="text-2xl font-normal text-[#3FD0B0] tabular-nums">
                 {myDeals.length} <span className="text-xs text-[rgba(255,255,255,0.5)]">{t('activeUnit')}</span>
@@ -187,6 +188,13 @@ export default function CompanyPortalPage() {
                     const task = tasks.find(t => t.id === deal.taskRequestId);
                     const student = students.find(s => s.id === deal.studentProfileId);
                     const isExpanded = Boolean(expandedDealIds[deal.id]);
+                    const displayTitle = language === 'en'
+                      ? (task?.titleEn || task?.title || 'Verified Task')
+                      : (task?.title || 'مهمة معتمدة');
+                    const displayNotes = language === 'en'
+                      ? (deal.adminSummaryNotesEn || deal.adminSummaryNotes || t('defaultBrokerNotes'))
+                      : (deal.adminSummaryNotes || t('defaultBrokerNotes'));
+
                     return (
                       <div
                         key={deal.id}
@@ -202,12 +210,12 @@ export default function CompanyPortalPage() {
                                 {deal.dealReference}
                               </span>
                               <span className="badge-glass-positive text-xs">
-                                {formatDealStatus(deal.status)}
+                                {formatDealStatus(deal.status, language)}
                               </span>
                             </div>
 
                             <h4 className="text-lg font-bold text-white leading-snug">
-                              {task?.title || (t('daysUnit') === 'days' ? 'Verified Task' : 'مهمة معتمدة')}
+                              {displayTitle}
                             </h4>
 
                             <p className="text-sm text-[rgba(255,255,255,0.7)]">
@@ -216,7 +224,7 @@ export default function CompanyPortalPage() {
                           </div>
 
                           <div className="flex items-center gap-4 shrink-0">
-                            <div className="text-left">
+                            <div className={language === 'ar' ? 'text-left' : 'text-right'}>
                               <span className="text-xl font-bold text-white">€{deal.agreedClientBudget}</span>
                               <span className="block text-[11px] text-[rgba(255,255,255,0.45)]">{t('agreedBudget')}</span>
                             </div>
@@ -246,7 +254,7 @@ export default function CompanyPortalPage() {
 
                               <div className="bg-white/5 p-3.5 rounded-2xl border border-white/10 space-y-1">
                                 <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.5)] block">{t('brokerNotesLabel')}</span>
-                                <p className="text-xs text-[rgba(255,255,255,0.9)] leading-relaxed">{deal.adminSummaryNotes || t('defaultBrokerNotes')}</p>
+                                <p className="text-xs text-[rgba(255,255,255,0.9)] leading-relaxed">{displayNotes}</p>
                               </div>
                             </div>
 
@@ -281,6 +289,10 @@ export default function CompanyPortalPage() {
               <div className="space-y-3">
                 {myTasks.map((task) => {
                   const isExpanded = Boolean(expandedTaskIds[task.id]);
+                  const displayTitle = language === 'en' ? (task.titleEn || task.title) : task.title;
+                  const displayProblem = language === 'en' ? (task.problemStatementEn || task.problemStatement) : task.problemStatement;
+                  const displayDeliverables = language === 'en' ? (task.deliverablesCriteriaEn || task.deliverablesCriteria) : task.deliverablesCriteria;
+
                   return (
                     <div
                       key={task.id}
@@ -296,20 +308,20 @@ export default function CompanyPortalPage() {
                               {task.referenceCode}
                             </span>
                             <span className="badge-glass-neutral text-xs">
-                              {formatCategoryName(task.category)}
+                              {formatCategoryName(task.category, language)}
                             </span>
                             <span className="badge-glass-positive text-xs">
-                              {formatTaskStatus(task.status)}
+                              {formatTaskStatus(task.status, language)}
                             </span>
                           </div>
 
                           <h4 className="text-lg font-bold text-white leading-snug">
-                            {task.title}
+                            {displayTitle}
                           </h4>
                         </div>
 
                         <div className="flex items-center gap-4 shrink-0">
-                          <div className="text-left">
+                          <div className={language === 'ar' ? 'text-left' : 'text-right'}>
                             <span className="text-2xl font-light text-white">
                               €{task.proposedBudget}
                             </span>
@@ -337,17 +349,17 @@ export default function CompanyPortalPage() {
                               {t('problemScopeLabel')}
                             </span>
                             <p className="text-sm text-[rgba(255,255,255,0.85)] leading-relaxed">
-                              {task.problemStatement}
+                              {displayProblem}
                             </p>
                           </div>
 
-                          {task.deliverablesCriteria && (
+                          {displayDeliverables && (
                             <div>
                               <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.5)] block mb-1">
                                 {t('deliverablesCriteria')}
                               </span>
                               <p className="text-xs text-[rgba(255,255,255,0.8)] leading-relaxed bg-white/5 p-3 rounded-2xl border border-white/10">
-                                {task.deliverablesCriteria}
+                                {displayDeliverables}
                               </p>
                             </div>
                           )}
@@ -367,7 +379,7 @@ export default function CompanyPortalPage() {
                             </div>
 
                             <div className="space-y-1 text-xs text-[rgba(255,255,255,0.7)]">
-                              <p>{t('targetAcademicLevel')} <strong className="text-white">{formatAcademicLevel(task.targetAcademicLevel)}</strong></p>
+                              <p>{t('targetAcademicLevel')} <strong className="text-white">{formatAcademicLevel(task.targetAcademicLevel, language)}</strong></p>
                               <p>{t('deliveryDuration')} <strong className="text-white">{task.estimatedDurationDays} {t('daysUnit')}</strong></p>
                             </div>
                           </div>

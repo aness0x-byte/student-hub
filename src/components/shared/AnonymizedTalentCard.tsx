@@ -18,7 +18,7 @@ export default function AnonymizedTalentCard({
   showAdminActions,
   onVerify
 }: Props) {
-  const { t } = useStore();
+  const { language, t } = useStore();
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -60,7 +60,7 @@ export default function AnonymizedTalentCard({
         {/* Academic Level & Major */}
         <div className="mt-2">
           <span className="inline-flex items-center text-xs font-medium text-white bg-white/10 px-3 py-1 rounded-full border border-white/15">
-            <span>{formatAcademicLevel(student.academicLevel)}</span>
+            <span>{formatAcademicLevel(student.academicLevel, language)}</span>
           </span>
           <p className="mt-2 text-sm font-semibold text-[rgba(255,255,255,0.9)] line-clamp-1">
             {student.major}
@@ -116,7 +116,7 @@ export default function AnonymizedTalentCard({
             {student.hourlyBenchmarkRate && (
               <div className="text-xs text-[rgba(255,255,255,0.65)] flex items-center justify-between pt-1">
                 <span>{t('hourlyRateLabel')}</span>
-                <span className="font-bold text-[#34D17A]">€{student.hourlyBenchmarkRate} / {t('daysUnit') === 'days' ? 'hr' : 'ساعة'}</span>
+                <span className="font-bold text-[#34D17A]">€{student.hourlyBenchmarkRate} / {language === 'en' ? 'hr' : 'ساعة'}</span>
               </div>
             )}
           </div>

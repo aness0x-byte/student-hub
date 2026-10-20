@@ -21,6 +21,10 @@ export default function AnonymizedTaskCard({
   const { language, t } = useStore();
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const displayTitle = language === 'en' ? (task.titleEn || task.title) : task.title;
+  const displayProblem = language === 'en' ? (task.problemStatementEn || task.problemStatement) : task.problemStatement;
+  const displayDeliverables = language === 'en' ? (task.deliverablesCriteriaEn || task.deliverablesCriteria) : task.deliverablesCriteria;
+
   return (
     <div 
       onClick={() => setIsExpanded(!isExpanded)}
@@ -36,7 +40,7 @@ export default function AnonymizedTaskCard({
               {task.referenceCode}
             </span>
             <span className="badge-glass-neutral text-xs">
-              {formatCategoryName(task.category)}
+              {formatCategoryName(task.category, language)}
             </span>
           </div>
 
@@ -47,7 +51,7 @@ export default function AnonymizedTaskCard({
 
         {/* Task Title */}
         <h3 className="text-base sm:text-lg font-medium text-white hover:text-[#A77BF3] transition-colors leading-snug">
-          {task.title}
+          {displayTitle}
         </h3>
 
         {/* Quick summary line when collapsed */}
@@ -74,18 +78,18 @@ export default function AnonymizedTaskCard({
                 {t('scopeAndProblem')}
               </span>
               <p className="text-sm text-[rgba(255,255,255,0.85)] leading-relaxed">
-                {task.problemStatement}
+                {displayProblem}
               </p>
             </div>
 
             {/* Deliverables Criteria */}
-            {task.deliverablesCriteria && (
+            {displayDeliverables && (
               <div>
                 <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.5)] block mb-1">
                   {t('deliverablesCriteria')}
                 </span>
                 <p className="text-xs text-[rgba(255,255,255,0.75)] leading-relaxed bg-white/5 p-2.5 rounded-xl border border-white/10">
-                  {task.deliverablesCriteria}
+                  {displayDeliverables}
                 </p>
               </div>
             )}
@@ -95,7 +99,7 @@ export default function AnonymizedTaskCard({
               <div className="text-xs text-[rgba(255,255,255,0.7)] flex items-center gap-1.5">
                 <span className="text-[rgba(255,255,255,0.5)]">{t('requiredAcademicLevel')}</span>
                 <span className="font-semibold text-white">
-                  {formatAcademicLevel(task.targetAcademicLevel)}
+                  {formatAcademicLevel(task.targetAcademicLevel, language)}
                 </span>
               </div>
             )}

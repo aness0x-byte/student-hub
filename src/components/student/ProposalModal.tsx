@@ -8,7 +8,7 @@ interface Props {
   onClose: () => void;
 }
 
-const ACADEMIC_MAJORS = [
+const ACADEMIC_MAJORS_AR = [
   'إدارة الأعمال، الاقتصاد والمالية',
   'الهندسة، التقنية والحوسبة',
   'الطب، التمريض والعلوم الصحية',
@@ -24,8 +24,24 @@ const ACADEMIC_MAJORS = [
   'تخصص / مجال آخر (كتابة يدوية)',
 ];
 
+const ACADEMIC_MAJORS_EN = [
+  'Business Administration, Economics & Finance',
+  'Engineering, Technology & Computing',
+  'Medicine, Nursing & Health Sciences',
+  'Pharmacy & Pharmaceutical Sciences',
+  'Law, Political Science & Legal Studies',
+  'Languages, Translation & Literature',
+  'Design, Architecture & Graphic Arts',
+  'Natural Sciences, Mathematics & Statistics',
+  'Media, Journalism & Public Relations',
+  'Humanities, Social Sciences & Psychology',
+  'Education & Curriculum Development',
+  'Agricultural, Environmental & Nutritional Sciences',
+  'Other Major / Custom Field (Manual Entry)',
+];
+
 export default function ProposalModal({ isOpen, onClose }: Props) {
-  const { submitServiceProposal, currentStudentProfile } = useStore();
+  const { submitServiceProposal, currentStudentProfile, language, t } = useStore();
   
   const [title, setTitle] = useState('');
   const [selectedMajor, setSelectedMajor] = useState('');
@@ -38,7 +54,12 @@ export default function ProposalModal({ isOpen, onClose }: Props) {
 
   if (!isOpen) return null;
 
-  const effectiveCategory = selectedMajor === 'تخصص / مجال آخر (كتابة يدوية)'
+  const academicMajors = language === 'en' ? ACADEMIC_MAJORS_EN : ACADEMIC_MAJORS_AR;
+  const customTrigger = language === 'en'
+    ? 'Other Major / Custom Field (Manual Entry)'
+    : 'تخصص / مجال آخر (كتابة يدوية)';
+
+  const effectiveCategory = selectedMajor === customTrigger
     ? customCategory.trim()
     : selectedMajor;
 
@@ -77,18 +98,18 @@ export default function ProposalModal({ isOpen, onClose }: Props) {
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute left-6 top-6 rounded-full px-3 py-1 text-xs font-semibold bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition-colors"
+          className={`absolute ${language === 'ar' ? 'left-6' : 'right-6'} top-6 rounded-full px-3 py-1 text-xs font-semibold bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition-colors`}
         >
-          إغلاق
+          {t('close')}
         </button>
 
         {isSubmitted ? (
           <div className="py-10 text-center">
             <h3 className="mt-4 text-2xl font-light text-white">
-              تم إرسال مقترح الخدمة بنجاح!
+              {t('proposalSuccessTitle')}
             </h3>
             <p className="mt-2 text-sm text-[rgba(255,255,255,0.7)] max-w-sm mx-auto leading-relaxed">
-              تم تحويل مقترحك إلى الوسيط المعتمد لمراجعته وتدقيقه، وتثبيته في دليل الكفاءات لطرحه على الجهات المتعاقدة.
+              {t('proposalSuccessSub')}
             </p>
           </div>
         ) : (
@@ -96,34 +117,34 @@ export default function ProposalModal({ isOpen, onClose }: Props) {
             <div className="border-b border-white/10 pb-4">
               <div className="flex items-center gap-2">
                 <span className="badge-glass-violet text-xs">
-                  استوديو المقترحات والعروض
+                  {t('proposalStudioBadge')}
                 </span>
                 <span className="text-xs text-[rgba(255,255,255,0.6)] font-mono">
                   {currentStudentProfile?.anonymousCode}
                 </span>
               </div>
               <h2 className="mt-2 text-xl font-bold text-white">
-                تقديم مقترح خدمة مصغرة للوسيط
+                {t('proposalHeading')}
               </h2>
             </div>
 
             <div className="glass-card p-4 text-xs text-[rgba(255,255,255,0.8)] border-[#3FD0B0]/20 bg-[#3FD0B0]/5">
               <span className="leading-relaxed">
-                <strong>تدقيق الوسيط المعتمد:</strong> يتولى الوسيط مراجعة المقترحات بدقة لضمان ملاءمتها وتحديد أسعار عادلة تضمن مستحقاتك دون تأخير.
+                {t('proposalBrokerNotice')}
               </span>
             </div>
 
             {/* Title */}
             <div>
               <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                عنوان الخدمة المصغرة *
+                {t('proposalTitleLabel')}
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
-                placeholder="اكتب عنوان الخدمة أو المهارة التي ترغب في تقديمها..."
+                placeholder={t('proposalTitlePlaceholder')}
                 className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
               />
             </div>
@@ -132,7 +153,7 @@ export default function ProposalModal({ isOpen, onClose }: Props) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                  تصنيف الخدمة / التخصص الجامعي *
+                  {t('proposalCategoryLabel')}
                 </label>
                 <select
                   value={selectedMajor}
@@ -140,8 +161,8 @@ export default function ProposalModal({ isOpen, onClose }: Props) {
                   required
                   className="w-full rounded-2xl border border-white/15 bg-[#07070C] px-4 py-2.5 text-xs text-white focus:border-[#A77BF3] focus:outline-none cursor-pointer"
                 >
-                  <option value="">اختر التخصص أو المجال الأكاديمي...</option>
-                  {ACADEMIC_MAJORS.map((major) => (
+                  <option value="">{t('proposalCategoryPlaceholder')}</option>
+                  {academicMajors.map((major) => (
                     <option key={major} value={major}>
                       {major}
                     </option>
@@ -151,7 +172,7 @@ export default function ProposalModal({ isOpen, onClose }: Props) {
 
               <div>
                 <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                  مدة الإنجاز (بالأيام) *
+                  {t('proposalTurnaroundLabel')}
                 </label>
                 <input
                   type="number"
@@ -160,96 +181,92 @@ export default function ProposalModal({ isOpen, onClose }: Props) {
                   value={turnaroundDays}
                   onChange={(e) => setTurnaroundDays(e.target.value ? Number(e.target.value) : '')}
                   required
-                  placeholder="عدد الأيام..."
+                  placeholder={t('proposalTurnaroundPlaceholder')}
                   className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
                 />
               </div>
             </div>
 
-            {selectedMajor === 'تخصص / مجال آخر (كتابة يدوية)' && (
+            {selectedMajor === customTrigger && (
               <div className="animate-in fade-in duration-200">
                 <label className="block text-xs font-semibold text-[#A77BF3] mb-1">
-                  اكتب التخصص أو المجال بدقة *
+                  {t('taskWizardCustomCategoryLabel')}
                 </label>
                 <input
                   type="text"
                   value={customCategory}
                   onChange={(e) => setCustomCategory(e.target.value)}
                   required
-                  placeholder="اكتب التخصص الأكاديمي المطلوب..."
+                  placeholder={t('taskWizardCustomCategoryPlaceholder')}
                   className="w-full rounded-2xl border border-[#A77BF3]/50 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
                 />
               </div>
             )}
 
-            {/* Description */}
+            {/* Scope */}
             <div>
               <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                ما الذي ستقدمه بدقة؟ (الوصف والشرح المفصل) *
+                {t('proposalScopeLabel')}
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
                 rows={3}
-                placeholder="اشرح نطاق عملك وتفاصيل المخرجات التي ستقدمها..."
-                className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
+                placeholder={t('proposalScopePlaceholder')}
+                className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
               />
             </div>
 
-            {/* Deliverables summary */}
+            {/* Deliverables */}
             <div>
               <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                قائمة المخرجات النهائية المحددة *
+                {t('proposalDeliverablesLabel')}
               </label>
-              <input
-                type="text"
+              <textarea
                 value={deliverablesSummary}
                 onChange={(e) => setDeliverablesSummary(e.target.value)}
                 required
-                placeholder="حدد المخرجات المتوقعة بدقة..."
-                className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
+                rows={2}
+                placeholder={t('proposalDeliverablesPlaceholder')}
+                className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
               />
             </div>
 
-            {/* Desired Student Fee */}
+            {/* Proposed Fee */}
             <div>
               <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                المكافأة الصافية التي ترغب في الحصول عليها (€) *
+                {t('proposalFeeLabel')}
               </label>
-              <div className="relative">
-                <input
-                  type="number"
-                  min={20}
-                  max={20000}
-                  step={5}
-                  value={proposedStudentFee}
-                  onChange={(e) => setProposedStudentFee(e.target.value ? Number(e.target.value) : '')}
-                  required
-                  dir="ltr"
-                  placeholder="المبلغ باليورو..."
-                  className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs font-bold text-[#34D17A] focus:outline-none focus:border-[#34D17A]"
-                />
-              </div>
-              <p className="mt-1 text-xs text-[rgba(255,255,255,0.5)]">
-                تضيف المنصة 20% كرسوم وساطة وحماية وضمان تحصيل على إجمالي الفاتورة للشركة.
+              <input
+                type="number"
+                min={20}
+                step={5}
+                value={proposedStudentFee}
+                onChange={(e) => setProposedStudentFee(e.target.value ? Number(e.target.value) : '')}
+                required
+                placeholder={t('proposalFeePlaceholder')}
+                className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-bold text-white focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
+              />
+              <p className="mt-1 text-xs text-[rgba(255,255,255,0.45)]">
+                {t('proposalBrokerFeeNotice')}
               </p>
             </div>
 
-            {/* Actions */}
+            {/* Submit */}
             <div className="flex items-center justify-between pt-4 border-t border-white/10">
               <button
                 type="button"
                 onClick={onClose}
                 className="btn-glass-ghost px-5 py-2 text-xs font-semibold"
               >
-                إلغاء
+                {t('cancel')}
               </button>
               <button
                 type="submit"
                 className="btn-glass-primary px-6 py-2.5 text-xs font-bold"
               >
-                <span>إرسال المقترح للوسيط</span>
+                <span>{t('proposalSubmitBtn')}</span>
               </button>
             </div>
           </form>

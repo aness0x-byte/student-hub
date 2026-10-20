@@ -4,22 +4,21 @@ import React from 'react';
 import { MatchmakingDeal, DealStatus } from '@/lib/types';
 import { useStore } from '@/lib/store';
 
-
 interface Props {
   onSelectDeal: (deal: MatchmakingDeal) => void;
 }
 
-const COLUMNS: { status: DealStatus; label: string; badgeClass: string }[] = [
-  { status: 'SUBMITTED', label: '١. تم الاستلام والتحقق', badgeClass: 'badge-glass-neutral' },
-  { status: 'UNDER_ADMIN_REVIEW', label: '٢. قيد التدقيق الإداري', badgeClass: 'rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/20 px-3 py-0.5 text-xs font-semibold' },
-  { status: 'SHORTLISTED', label: '٣. ترشيح القائمة المختصرة', badgeClass: 'badge-glass-violet' },
-  { status: 'MATCHED_CONNECTED', label: '٤. تم التكليف والربط', badgeClass: 'badge-glass-positive' },
-  { status: 'IN_PROGRESS', label: '٥. قيد الإنجاز والتنفيذ', badgeClass: 'rounded-full bg-blue-400/10 text-blue-300 border border-blue-400/20 px-3 py-0.5 text-xs font-semibold' },
-  { status: 'COMPLETED_COMMISSION_COLLECTED', label: '٦. مكتمل ومسوى مالياً', badgeClass: 'badge-glass-positive' },
-];
-
 export default function KanbanBoard({ onSelectDeal }: Props) {
-  const { deals, tasks, students, companies, updateDealStatus } = useStore();
+  const { deals, tasks, students, companies, updateDealStatus, language, t } = useStore();
+
+  const columns: { status: DealStatus; label: string; badgeClass: string }[] = [
+    { status: 'SUBMITTED', label: t('kanbanStage1'), badgeClass: 'badge-glass-neutral' },
+    { status: 'UNDER_ADMIN_REVIEW', label: t('kanbanStage2'), badgeClass: 'rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/20 px-3 py-0.5 text-xs font-semibold' },
+    { status: 'SHORTLISTED', label: t('kanbanStage3'), badgeClass: 'badge-glass-violet' },
+    { status: 'MATCHED_CONNECTED', label: t('kanbanStage4'), badgeClass: 'badge-glass-positive' },
+    { status: 'IN_PROGRESS', label: t('kanbanStage5'), badgeClass: 'rounded-full bg-blue-400/10 text-blue-300 border border-blue-400/20 px-3 py-0.5 text-xs font-semibold' },
+    { status: 'COMPLETED_COMMISSION_COLLECTED', label: t('kanbanStage6'), badgeClass: 'badge-glass-positive' },
+  ];
 
   const getNextStatus = (current: DealStatus): DealStatus | null => {
     switch (current) {
@@ -35,7 +34,7 @@ export default function KanbanBoard({ onSelectDeal }: Props) {
   return (
     <div className="overflow-x-auto pb-6">
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 min-w-[1200px]">
-        {COLUMNS.map((col) => {
+        {columns.map((col) => {
           const colDeals = deals.filter(d => d.status === col.status);
           const colTotalBudget = colDeals.reduce((sum, d) => sum + d.agreedClientBudget, 0);
 
@@ -51,7 +50,7 @@ export default function KanbanBoard({ onSelectDeal }: Props) {
                     {col.label}
                   </span>
                   <p className="text-xs text-[rgba(255,255,255,0.5)] mt-1.5 font-medium">
-                    €{colTotalBudget} إجمالي
+                    {language === 'ar' ? `€${colTotalBudget} ${t('kanbanTotalBudget')}` : `${t('kanbanTotalBudget')}: €${colTotalBudget}`}
                   </p>
                 </div>
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-xs font-bold text-white border border-white/15">
@@ -63,7 +62,7 @@ export default function KanbanBoard({ onSelectDeal }: Props) {
               <div className="flex-1 space-y-3 overflow-y-auto">
                 {colDeals.length === 0 ? (
                   <div className="rounded-2xl border border-dashed border-[rgba(255,255,255,0.1)] py-12 text-center text-xs text-[rgba(255,255,255,0.4)]">
-                    لا توجد صفقات هنا حالياً
+                    {t('kanbanNoDeals')}
                   </div>
                 ) : (
                   colDeals.map((deal) => {
@@ -71,6 +70,9 @@ export default function KanbanBoard({ onSelectDeal }: Props) {
                     const student = students.find(s => s.id === deal.studentProfileId);
                     const company = companies.find(c => c.id === task?.companyProfileId);
                     const nextStatus = getNextStatus(deal.status);
+                    const displayTitle = language === 'en'
+                      ? (task?.titleEn || task?.title || t('kanbanDefaultTask'))
+                      : (task?.title || t('kanbanDefaultTask'));
 
                     return (
                       <div
@@ -84,23 +86,23 @@ export default function KanbanBoard({ onSelectDeal }: Props) {
                             {deal.dealReference}
                           </span>
                           <span className="font-bold text-[#34D17A]">
-                            +€{deal.platformGrossMargin} عائد الوساطة
+                            +€{deal.platformGrossMargin} {t('kanbanBrokerMargin')}
                           </span>
                         </div>
 
                         {/* Title */}
                         <h4 className="mt-2.5 text-sm font-bold text-white line-clamp-2 leading-snug group-hover:text-[#A77BF3] transition-colors">
-                          {task?.title || 'مهمة معتمدة'}
+                          {displayTitle}
                         </h4>
 
                         {/* Parties */}
                         <div className="mt-3 space-y-1.5 text-xs text-[rgba(255,255,255,0.7)]">
                           <div className="truncate">
-                            <span className="text-[rgba(255,255,255,0.45)]">الجهة الطالبة: </span>
+                            <span className="text-[rgba(255,255,255,0.45)]">{t('kanbanClientLabel')} </span>
                             <span className="truncate">{company?.companyName}</span>
                           </div>
                           <div className="truncate">
-                            <span className="text-[rgba(255,255,255,0.45)]">الكفاءة المنفذة: </span>
+                            <span className="text-[rgba(255,255,255,0.45)]">{t('kanbanTalentLabel')} </span>
                             <span className="truncate">{student?.fullName} ({student?.anonymousCode})</span>
                           </div>
                         </div>
@@ -118,9 +120,9 @@ export default function KanbanBoard({ onSelectDeal }: Props) {
                                 updateDealStatus(deal.id, nextStatus);
                               }}
                               className="btn-glass-ghost px-2.5 py-1 text-[11px] font-semibold border-white/15 hover:border-white"
-                              title="ترقية الصفقة إلى المرحلة التالية"
+                              title={t('kanbanAdvanceTitle')}
                             >
-                              <span>المرحلة التالية ←</span>
+                              <span>{t('nextStage')}</span>
                             </button>
                           )}
                         </div>

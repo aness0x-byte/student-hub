@@ -6,7 +6,6 @@ import { useStore } from '@/lib/store';
 import { getTopMatchingStudents, MatchScoreResult } from '@/lib/matching-engine';
 import { formatAcademicLevel } from '@/lib/privacy-shield';
 
-
 interface Props {
   task: CompanyTaskRequest | null;
   isOpen: boolean;
@@ -15,7 +14,7 @@ interface Props {
 }
 
 export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }: Props) {
-  const { students, createMatchDeal, companies } = useStore();
+  const { students, createMatchDeal, companies, language, t } = useStore();
   
   const [selectedStudent, setSelectedStudent] = useState<StudentProfile | null>(null);
   const [agreedBudget, setAgreedBudget] = useState<number>(task?.proposedBudget || 350);
@@ -30,6 +29,7 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
 
   const topMatches: MatchScoreResult[] = getTopMatchingStudents(task, students, 5);
   const company = companies.find(c => c.id === task.companyProfileId);
+  const displayTaskTitle = language === 'en' ? (task.titleEn || task.title) : task.title;
 
   const handleInitiateDeal = (student: StudentProfile) => {
     setSelectedStudent(student);
@@ -41,12 +41,16 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
     e.preventDefault();
     if (!selectedStudent) return;
 
+    const defaultNotes = language === 'ar'
+      ? `تمت مطابقة الكفاءة ${selectedStudent.anonymousCode} بنجاح عبر نظام المطابقة الذكي.`
+      : `Matched talent ${selectedStudent.anonymousCode} successfully via smart algorithm engine.`;
+
     const deal = createMatchDeal({
       taskRequestId: task.id,
       studentProfileId: selectedStudent.id,
       agreedBudget: Number(agreedBudget),
       studentPayout: Number(studentPayout),
-      adminNotes: adminNotes || `تمت مطابقة الكفاءة ${selectedStudent.anonymousCode} بنجاح عبر نظام المطابقة الذكي.`,
+      adminNotes: adminNotes || defaultNotes,
     });
 
     setCreatedDealRef(deal.dealReference);
@@ -67,21 +71,21 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute left-6 top-6 rounded-full px-3 py-1 text-xs font-semibold bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition-colors"
+          className={`absolute ${language === 'ar' ? 'left-6' : 'right-6'} top-6 rounded-full px-3 py-1 text-xs font-semibold bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition-colors`}
         >
-          <span>إغلاق</span>
+          <span>{t('close')}</span>
         </button>
 
         {isSuccess ? (
           <div className="py-12 text-center">
             <h3 className="mt-4 text-2xl font-light text-white">
-              تمت المطابقة بنجاح وإنشاء الصفقة!
+              {t('smartMatchSuccessTitle')}
             </h3>
             <p className="mt-2 text-sm text-[rgba(255,255,255,0.7)]">
-              مرجع الصفقة الرسمي: <strong className="text-[#34D17A] font-mono text-base">{createdDealRef}</strong>
+              {t('smartMatchDealRef')} <strong className="text-[#34D17A] font-mono text-base">{createdDealRef}</strong>
             </p>
             <p className="mt-2 text-xs text-[rgba(255,255,255,0.45)] max-w-md mx-auto leading-relaxed">
-              تم تثبيت سجل الصفقة، وحجز عمولة الوسيط 20%، وإنشاء غرفة المتابعة المحمية تلقائياً.
+              {t('smartMatchSuccessSub')}
             </p>
           </div>
         ) : selectedStudent ? (
@@ -90,14 +94,14 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
             <div className="border-b border-white/10 pb-4">
               <div className="flex items-center gap-2">
                 <span className="badge-glass-violet text-xs">
-                  إعدادات الوساطة وتوزيع الأرباح
+                  {t('smartMatchSettingsTitle')}
                 </span>
                 <span className="text-xs text-[rgba(255,255,255,0.5)] font-mono">
-                  المهمة: {task.referenceCode}
+                  {t('smartMatchTaskLabel')} {task.referenceCode}
                 </span>
               </div>
               <h2 className="mt-2 text-xl font-bold text-white">
-                ربط الكفاءة: {selectedStudent.fullName} ({selectedStudent.anonymousCode})
+                {t('smartMatchAssignTalent')} {selectedStudent.fullName} ({selectedStudent.anonymousCode})
               </h2>
             </div>
 
@@ -105,7 +109,7 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="glass-card p-4">
                 <label className="block text-xs font-semibold text-[rgba(255,255,255,0.7)] mb-1">
-                  إجمالي الفاتورة للشركة (€)
+                  {t('smartMatchGrossAmount')}
                 </label>
                 <div className="relative">
                   <input
@@ -125,7 +129,7 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
 
               <div className="glass-card p-4 border-[#34D17A]/30">
                 <label className="block text-xs font-semibold text-[#34D17A] mb-1">
-                  مستحقات المنفذ المضمونة (80%)
+                  {t('smartMatchTalentPayout')}
                 </label>
                 <div className="relative">
                   <input
@@ -141,11 +145,11 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
 
               <div className="glass-card p-4 border-[#A77BF3]/40 bg-[#5B2BE0]/15">
                 <label className="block text-xs font-semibold text-[#A77BF3] mb-1">
-                  عائد الوساطة المعتمدة (20%)
+                  {t('smartMatchBrokerRevenue')}
                 </label>
                 <p className="mt-1 text-lg font-bold text-white">
                   €{agreedBudget - studentPayout}
-                  <span className="text-xs text-[rgba(255,255,255,0.6)] font-normal mr-2">
+                  <span className="text-xs text-[rgba(255,255,255,0.6)] font-normal mx-2">
                     ({agreedBudget > 0 ? (((agreedBudget - studentPayout) / agreedBudget) * 100).toFixed(0) : 0}%)
                   </span>
                 </p>
@@ -155,13 +159,13 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
             {/* Admin notes */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[rgba(255,255,255,0.7)]">
-                تعليمات الوسيط وملاحظات انطلاق المهمة
+                {t('smartMatchBrokerDirectives')}
               </label>
               <textarea
                 value={adminNotes}
                 onChange={(e) => setAdminNotes(e.target.value)}
                 rows={3}
-                placeholder="اكتب هنا أي تعليمات توجيهية خاصة للاتفاق، تسليم المخرجات، أو مواعيد المتابعة..."
+                placeholder={t('smartMatchDirectivesPlaceholder')}
                 className="mt-2 w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
               />
             </div>
@@ -173,13 +177,13 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
                 onClick={() => setSelectedStudent(null)}
                 className="btn-glass-ghost px-5 py-2.5 text-xs font-semibold"
               >
-                الرجوع لقائمة الكفاءات
+                {t('smartMatchBackToTalents')}
               </button>
               <button
                 type="submit"
                 className="btn-glass-primary px-6 py-2.5 text-xs font-bold"
               >
-                <span>تأكيد المطابقة وتدشين غرفة الصفقة</span>
+                <span>{language === 'en' ? 'Confirm Match & Launch Deal Room' : 'تأكيد المطابقة وتدشين غرفة الصفقة'}</span>
               </button>
             </div>
           </form>
@@ -190,7 +194,7 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
             <div className="border-b border-white/10 pb-5 mb-5">
               <div className="flex items-center gap-2.5">
                 <span className="badge-glass-violet text-xs">
-                  <span>مساعد المطابقة الذكي الخوارزمي</span>
+                  <span>{language === 'en' ? 'Algorithmic Smart Match Assistant' : 'مساعد المطابقة الذكي الخوارزمي'}</span>
                 </span>
                 <span className="text-xs text-[rgba(255,255,255,0.5)] font-mono">
                   {task.referenceCode}
@@ -198,15 +202,15 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
               </div>
               
               <h2 className="mt-3 text-2xl font-light text-white">
-                أفضل 5 كفاءات جامعية مطابقة لـ: {task.title}
+                {language === 'en' ? `Top 5 Matching Talents for: ${displayTaskTitle}` : `أفضل 5 كفاءات جامعية مطابقة لـ: ${displayTaskTitle}`}
               </h2>
               
               <div className="mt-2.5 flex flex-wrap items-center gap-3 text-xs text-[rgba(255,255,255,0.6)] font-medium">
-                <span>جهة الأعمال: <strong className="text-white">{company?.companyName || 'شركة ومؤسسة معتمدة'}</strong></span>
+                <span>{language === 'en' ? 'Client:' : 'جهة الأعمال:'} <strong className="text-white">{company?.companyName || (language === 'en' ? 'Verified Enterprise' : 'شركة ومؤسسة معتمدة')}</strong></span>
                 <span>•</span>
-                <span>الميزانية: <strong className="text-[#34D17A]">€{task.proposedBudget}</strong></span>
+                <span>{language === 'en' ? 'Budget:' : 'الميزانية:'} <strong className="text-[#34D17A]">€{task.proposedBudget}</strong></span>
                 <span>•</span>
-                <span>المهارات المطلوبة: <strong className="text-[#A77BF3]">{task.requiredSkills.join('، ')}</strong></span>
+                <span>{t('requiredSkills')}: <strong className="text-[#A77BF3]">{task.requiredSkills.join(', ')}</strong></span>
               </div>
             </div>
 
@@ -239,11 +243,11 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
                         </div>
 
                         <p className="text-xs text-[rgba(255,255,255,0.65)] mt-1">
-                          {match.student.university} • {formatAcademicLevel(match.student.academicLevel)}
+                          {match.student.university} • {formatAcademicLevel(match.student.academicLevel, language)}
                         </p>
 
                         <p className="text-xs text-[#3FD0B0] mt-1.5 font-medium">
-                          توصية الخوارزمية: {match.recommendationReason}
+                          {language === 'en' ? 'Match Recommendation: ' : 'توصية الخوارزمية: '}{match.recommendationReason}
                         </p>
                       </div>
                     </div>
@@ -251,7 +255,7 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
                     {/* Score & Select Button */}
                     <div className="flex sm:flex-col items-end justify-between sm:justify-center gap-3 border-t sm:border-t-0 border-white/10 pt-3 sm:pt-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-[rgba(255,255,255,0.6)]">نسبة التوافق:</span>
+                        <span className="text-xs text-[rgba(255,255,255,0.6)]">{language === 'en' ? 'Fit Score:' : 'نسبة التوافق:'}</span>
                         <span className="badge-glass-positive text-xs font-bold">
                           {match.overallScore}%
                         </span>
@@ -261,7 +265,7 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
                         onClick={() => handleInitiateDeal(match.student)}
                         className="btn-glass-gradient px-4 py-2 text-xs font-bold shadow-[0_0_16px_rgba(127,90,240,0.4)]"
                       >
-                        <span>اعتماد وتعيين الوساطة</span>
+                        <span>{language === 'en' ? 'Assign & Setup Deal' : 'اعتماد وتعيين الوساطة'}</span>
                       </button>
                     </div>
 
@@ -270,20 +274,20 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
                   {/* Score breakdown metrics bar */}
                   <div className="mt-3.5 pt-3 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-[rgba(255,255,255,0.6)]">
                     <div>
-                      <span>تطابق المهارات: </span>
+                      <span>{language === 'en' ? 'Skill Match: ' : 'تطابق المهارات: '}</span>
                       <strong className="text-white font-mono">{match.breakdown.skillMatchScore}%</strong>
                     </div>
                     <div>
-                      <span>المستوى الأكاديمي: </span>
+                      <span>{language === 'en' ? 'Academic Level: ' : 'المستوى الأكاديمي: '}</span>
                       <strong className="text-white font-mono">{match.breakdown.academicFitScore}%</strong>
                     </div>
                     <div>
-                      <span>تقييم الإدارة: </span>
+                      <span>{language === 'en' ? 'Admin Rating: ' : 'تقييم الإدارة: '}</span>
                       <strong className="text-white font-mono">{match.breakdown.ratingScore}%</strong>
                     </div>
                     <div>
-                      <span>ساعات التفرغ: </span>
-                      <strong className="text-white font-mono">{match.student.weeklyAvailability} س/أ</strong>
+                      <span>{language === 'en' ? 'Availability: ' : 'ساعات التفرغ: '}</span>
+                      <strong className="text-white font-mono">{match.student.weeklyAvailability} {t('hoursPerWeekUnit')}</strong>
                     </div>
                   </div>
                 </div>
@@ -296,7 +300,7 @@ export default function SmartMatchModal({ task, isOpen, onClose, onDealCreated }
                 onClick={onClose}
                 className="btn-glass-ghost px-5 py-2 text-xs font-semibold"
               >
-                إغلاق المساعد
+                {language === 'en' ? 'Close Assistant' : 'إغلاق المساعد'}
               </button>
             </div>
           </div>

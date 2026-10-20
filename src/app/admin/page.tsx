@@ -13,8 +13,7 @@ import {
   formatAcademicLevel, 
   formatCategoryName, 
   formatTaskStatus, 
-  formatApplicationStatus, 
-  formatDealStatus 
+  formatApplicationStatus 
 } from '@/lib/privacy-shield';
 
 type AdminTab = 'KANBAN' | 'COMPANY_REQUESTS' | 'STUDENT_APPLICATIONS' | 'STUDENTS_CRM' | 'COMPANIES_CRM' | 'LEDGER';
@@ -27,7 +26,7 @@ export default function AdminDashboardPage() {
     tasks, 
     students, 
     companies, 
-    applications,
+    applications, 
     ledger,
     moderateTaskRequest,
     createMatchDeal,
@@ -57,7 +56,6 @@ export default function AdminDashboardPage() {
   const [studentLevelFilter, setStudentLevelFilter] = useState('ALL');
 
   // Metrics
-  const activeDeals = deals.filter(d => d.status !== 'COMPLETED_COMMISSION_COLLECTED' && d.status !== 'CANCELLED');
   const totalCommission = ledger.reduce((sum, item) => sum + item.platformCommissionAmount, 0);
   const totalInvoiced = ledger.reduce((sum, item) => sum + item.grossClientAmount, 0);
   const totalStudentPayouts = ledger.reduce((sum, item) => sum + item.studentPayoutAmount, 0);
@@ -114,7 +112,7 @@ export default function AdminDashboardPage() {
       {/* Section 5.2 Dashboard Grid (Ref A) - Frame Container */}
       <div className="frame p-6 sm:p-8 space-y-6">
         
-        {/* Row 1: 3 equal KPI columns, min-height ~135px, Section 6.2 */}
+        {/* Row 1: 3 equal KPI columns */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {/* KPI 1 */}
           <div className="kpi">
@@ -178,14 +176,14 @@ export default function AdminDashboardPage() {
           <div className="rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] p-5 flex flex-col justify-between">
             <div>
               <div className="mb-2">
-                <h3 className="text-base font-bold text-white">١. الشركات وجهات الأعمال</h3>
+                <h3 className="text-base font-bold text-white">{t('tripartyTitle1')}</h3>
               </div>
               <p className="text-sm text-[rgba(255,255,255,0.65)] leading-relaxed">
-                <strong>طلب الخدمات:</strong> تطلب خدمات متخصصة ومحددة النطاق بدقة وتسليم مضمون، مع سداد فواتير بنكية رسمية (B2B Wire) مباشرة للمنصة دون أعباء التعامل الفردي.
+                <strong>{t('tripartyRole1')}</strong> {t('tripartyDesc1')}
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-[rgba(255,255,255,0.06)] flex items-center justify-between text-xs text-[rgba(255,255,255,0.5)]">
-              <span>طلبات الخدمات المسجلة</span>
+              <span>{t('tripartyRegisteredRequests')}</span>
               <strong className="text-white text-sm">{tasks.length}</strong>
             </div>
           </div>
@@ -194,15 +192,15 @@ export default function AdminDashboardPage() {
           <div className="rounded-2xl bg-gradient-to-b from-[#5B2BE0]/30 to-[#7F5AF0]/10 border border-[#A77BF3]/40 p-5 shadow-[0_0_30px_rgba(91,43,224,0.25)] flex flex-col justify-between">
             <div>
               <div className="mb-2">
-                <h3 className="text-base font-bold text-white">٢. الوسيط الحصري المعتمد (إيلينا)</h3>
+                <h3 className="text-base font-bold text-white">{t('tripartyTitle2')}</h3>
               </div>
               <p className="text-sm text-[rgba(255,255,255,0.85)] leading-relaxed">
-                <strong>إدارة المنظومة والرقابة:</strong> حماية الطرفين وحظر التحايل، تدقيق الوثائق الأكاديمية، تشغيل محرك المطابقة الذكي، فحص مخرجات العمل، وضمان التسوية البنكية.
+                <strong>{t('tripartyRole2')}</strong> {t('tripartyDesc2')}
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-[#3FD0B0]">
-              <span>بروتوكول حماية البيانات</span>
-              <span className="badge-glass-positive text-xs">محمي بنسبة 100%</span>
+              <span>{t('tripartyDataProtection')}</span>
+              <span className="badge-glass-positive text-xs">{t('footerProtectedBadge')}</span>
             </div>
           </div>
 
@@ -210,14 +208,14 @@ export default function AdminDashboardPage() {
           <div className="rounded-2xl bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.08)] p-5 flex flex-col justify-between">
             <div>
               <div className="mb-2">
-                <h3 className="text-base font-bold text-white">٣. الكفاءات الجامعية المتميزة</h3>
+                <h3 className="text-base font-bold text-white">{t('tripartyTitle3')}</h3>
               </div>
               <p className="text-sm text-[rgba(255,255,255,0.65)] leading-relaxed">
-                <strong>الخبرة والمقابل المالي:</strong> بناء سجل مهني معتمد ونيل مكافآت نقدية مضمونة، مع التنسيق الكامل والحماية عبر الوسيط واستلام المستحقات بحوالات بنكية مباشرة.
+                <strong>{t('tripartyRole3')}</strong> {t('tripartyDesc3')}
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-[rgba(255,255,255,0.06)] flex items-center justify-between text-xs text-[rgba(255,255,255,0.5)]">
-              <span>الكفاءات الموثقة</span>
+              <span>{t('tripartyVerifiedTalents')}</span>
               <strong className="text-white text-sm">{students.length}</strong>
             </div>
           </div>
@@ -302,9 +300,9 @@ export default function AdminDashboardPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-xl font-light text-white">مسار متابعة الصفقات والوساطة النشطة</h3>
+                <h3 className="text-xl font-light text-white">{t('adminKanbanHeading')}</h3>
                 <p className="text-sm text-[rgba(255,255,255,0.6)]">
-                  تدار وتوثق كافة الصفقات حصرياً عبر الوسيط المعتمد. يمكنك الضغط على أي صفقة للدخول إلى غرفة الوساطة المشفرة.
+                  {t('adminKanbanSub')}
                 </p>
               </div>
             </div>
@@ -316,9 +314,9 @@ export default function AdminDashboardPage() {
         {activeTab === 'COMPANY_REQUESTS' && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-xl font-light text-white">طلبات الخدمات والمشاريع الواردة من الشركات</h3>
+              <h3 className="text-xl font-light text-white">{t('adminCompanyRequestsHeading')}</h3>
               <p className="text-sm text-[rgba(255,255,255,0.6)]">
-                تتلقى المنصة طلبات ومواصفات المهام من الشركات، حيث يتولى الوسيط تدقيق النطاق، وتقدير الميزانية العادلة، وتشغيل خوارزمية المطابقة الذكية لاختيار أفضل الكفاءات.
+                {t('adminCompanyRequestsSub')}
               </p>
             </div>
 
@@ -326,6 +324,9 @@ export default function AdminDashboardPage() {
               {tasks.map((task) => {
                 const company = companies.find(c => c.id === task.companyProfileId);
                 const isExpanded = Boolean(expandedTaskIds[task.id]);
+                const displayTitle = language === 'en' ? (task.titleEn || task.title) : task.title;
+                const displayProblem = language === 'en' ? (task.problemStatementEn || task.problemStatement) : task.problemStatement;
+
                 return (
                   <div 
                     key={task.id} 
@@ -347,20 +348,20 @@ export default function AdminDashboardPage() {
                             ({company?.contactPersonName})
                           </span>
                           <span className="badge-glass-neutral text-xs">
-                            {formatCategoryName(task.category)}
+                            {formatCategoryName(task.category, language)}
                           </span>
                           <span className="badge-glass-positive text-xs">
-                            {formatTaskStatus(task.status)}
+                            {formatTaskStatus(task.status, language)}
                           </span>
                         </div>
 
                         <h4 className="text-lg font-semibold text-white mt-1">
-                          {task.title}
+                          {displayTitle}
                         </h4>
                       </div>
 
                       <div className="flex flex-wrap items-center gap-3 shrink-0">
-                        <div className="text-left ml-2">
+                        <div className={language === 'ar' ? 'text-left ml-2' : 'text-right mr-2'}>
                           <span className="text-xl font-bold text-white">€{task.proposedBudget}</span>
                         </div>
 
@@ -372,7 +373,7 @@ export default function AdminDashboardPage() {
                           }}
                           className="text-xs font-bold text-[#A77BF3] hover:text-white px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 transition-all cursor-pointer whitespace-nowrap"
                         >
-                          {isExpanded ? 'إخفاء التفاصيل ↑' : 'عرض التفاصيل ↓'}
+                          {isExpanded ? t('hideDetails') : t('showDetails')}
                         </button>
 
                         <button
@@ -383,7 +384,7 @@ export default function AdminDashboardPage() {
                           }}
                           className="btn-glass-gradient px-4 py-2 text-xs font-semibold shadow-[0_0_20px_rgba(127,90,240,0.4)]"
                         >
-                          <span>المطابقة الذكية</span>
+                          <span>{t('smartMatch')}</span>
                         </button>
                       </div>
                     </div>
@@ -393,24 +394,24 @@ export default function AdminDashboardPage() {
                       <div className="mt-5 pt-4 border-t border-[rgba(255,255,255,0.1)] space-y-3.5 animate-in fade-in duration-200">
                         <div>
                           <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.5)] block mb-1">
-                            شرح المشكلة ونطاق العمل:
+                            {t('adminTaskScopeLabel')}
                           </span>
                           <p className="text-sm text-[rgba(255,255,255,0.85)] leading-relaxed">
-                            {task.problemStatement}
+                            {displayProblem}
                           </p>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-4 text-xs text-[rgba(255,255,255,0.6)]">
-                          <span>المهارات المطلوبة: <strong className="text-white">{task.requiredSkills.join('، ')}</strong></span>
+                          <span>{t('requiredSkills')}: <strong className="text-white">{task.requiredSkills.join(', ')}</strong></span>
                           <span>•</span>
-                          <span>المدة: <strong className="text-white">{task.estimatedDurationDays} أيام</strong></span>
+                          <span>{t('durationLabel')}: <strong className="text-white">{task.estimatedDurationDays} {t('daysUnit')}</strong></span>
                           <span>•</span>
-                          <span>مستحقات الطالب (80%): <strong className="text-[#34D17A]">€{Math.round(task.proposedBudget * 0.8)}</strong></span>
+                          <span>{t('adminStudentRewardLabel')} <strong className="text-[#34D17A]">€{Math.round(task.proposedBudget * 0.8)}</strong></span>
                           <span>•</span>
-                          <span>عائد الوسيط (20%): <strong className="text-[#A77BF3]">€{Math.round(task.proposedBudget * 0.2)}</strong></span>
+                          <span>{t('adminBrokerReturnLabel')} <strong className="text-[#A77BF3]">€{Math.round(task.proposedBudget * 0.2)}</strong></span>
                         </div>
 
-                        <div className="pt-2 flex justify-end">
+                        <div className={`pt-2 flex ${language === 'ar' ? 'justify-end' : 'justify-end'}`}>
                           <button
                             type="button"
                             onClick={(e) => {
@@ -419,7 +420,7 @@ export default function AdminDashboardPage() {
                             }}
                             className="btn-glass-ghost px-4 py-1.5 text-xs font-medium"
                           >
-                            {task.isPubliclyVisible ? 'إخفاء من دليل المهام العام' : 'نشر بدليل المهام العام'}
+                            {task.isPubliclyVisible ? t('adminHideFromPublic') : t('adminPublishToPublic')}
                           </button>
                         </div>
                       </div>
@@ -431,26 +432,29 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* 3. STUDENT APPLICATIONS FOR EXPERIENCE & MONEY */}
+        {/* 3. STUDENT APPLICATIONS */}
         {activeTab === 'STUDENT_APPLICATIONS' && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-xl font-light text-white">عروض الكفاءات الطلابية للمهام المفتوحة</h3>
+              <h3 className="text-xl font-light text-white">{t('adminStudentAppsHeading')}</h3>
               <p className="text-sm text-[rgba(255,255,255,0.6)]">
-                يقدم الطلاب الجامعيون عروضهم المباشرة للوسيط المعتمد، حيث يتم فحص الجاهزية والخبرة وإبرام الصفقات المضمونة نيابة عنهم.
+                {t('adminStudentAppsSub')}
               </p>
             </div>
 
             <div className="grid grid-cols-1 gap-4">
               {applications.length === 0 ? (
                 <div className="glass-card p-12 text-center text-sm text-[rgba(255,255,255,0.5)]">
-                  لا توجد طلبات طلاب معلقة في قائمة الانتظار حالياً.
+                  {t('adminNoApps')}
                 </div>
               ) : (
                 applications.map((app) => {
                   const student = students.find(s => s.id === app.studentProfileId);
                   const task = tasks.find(t => t.id === app.taskRequestId);
                   const isExpanded = Boolean(expandedAppIds[app.id]);
+                  const displayTaskTitle = language === 'en' ? (task?.titleEn || task?.title) : task?.title;
+                  const displayPitch = language === 'en' ? (app.pitchStatementEn || app.pitchStatement) : app.pitchStatement;
+
                   return (
                     <div 
                       key={app.id} 
@@ -472,12 +476,12 @@ export default function AdminDashboardPage() {
                               • {student?.university}
                             </span>
                             <span className="badge-glass-positive text-xs">
-                              {formatApplicationStatus(app.status)}
+                              {formatApplicationStatus(app.status, language)}
                             </span>
                           </div>
 
                           <p className="text-base font-medium text-white">
-                            <strong>التقديم للمهمة:</strong> {task?.referenceCode} - {task?.title}
+                            <strong>{t('adminAppForTask')}</strong> {task?.referenceCode} - {displayTaskTitle}
                           </p>
                         </div>
 
@@ -490,7 +494,7 @@ export default function AdminDashboardPage() {
                             }}
                             className="text-xs font-bold text-[#3FD0B0] hover:text-white px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 transition-all cursor-pointer whitespace-nowrap"
                           >
-                            {isExpanded ? 'إخفاء التفاصيل ↑' : 'عرض التفاصيل ↓'}
+                            {isExpanded ? t('hideDetails') : t('showDetails')}
                           </button>
 
                           <button
@@ -503,14 +507,16 @@ export default function AdminDashboardPage() {
                                 studentProfileId: student.id,
                                 agreedBudget: task.proposedBudget,
                                 studentPayout: Math.round(task.proposedBudget * 0.8),
-                                adminNotes: `تم قبول عرض الطالب يدويًا: ${student.anonymousCode} (${student.fullName}).`,
+                                adminNotes: language === 'ar'
+                                  ? `تم قبول عرض الطالب يدويًا: ${student.anonymousCode} (${student.fullName}).`
+                                  : `Student proposal accepted manually: ${student.anonymousCode} (${student.fullName}).`,
                               });
-                              alert(`تم إنشاء الصفقة ${deal.dealReference} بنجاح! تم إشعار الطرفين مع حماية تامة لمنع التحايل.`);
+                              alert(`${deal.dealReference}: ${t('adminDealCreatedAlert')}`);
                               setActiveTab('KANBAN');
                             }}
                             className="btn-glass-gradient px-5 py-2.5 text-xs font-semibold shadow-[0_0_24px_rgba(127,90,240,0.4)]"
                           >
-                            <span>اعتماد وتدشين الصفقة</span>
+                            <span>{t('adminApproveAndLaunchDeal')}</span>
                           </button>
                         </div>
                       </div>
@@ -519,14 +525,14 @@ export default function AdminDashboardPage() {
                       {isExpanded && (
                         <div className="mt-4 pt-4 border-t border-[rgba(255,255,255,0.1)] space-y-3 animate-in fade-in duration-200">
                           <div className="rounded-2xl bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] p-4 text-sm text-[rgba(255,255,255,0.85)] leading-relaxed max-w-3xl">
-                            <span className="text-[#A77BF3] font-semibold block mb-1">عرض الطالب المقدم للوسيط:</span>
-                            "{app.pitchStatement}"
+                            <span className="text-[#A77BF3] font-semibold block mb-1">{t('adminStudentPitchLabel')}</span>
+                            "{displayPitch}"
                           </div>
 
                           <div className="flex flex-wrap items-center gap-4 text-xs text-[rgba(255,255,255,0.6)] pt-1">
-                            <span>ميزانية العميل: <strong className="text-white">€{task?.proposedBudget}</strong></span>
-                            <span>مستحقات الطالب (80%): <strong className="text-[#34D17A]">€{task ? Math.round(task.proposedBudget * 0.8) : 0}</strong></span>
-                            <span>عائد الوسيط (20%): <strong className="text-[#A77BF3]">€{task ? Math.round(task.proposedBudget * 0.2) : 0}</strong></span>
+                            <span>{t('adminClientBudgetLabel')} <strong className="text-white">€{task?.proposedBudget}</strong></span>
+                            <span>{t('adminStudentRewardLabel')} <strong className="text-[#34D17A]">€{task ? Math.round(task.proposedBudget * 0.8) : 0}</strong></span>
+                            <span>{t('adminBrokerReturnLabel')} <strong className="text-[#A77BF3]">€{task ? Math.round(task.proposedBudget * 0.2) : 0}</strong></span>
                           </div>
                         </div>
                       )}
@@ -543,9 +549,9 @@ export default function AdminDashboardPage() {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h3 className="text-xl font-light text-white">قاعدة بيانات الكفاءات الطلابية</h3>
+                <h3 className="text-xl font-light text-white">{t('adminStudentCrmHeading')}</h3>
                 <p className="text-sm text-[rgba(255,255,255,0.6)]">
-                  تدقيق الأوراق الجامعية وتحديث التقييمات الإدارية المعتمدة.
+                  {t('adminStudentCrmSub')}
                 </p>
               </div>
 
@@ -556,7 +562,7 @@ export default function AdminDashboardPage() {
                     type="text"
                     value={studentSearch}
                     onChange={(e) => setStudentSearch(e.target.value)}
-                    placeholder="ابحث بالاسم، المهارة، الجامعة..."
+                    placeholder={t('adminSearchStudentPlaceholder')}
                     className="w-full rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.06)] px-4 py-2 text-sm text-white placeholder:text-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#A77BF3]"
                   />
                 </div>
@@ -566,11 +572,11 @@ export default function AdminDashboardPage() {
                   onChange={(e) => setStudentLevelFilter(e.target.value)}
                   className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[#07070C] px-4 py-2 text-sm text-white focus:outline-none focus:border-[#A77BF3] cursor-pointer"
                 >
-                  <option value="ALL">جميع المستويات</option>
-                  <option value="LICENCE_3">بكالوريوس / ليسانس (L3)</option>
-                  <option value="MASTER_1">ماستر 1 (M1)</option>
-                  <option value="MASTER_2">ماستر 2 (M2)</option>
-                  <option value="ENGINEERING_CYCLE">سلك المهندسين</option>
+                  <option value="ALL">{t('adminAllLevels')}</option>
+                  <option value="LICENCE_3">{t('adminLicence3')}</option>
+                  <option value="MASTER_1">{t('adminMaster1')}</option>
+                  <option value="MASTER_2">{t('adminMaster2')}</option>
+                  <option value="ENGINEERING_CYCLE">{t('adminEngineering')}</option>
                 </select>
               </div>
             </div>
@@ -578,16 +584,16 @@ export default function AdminDashboardPage() {
             {/* Table */}
             <div className="glass-card overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-right text-sm">
+                <table className={`w-full text-sm ${language === 'ar' ? 'text-right' : 'text-left'}`}>
                   <thead className="bg-[rgba(255,255,255,0.04)] text-xs uppercase tracking-wider text-[rgba(255,255,255,0.5)] border-b border-[rgba(255,255,255,0.08)]">
                     <tr>
-                      <th className="py-3.5 px-6 font-semibold">الكفاءة الطلابية</th>
-                      <th className="py-3.5 px-6 font-semibold">الجامعة والتخصص</th>
-                      <th className="py-3.5 px-6 font-semibold">المستوى</th>
-                      <th className="py-3.5 px-6 font-semibold">المهارات</th>
-                      <th className="py-3.5 px-6 font-semibold">التقييم</th>
-                      <th className="py-3.5 px-6 font-semibold">حالة التوثيق</th>
-                      <th className="py-3.5 px-6 font-semibold text-left">الإجراءات</th>
+                      <th className="py-3.5 px-6 font-semibold">{t('adminThTalent')}</th>
+                      <th className="py-3.5 px-6 font-semibold">{t('adminThUniversityMajor')}</th>
+                      <th className="py-3.5 px-6 font-semibold">{t('adminThLevel')}</th>
+                      <th className="py-3.5 px-6 font-semibold">{t('adminThSkills')}</th>
+                      <th className="py-3.5 px-6 font-semibold">{t('adminThRating')}</th>
+                      <th className="py-3.5 px-6 font-semibold">{t('adminThVerification')}</th>
+                      <th className={`py-3.5 px-6 font-semibold ${language === 'ar' ? 'text-left' : 'text-right'}`}>{t('adminThActions')}</th>
                     </tr>
                   </thead>
 
@@ -613,7 +619,7 @@ export default function AdminDashboardPage() {
                         </td>
 
                         <td className="py-4 px-6 font-medium text-[rgba(255,255,255,0.7)]">
-                          {formatAcademicLevel(student.academicLevel)}
+                          {formatAcademicLevel(student.academicLevel, language)}
                         </td>
 
                         <td className="py-4 px-6">
@@ -635,21 +641,21 @@ export default function AdminDashboardPage() {
                         <td className="py-4 px-6">
                           {student.verificationStatus === 'VERIFIED' ? (
                             <span className="badge-glass-positive text-xs">
-                              <span>موثق أكاديمياً</span>
+                              <span>{t('adminVerifiedAcademic')}</span>
                             </span>
                           ) : (
                             <span className="badge-glass-neutral text-xs">
-                              قيد المراجعة
+                              {t('adminPendingReview')}
                             </span>
                           )}
                         </td>
 
-                        <td className="py-4 px-6 text-left">
+                        <td className={`py-4 px-6 ${language === 'ar' ? 'text-left' : 'text-right'}`}>
                           <button
                             onClick={() => setSelectedStudentForVetting(student)}
                             className="btn-glass-ghost px-4 py-1.5 text-xs font-medium"
                           >
-                            مراجعة وتوثيق
+                            {t('adminReviewAndVerify')}
                           </button>
                         </td>
                       </tr>
@@ -665,9 +671,9 @@ export default function AdminDashboardPage() {
         {activeTab === 'COMPANIES_CRM' && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-xl font-light text-white">حسابات الشركات المعتمدة</h3>
+              <h3 className="text-xl font-light text-white">{t('adminCompanyCrmHeading')}</h3>
               <p className="text-sm text-[rgba(255,255,255,0.6)]">
-                ملفات الشركات الناشئة الموثقة وجهات الاتصال الرسمية الطالبة للخدمات.
+                {t('adminCompanyCrmSub')}
               </p>
             </div>
 
@@ -686,7 +692,7 @@ export default function AdminDashboardPage() {
                             {company.companyName}
                           </h4>
                           <p className="text-sm text-[rgba(255,255,255,0.6)] mt-0.5">
-                            {company.industry} • فريق من {company.companySize}
+                            {company.industry} • {t('adminCompanyTeam')} {company.companySize}
                           </p>
                         </div>
 
@@ -696,15 +702,15 @@ export default function AdminDashboardPage() {
                       </div>
 
                       <div className="mt-5 rounded-2xl bg-[rgba(255,255,255,0.04)] p-4 text-sm text-[rgba(255,255,255,0.8)] border border-[rgba(255,255,255,0.08)] space-y-1.5">
-                        <p><strong>المسؤول:</strong> {company.contactPersonName} ({company.contactPersonTitle})</p>
-                        <p><strong>الهاتف:</strong> <span dir="ltr">{company.contactPhone}</span></p>
-                        <p><strong>الموقع الإلكتروني:</strong> <span className="text-[#3FD0B0] underline" dir="ltr">{company.corporateWebsite}</span></p>
+                        <p><strong>{t('adminCompanyPerson')}</strong> {company.contactPersonName} ({company.contactPersonTitle})</p>
+                        <p><strong>{t('adminCompanyPhone')}</strong> <span dir="ltr">{company.contactPhone}</span></p>
+                        <p><strong>{t('adminCompanyWebsite')}</strong> <span className="text-[#3FD0B0] underline" dir="ltr">{company.corporateWebsite}</span></p>
                       </div>
                     </div>
 
                     <div className="mt-6 pt-4 border-t border-[rgba(255,255,255,0.08)] flex justify-between items-center text-sm text-[rgba(255,255,255,0.6)]">
-                      <span>الطلبات المقدمة: <strong className="text-white">{companyTasks.length}</strong></span>
-                      <span className="badge-glass-positive text-xs">عميل نشط</span>
+                      <span>{t('adminCompanyTasksSubmitted')} <strong className="text-white">{companyTasks.length}</strong></span>
+                      <span className="badge-glass-positive text-xs">{t('adminActiveClient')}</span>
                     </div>
                   </div>
                 );

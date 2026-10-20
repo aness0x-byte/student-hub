@@ -3,9 +3,10 @@
 import React, { useState } from 'react';
 import { useStore } from '@/lib/store';
 import AnonymizedTalentCard from '@/components/shared/AnonymizedTalentCard';
+import { formatAcademicLevel } from '@/lib/privacy-shield';
 
 export default function TalentCatalogPage() {
-  const { students } = useStore();
+  const { students, language, t } = useStore();
   const [search, setSearch] = useState('');
   const [levelFilter, setLevelFilter] = useState('ALL');
   const [skillFilter, setSkillFilter] = useState('ALL');
@@ -31,13 +32,13 @@ export default function TalentCatalogPage() {
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <div className="badge-glass-positive px-4 py-1.5 text-sm font-semibold">
-          <span>درع الخصوصية الصارم • ملفات تعريف مجهولة الهوية بالكامل</span>
+          <span>{t('catalogHeroBadge')}</span>
         </div>
         <h1 className="text-4xl sm:text-5xl font-light tracking-tight text-white">
-          دليل الكفاءات الجامعية المعتمدة
+          {t('catalogHeroTitle')}
         </h1>
         <p className="text-base sm:text-lg text-[rgba(255,255,255,0.7)] leading-relaxed">
-          تصفح نخبة الكفاءات الأكاديمية والمهنية المعتمدة. تبقى بيانات التواصل الشخصية محجوبة بالكامل وفق سياسة درع الخصوصية الصارم، ويتولى الوسيط المعتمد التنسيق والمطابقة الرسمية وتدشين غرفة الصفقة.
+          {t('catalogHeroSubtitle')}
         </p>
       </div>
 
@@ -48,14 +49,14 @@ export default function TalentCatalogPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="ابحث بالجامعة، المهارة، أو الكود..."
+            placeholder={t('catalogSearchPlaceholder')}
             className="w-full rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.06)] px-5 py-2.5 text-sm text-white placeholder:text-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#A77BF3]"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           <div className="text-sm text-[rgba(255,255,255,0.6)] font-semibold">
-            <span>التصفيات:</span>
+            <span>{t('catalogFilterLabel')}</span>
           </div>
 
           <select
@@ -63,11 +64,11 @@ export default function TalentCatalogPage() {
             onChange={(e) => setLevelFilter(e.target.value)}
             className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[#07070C] px-5 py-2.5 text-sm text-white focus:outline-none focus:border-[#A77BF3] cursor-pointer"
           >
-            <option value="ALL">جميع المستويات الأكاديمية</option>
-            <option value="LICENCE_3">ليسانس / بكالوريوس (L3)</option>
-            <option value="MASTER_1">ماستر 1 (M1)</option>
-            <option value="MASTER_2">ماستر 2 / تخصصي (M2)</option>
-            <option value="ENGINEERING_CYCLE">سلك المهندسين</option>
+            <option value="ALL">{t('catalogAllLevels')}</option>
+            <option value="LICENCE_3">{formatAcademicLevel('LICENCE_3', language)}</option>
+            <option value="MASTER_1">{formatAcademicLevel('MASTER_1', language)}</option>
+            <option value="MASTER_2">{formatAcademicLevel('MASTER_2', language)}</option>
+            <option value="ENGINEERING_CYCLE">{formatAcademicLevel('ENGINEERING_CYCLE', language)}</option>
           </select>
 
           <select
@@ -75,7 +76,7 @@ export default function TalentCatalogPage() {
             onChange={(e) => setSkillFilter(e.target.value)}
             className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[#07070C] px-5 py-2.5 text-sm text-white focus:outline-none focus:border-[#A77BF3] cursor-pointer"
           >
-            <option value="ALL">جميع المهارات المعتمدة</option>
+            <option value="ALL">{t('catalogAllSkills')}</option>
             {allSkills.map((sk) => (
               <option key={sk} value={sk}>{sk}</option>
             ))}
@@ -90,7 +91,7 @@ export default function TalentCatalogPage() {
             key={student.id}
             student={student}
             onRequestMatch={(s) => {
-              alert(`تم تسجيل طلب المطابقة للكفاءة ${s.anonymousCode} بنجاح! سيتولى الوسيط المعتمد دراسة الطلب وبدء إجراءات التنسيق الفوري.`);
+              alert(`${s.anonymousCode}: ${t('catalogMatchSuccess')}`);
             }}
           />
         ))}
@@ -98,7 +99,7 @@ export default function TalentCatalogPage() {
 
       {filtered.length === 0 && (
         <div className="glass-card py-20 text-center text-sm text-[rgba(255,255,255,0.5)]">
-          لم يتم العثور على أي كفاءة جامعية مطابقة لمعايير البحث المحددة.
+          {t('catalogNoResults')}
         </div>
       )}
 

@@ -3,13 +3,14 @@
 import React, { useState } from 'react';
 import { useStore } from '@/lib/store';
 import { AcademicLevel } from '@/lib/types';
+import { formatAcademicLevel } from '@/lib/privacy-shield';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const ACADEMIC_MAJORS = [
+const ACADEMIC_MAJORS_AR = [
   'إدارة الأعمال، الاقتصاد والمالية',
   'الهندسة، التقنية والحوسبة',
   'الطب، التمريض والعلوم الصحية',
@@ -25,8 +26,24 @@ const ACADEMIC_MAJORS = [
   'تخصص / مجال آخر (كتابة يدوية)',
 ];
 
+const ACADEMIC_MAJORS_EN = [
+  'Business Administration, Economics & Finance',
+  'Engineering, Technology & Computing',
+  'Medicine, Nursing & Health Sciences',
+  'Pharmacy & Pharmaceutical Sciences',
+  'Law, Political Science & Legal Studies',
+  'Languages, Translation & Literature',
+  'Design, Architecture & Graphic Arts',
+  'Natural Sciences, Mathematics & Statistics',
+  'Media, Journalism & Public Relations',
+  'Humanities, Social Sciences & Psychology',
+  'Education & Curriculum Development',
+  'Agricultural, Environmental & Nutritional Sciences',
+  'Other Major / Custom Field (Manual Entry)',
+];
+
 export default function TaskWizardModal({ isOpen, onClose }: Props) {
-  const { submitTaskRequest, currentCompanyProfile } = useStore();
+  const { submitTaskRequest, currentCompanyProfile, language, t } = useStore();
 
   const [step, setStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -44,7 +61,12 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
 
   if (!isOpen) return null;
 
-  const effectiveCategory = selectedMajor === 'تخصص / مجال آخر (كتابة يدوية)'
+  const academicMajors = language === 'en' ? ACADEMIC_MAJORS_EN : ACADEMIC_MAJORS_AR;
+  const customTrigger = language === 'en'
+    ? 'Other Major / Custom Field (Manual Entry)'
+    : 'تخصص / مجال آخر (كتابة يدوية)';
+
+  const effectiveCategory = selectedMajor === customTrigger
     ? customCategory.trim()
     : selectedMajor;
 
@@ -76,7 +98,7 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
       title: title.trim(),
       category: effectiveCategory,
       problemStatement: problemStatement.trim(),
-      deliverablesCriteria: deliverablesCriteria.trim() || 'مخرجات متكاملة ومحققة وفق المواصفات المحددة.',
+      deliverablesCriteria: deliverablesCriteria.trim() || (language === 'en' ? 'Quality deliverables adhering to specifications.' : 'مخرجات متكاملة ومحققة وفق المواصفات المحددة.'),
       requiredSkills: parsedSkills,
       targetAcademicLevel,
       estimatedDurationDays: Number(estimatedDurationDays) || 7,
@@ -106,18 +128,18 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute left-6 top-6 rounded-full px-3 py-1 text-xs font-semibold bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition-colors"
+          className={`absolute ${language === 'ar' ? 'left-6' : 'right-6'} top-6 rounded-full px-3 py-1 text-xs font-semibold bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition-colors`}
         >
-          إغلاق
+          {t('close')}
         </button>
 
         {isSubmitted ? (
           <div className="py-12 text-center">
             <h3 className="mt-4 text-2xl font-light text-white">
-              تم استلام طلب المهمة والخدمة بنجاح!
+              {t('taskWizardSuccessTitle')}
             </h3>
             <p className="mt-2 text-sm text-[rgba(255,255,255,0.7)] max-w-md mx-auto leading-relaxed">
-              يقوم الوسيط المعتمد بتدقيق متطلباتك وتشغيل محرك المطابقة الذكي لاختيار أفضل الكفاءات الجامعية وتنسيق بدء التنفيذ فوراً.
+              {t('taskWizardSuccessSub')}
             </p>
           </div>
         ) : (
@@ -127,16 +149,16 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
             <div className="border-b border-white/10 pb-5 mb-5">
               <div className="flex items-center gap-2">
                 <span className="badge-glass-violet text-xs font-mono">
-                  الخطوة {step} من 3
+                  {language === 'en' ? `Step ${step} of 3` : `الخطوة ${step} من 3`}
                 </span>
                 <span className="text-xs text-[rgba(255,255,255,0.6)] font-medium">
                   {currentCompanyProfile?.companyName}
                 </span>
               </div>
               <h2 className="mt-2 text-xl font-bold text-white">
-                {step === 1 && 'تحديد نطاق الخدمة، المشكلة، والتخصص الأكاديمي المطلوب'}
-                {step === 2 && 'المتطلبات، المهارات، والمستوى الأكاديمي المستهدف'}
-                {step === 3 && 'الميزانية، مدة الإنجاز، وضمان الوساطة'}
+                {step === 1 && t('taskWizardStep1Title')}
+                {step === 2 && t('taskWizardStep2Title')}
+                {step === 3 && t('taskWizardStep3Title')}
               </h2>
 
               {/* Progress bar */}
@@ -152,21 +174,21 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                    عنوان المهمة أو الخدمة المطلوبة *
+                    {t('taskWizardTitleLabel')}
                   </label>
                   <input
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     required
-                    placeholder="اكتب عنوان الخدمة المطلوبة..."
+                    placeholder={t('taskWizardTitlePlaceholder')}
                     className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                    تصنيف الخدمة / التخصص الجامعي المطلوب (مفتوح لكافة التخصصات) *
+                    {t('taskWizardCategoryLabel')}
                   </label>
                   <select
                     value={selectedMajor}
@@ -174,8 +196,8 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
                     required
                     className="w-full rounded-2xl border border-white/15 bg-[#07070C] px-4 py-2.5 text-xs text-white focus:border-[#A77BF3] focus:outline-none cursor-pointer"
                   >
-                    <option value="">اختر التخصص أو المجال الأكاديمي المطلوب...</option>
-                    {ACADEMIC_MAJORS.map((major) => (
+                    <option value="">{t('taskWizardCategoryPlaceholder')}</option>
+                    {academicMajors.map((major) => (
                       <option key={major} value={major}>
                         {major}
                       </option>
@@ -183,17 +205,17 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
                   </select>
                 </div>
 
-                {selectedMajor === 'تخصص / مجال آخر (كتابة يدوية)' && (
+                {selectedMajor === customTrigger && (
                   <div className="animate-in fade-in duration-200">
                     <label className="block text-xs font-semibold text-[#A77BF3] mb-1">
-                      اكتب التخصص أو المجال بدقة (تحكم كامل للمستخدم) *
+                      {t('taskWizardCustomCategoryLabel')}
                     </label>
                     <input
                       type="text"
                       value={customCategory}
                       onChange={(e) => setCustomCategory(e.target.value)}
                       required
-                      placeholder="اكتب اسم التخصص أو المجال الأكاديمي المطلوب..."
+                      placeholder={t('taskWizardCustomCategoryPlaceholder')}
                       className="w-full rounded-2xl border border-[#A77BF3]/50 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
                     />
                   </div>
@@ -201,28 +223,28 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
 
                 <div>
                   <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                    شرح المشكلة والسياق المطلوب *
+                    {t('taskWizardProblemLabel')}
                   </label>
                   <textarea
                     value={problemStatement}
                     onChange={(e) => setProblemStatement(e.target.value)}
                     required
                     rows={4}
-                    placeholder="اشرح الهدف والمتطلبات وما الذي ترغب في إنجازه بدقة..."
-                    className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
+                    placeholder={t('taskWizardProblemPlaceholder')}
+                    className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                    معايير ومخرجات التسليم المحددة
+                    {t('taskWizardDeliverablesLabel')}
                   </label>
-                  <input
-                    type="text"
+                  <textarea
                     value={deliverablesCriteria}
                     onChange={(e) => setDeliverablesCriteria(e.target.value)}
-                    placeholder="حدد معايير ومخرجات التسليم المطلوبة..."
-                    className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
+                    rows={2}
+                    placeholder={t('taskWizardDeliverablesPlaceholder')}
+                    className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
                   />
                 </div>
               </div>
@@ -233,51 +255,46 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                    المهارات أو المتطلبات المطلوبة (مفصولة بفواصل) *
+                    {t('taskWizardSkillsLabel')}
                   </label>
                   <input
                     type="text"
                     value={skillsString}
                     onChange={(e) => setSkillsString(e.target.value)}
                     required
-                    placeholder="اكتب المهارات أو الشروط المطلوبة مفصولة بفواصل..."
+                    placeholder={t('taskWizardSkillsPlaceholder')}
                     className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
                   />
-                  <p className="mt-1 text-xs text-[rgba(255,255,255,0.5)]">
-                    يستخدم الوسيط هذه المهارات لاختيار أفضل الكفاءات الجامعية المتطابقة.
-                  </p>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                    المستوى الأكاديمي المستهدف
+                    {t('taskWizardAcademicLevelLabel')}
                   </label>
                   <select
                     value={targetAcademicLevel}
                     onChange={(e) => setTargetAcademicLevel(e.target.value as AcademicLevel)}
                     className="w-full rounded-2xl border border-white/15 bg-[#07070C] px-4 py-2.5 text-xs text-white focus:border-[#A77BF3] focus:outline-none cursor-pointer"
                   >
-                    <option value="LICENCE_2">السنة الثانية جامعي (L2)</option>
-                    <option value="LICENCE_3">بكالوريوس / ليسانس (L3)</option>
-                    <option value="MASTER_1">ماستر 1 (M1)</option>
-                    <option value="MASTER_2">ماستر 2 / ماجستير تخصصي (M2)</option>
-                    <option value="ENGINEERING_CYCLE">سلك كبار المهندسين والماستر المهني</option>
-                    <option value="PHD_DOCTORATE">دكتوراه وباحث أكاديمي</option>
+                    <option value="LICENCE_3">{formatAcademicLevel('LICENCE_3', language)}</option>
+                    <option value="MASTER_1">{formatAcademicLevel('MASTER_1', language)}</option>
+                    <option value="MASTER_2">{formatAcademicLevel('MASTER_2', language)}</option>
+                    <option value="ENGINEERING_CYCLE">{formatAcademicLevel('ENGINEERING_CYCLE', language)}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                    مدة الإنجاز والتسليم المتوقعة (بالأيام) *
+                    {t('taskWizardDurationLabel')}
                   </label>
                   <input
                     type="number"
                     min={1}
-                    max={90}
+                    max={60}
                     value={estimatedDurationDays}
                     onChange={(e) => setEstimatedDurationDays(e.target.value ? Number(e.target.value) : '')}
                     required
-                    placeholder="اكتب عدد الأيام المتوقعة للإنجاز..."
+                    placeholder={t('taskWizardDurationPlaceholder')}
                     className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
                   />
                 </div>
@@ -286,76 +303,84 @@ export default function TaskWizardModal({ isOpen, onClose }: Props) {
 
             {/* Step 3: Budget & Terms */}
             {step === 3 && (
-              <div className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                    الميزانية المقترحة للمشروع (€) *
+                    {t('taskWizardBudgetLabel')}
                   </label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      min={50}
-                      max={50000}
-                      step={5}
-                      value={proposedBudget}
-                      onChange={(e) => setProposedBudget(e.target.value ? Number(e.target.value) : '')}
-                      required
-                      dir="ltr"
-                      placeholder="اكتب الميزانية المقترحة..."
-                      className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs font-bold text-white focus:outline-none focus:border-[#A77BF3]"
-                    />
-                  </div>
-                  <p className="mt-1 text-xs text-[rgba(255,255,255,0.5)]">
-                    تُصرف 80% للمنفذ كصافي مستحقات مضمونة، وتُخصص 20% كرسوم وساطة وحماية وضمان جودة بموجب فاتورة بنكية رسمية معتمدة.
-                  </p>
+                  <input
+                    type="number"
+                    min={50}
+                    step={10}
+                    value={proposedBudget}
+                    onChange={(e) => setProposedBudget(e.target.value ? Number(e.target.value) : '')}
+                    required
+                    placeholder={t('taskWizardBudgetPlaceholder')}
+                    className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-bold text-white focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
+                  />
                 </div>
 
-                {/* Privacy & Concierge Confirmation */}
-                <div className="glass-card p-4 space-y-2 border-[#34D17A]/30 bg-[#34D17A]/5">
-                  <div className="flex items-center gap-2 text-xs font-bold text-white">
-                    <span>ميثاق الوساطة والحماية الحصرية</span>
+                {/* Live Split Calculation */}
+                {Number(proposedBudget) > 0 && (
+                  <div className="rounded-2xl border border-white/15 bg-white/5 p-4 space-y-2 text-xs">
+                    <div className="flex items-center justify-between text-[#34D17A]">
+                      <span>{t('taskWizardPayout80')}</span>
+                      <strong className="font-mono text-sm">€{Math.round(Number(proposedBudget) * 0.8)}</strong>
+                    </div>
+                    <div className="flex items-center justify-between text-[#A77BF3]">
+                      <span>{t('taskWizardMargin20')}</span>
+                      <strong className="font-mono text-sm">€{Math.round(Number(proposedBudget) * 0.2)}</strong>
+                    </div>
                   </div>
-                  <ul className="text-xs text-[rgba(255,255,255,0.7)] space-y-1 list-disc pr-4">
-                    <li>يتولى الوسيط المعتمد مراجعة مواصفات الخدمة وتدقيق مخرجاتها قبل التعاقد والتكليف.</li>
-                    <li>حماية تامة لبيانات التواصل والسرية المهنية وفق بروتوكول درع الخصوصية الصارم.</li>
-                    <li>ضمانات سداد مصرفية رسمية (SEPA / B2B Wire) تضمن حقوق الطرفين حتى التسليم النهائي.</li>
-                  </ul>
+                )}
+
+                <div className="glass-card p-4 text-xs text-[rgba(255,255,255,0.75)] space-y-1.5 border-[#3FD0B0]/20 bg-[#3FD0B0]/5">
+                  <p className="font-semibold text-white">{t('landingNotice')}</p>
+                  <p>{t('taskWizardEscrowNotice')}</p>
                 </div>
-              </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                  <button
+                    type="button"
+                    onClick={handlePrev}
+                    className="btn-glass-ghost px-5 py-2 text-xs font-semibold"
+                  >
+                    {t('taskWizardPrev')}
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-glass-primary px-6 py-2.5 text-xs font-bold"
+                  >
+                    <span>{t('taskWizardSubmit')}</span>
+                  </button>
+                </div>
+              </form>
             )}
 
-            {/* Stepper Buttons */}
-            <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-4">
-              {step > 1 ? (
-                <button
-                  type="button"
-                  onClick={handlePrev}
-                  className="btn-glass-ghost px-5 py-2.5 text-xs font-semibold"
-                >
-                  <span>السابق</span>
-                </button>
-              ) : (
-                <div />
-              )}
+            {/* Stepper Navigation (Steps 1 & 2) */}
+            {step < 3 && (
+              <div className="flex items-center justify-between pt-5 border-t border-white/10 mt-6">
+                {step > 1 ? (
+                  <button
+                    type="button"
+                    onClick={handlePrev}
+                    className="btn-glass-ghost px-5 py-2 text-xs font-semibold"
+                  >
+                    {t('taskWizardPrev')}
+                  </button>
+                ) : (
+                  <div />
+                )}
 
-              {step < 3 ? (
                 <button
                   type="button"
                   onClick={handleNext}
                   className="btn-glass-primary px-6 py-2.5 text-xs font-bold"
                 >
-                  <span>المتابعة</span>
+                  <span>{t('taskWizardNext')}</span>
                 </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  className="btn-glass-primary px-6 py-2.5 text-xs font-bold"
-                >
-                  <span>إرسال طلب الخدمة للوسيط</span>
-                </button>
-              )}
-            </div>
+              </div>
+            )}
 
           </div>
         )}

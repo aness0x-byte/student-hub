@@ -3,9 +3,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useStore } from '@/lib/store';
 
 export default function Footer() {
   const pathname = usePathname();
+  const { t } = useStore();
+
   if (pathname === '/') return null;
 
   return (
@@ -17,19 +20,19 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div>
               <h4 className="text-base font-bold text-white flex items-center gap-2.5">
-                <span>بروتوكول الوساطة المزدوجة والحماية من التحايل</span>
+                <span>{t('footerProtocolTitle')}</span>
                 <span className="rounded-full bg-[#3FD0B0]/20 text-[#3FD0B0] border border-[#3FD0B0]/30 px-2.5 py-0.5 text-xs font-semibold">
-                  محمي بنسبة 100%
+                  {t('footerProtectedBadge')}
                 </span>
               </h4>
               <p className="text-sm text-[rgba(255,255,255,0.65)] mt-1 max-w-3xl leading-relaxed">
-                تتواصل الشركات والطلاب حصرياً عبر الوسيط المعتمد. يحصل الطلاب على مستحقات مضمونة وخبرة جامعية معتمدة، وتتلقى الشركات برمجيات مفحوصة وفواتير بنكية مباشرة دون أي مخاطر.
+                {t('footerProtocolDesc')}
               </p>
             </div>
             
             <div className="flex items-center gap-5 text-sm font-medium text-white shrink-0">
-              <span className="badge-glass-neutral text-xs">تسوية بنكية مباشرة</span>
-              <span className="badge-glass-neutral text-xs">بدون احتجاز أموال</span>
+              <span className="badge-glass-neutral text-xs">{t('footerDirectWire')}</span>
+              <span className="badge-glass-neutral text-xs">{t('footerNoEscrowCustody')}</span>
             </div>
           </div>
         </div>
@@ -38,47 +41,53 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 text-sm">
           <div>
             <span className="font-bold text-lg text-white tracking-tight">
-              ستودنت هب
+              {t('brandName')}
             </span>
             <p className="mt-3 text-[rgba(255,255,255,0.55)] leading-relaxed text-sm">
-              منصة الخدمات والمهام المصغرة المدارة التي تربط الكفاءات الجامعية بالشركات التقنية عبر نموذج وساطة حصري ومحمي.
+              {t('footerAboutDesc')}
             </p>
           </div>
 
           <div>
-            <h5 className="font-bold text-white text-sm uppercase tracking-wider mb-4">الكفاءات الجامعية</h5>
+            <h5 className="font-bold text-white text-sm uppercase tracking-wider mb-4">
+              {t('footerColStudents')}
+            </h5>
             <ul className="space-y-2.5 text-[rgba(255,255,255,0.65)]">
-              <li><Link href="/student" className="hover:text-white transition-colors">مساحة الكفاءات والخدمات</Link></li>
-              <li><Link href="/tasks-board" className="hover:text-white transition-colors">لوحة المشاريع والمهام</Link></li>
-              <li><span className="hover:text-white transition-colors">مستحقات بنكية مضمونة سلفاً</span></li>
-              <li><span className="hover:text-white transition-colors">سجل إنجاز موثق أكاديمياً</span></li>
+              <li><Link href="/student" className="hover:text-white transition-colors">{t('footerLinkStudentSpace')}</Link></li>
+              <li><Link href="/tasks-board" className="hover:text-white transition-colors">{t('footerLinkTasksBoard')}</Link></li>
+              <li><span className="hover:text-white transition-colors">{t('footerLinkGuaranteedPayouts')}</span></li>
+              <li><span className="hover:text-white transition-colors">{t('footerLinkAcademicRecord')}</span></li>
             </ul>
           </div>
 
           <div>
-            <h5 className="font-bold text-white text-sm uppercase tracking-wider mb-4">قطاع الأعمال والشركات</h5>
+            <h5 className="font-bold text-white text-sm uppercase tracking-wider mb-4">
+              {t('footerColCompanies')}
+            </h5>
             <ul className="space-y-2.5 text-[rgba(255,255,255,0.65)]">
-              <li><Link href="/company" className="hover:text-white transition-colors">طرح متطلبات وتكليف مهام</Link></li>
-              <li><Link href="/catalog" className="hover:text-white transition-colors">دليل الكفاءات الأكاديمية</Link></li>
-              <li><span className="hover:text-white transition-colors">مخرجات مفحوصة ومعتمدة الجودة</span></li>
-              <li><span className="hover:text-white transition-colors">فواتير رسمية مصرفية (B2B Wire)</span></li>
+              <li><Link href="/company" className="hover:text-white transition-colors">{t('footerLinkPostTasks')}</Link></li>
+              <li><Link href="/catalog" className="hover:text-white transition-colors">{t('footerLinkTalentCatalog')}</Link></li>
+              <li><span className="hover:text-white transition-colors">{t('footerLinkQualityAudited')}</span></li>
+              <li><span className="hover:text-white transition-colors">{t('footerLinkOfficialInvoices')}</span></li>
             </ul>
           </div>
 
           <div>
-            <h5 className="font-bold text-white text-sm uppercase tracking-wider mb-4">إدارة الوساطة المعتمدة</h5>
+            <h5 className="font-bold text-white text-sm uppercase tracking-wider mb-4">
+              {t('footerColBrokerage')}
+            </h5>
             <ul className="space-y-2.5 text-[rgba(255,255,255,0.65)]">
-              <li><Link href="/admin" className="hover:text-white transition-colors">لوحة كانبان الوساطة</Link></li>
-              <li><Link href="/admin" className="hover:text-white transition-colors">غرف إدارة وتنسيق الصفقات</Link></li>
-              <li><Link href="/admin" className="hover:text-white transition-colors">سجل التسويات والعمولات</Link></li>
-              <li><Link href="/" className="hover:text-white transition-colors">بوابة الدخول الرئيسية</Link></li>
+              <li><Link href="/admin" className="hover:text-white transition-colors">{t('footerLinkKanban')}</Link></li>
+              <li><Link href="/admin" className="hover:text-white transition-colors">{t('footerLinkDealRooms')}</Link></li>
+              <li><Link href="/admin" className="hover:text-white transition-colors">{t('footerLinkLedger')}</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">{t('footerLinkMainPortal')}</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="mt-12 border-t border-[rgba(255,255,255,0.08)] pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[rgba(255,255,255,0.45)]">
-          <p>© 2026 ستودنت هب. منصة الوساطة الجامعية المصغرة.</p>
-          <p className="mt-2 sm:mt-0">نموذج الوسيط المعتمد • تسوية خارج المنصة • حماية من التحايل</p>
+          <p>{t('allRightsReserved')}</p>
+          <p className="mt-2 sm:mt-0">{t('footerTagline')}</p>
         </div>
       </div>
     </footer>

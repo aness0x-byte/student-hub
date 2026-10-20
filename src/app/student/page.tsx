@@ -25,6 +25,7 @@ export default function StudentPortalPage() {
     applications, 
     deals,
     openSignInModal,
+    language,
     t
   } = useStore();
 
@@ -66,7 +67,7 @@ export default function StudentPortalPage() {
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-base font-bold text-white">
-              {t('studentWelcome')} {student?.fullName || (t('daysUnit') === 'days' ? 'Alex Chen' : 'أليكس تشين')}
+              {t('studentWelcome')} {student?.fullName || (language === 'en' ? 'Alex Chen' : 'أليكس تشين')}
             </h2>
             <span className="badge-glass-positive text-xs">{t('studentBadgeText')}</span>
             <button
@@ -110,14 +111,14 @@ export default function StudentPortalPage() {
                 )}
               </div>
               <p className="text-sm text-[rgba(255,255,255,0.65)] mt-2">
-                {student?.university} • {student ? formatAcademicLevel(student.academicLevel) : ''} • {student?.major}
+                {student?.university} • {student ? formatAcademicLevel(student.academicLevel, language) : ''} • {student?.major}
               </p>
             </div>
           </div>
 
           {/* Quick Metrics with Section 3.2 typography */}
           <div className="flex flex-wrap items-center gap-3">
-            <div className="glass p-4 rounded-[20px] min-w-[130px] text-right">
+            <div className={`glass p-4 rounded-[20px] min-w-[130px] ${language === 'ar' ? 'text-right' : 'text-left'}`}>
               <span className="micro block mb-1">{t('academicRating')}</span>
               <div className="text-2xl font-normal text-amber-300 tabular-nums">
                 <span>{student?.internalAdminRating.toFixed(2)}</span>
@@ -125,14 +126,14 @@ export default function StudentPortalPage() {
               </div>
             </div>
 
-            <div className="glass p-4 rounded-[20px] min-w-[130px] text-right">
+            <div className={`glass p-4 rounded-[20px] min-w-[130px] ${language === 'ar' ? 'text-right' : 'text-left'}`}>
               <span className="micro block mb-1">{t('availabilityHours')}</span>
               <p className="text-2xl font-normal text-white tabular-nums">
                 {student?.weeklyAvailability} <span className="text-xs text-[rgba(255,255,255,0.5)]">{t('hoursPerWeekUnit')}</span>
               </p>
             </div>
 
-            <div className="glass p-4 rounded-[20px] min-w-[130px] text-right">
+            <div className={`glass p-4 rounded-[20px] min-w-[130px] ${language === 'ar' ? 'text-right' : 'text-left'}`}>
               <span className="micro block mb-1">{t('activeContracts')}</span>
               <p className="text-2xl font-normal text-[#3FD0B0] tabular-nums">
                 {myDeals.length} <span className="text-xs text-[rgba(255,255,255,0.5)]">{t('activeUnit')}</span>
@@ -241,6 +242,11 @@ export default function StudentPortalPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {myProposals.map((prop) => {
                 const isExpanded = Boolean(expandedProposalIds[prop.id]);
+                const displayTitle = language === 'en' ? (prop.titleEn || prop.title) : prop.title;
+                const displayDesc = language === 'en' ? (prop.descriptionEn || prop.description) : prop.description;
+                const displayDeliverables = language === 'en' ? (prop.deliverablesSummaryEn || prop.deliverablesSummary) : prop.deliverablesSummary;
+                const displayFeedback = language === 'en' ? (prop.adminFeedbackEn || prop.adminFeedback) : prop.adminFeedback;
+
                 return (
                   <div
                     key={prop.id}
@@ -253,14 +259,14 @@ export default function StudentPortalPage() {
                       <div className="flex items-start justify-between gap-4">
                         <div className="space-y-1">
                           <span className="font-mono text-xs font-bold text-white bg-white/10 px-3 py-1 rounded-full border border-white/15">
-                            {formatCategoryName(prop.category)}
+                            {formatCategoryName(prop.category, language)}
                           </span>
                           <h4 className="mt-2 text-lg font-bold text-white leading-snug">
-                            {prop.title}
+                            {displayTitle}
                           </h4>
                         </div>
 
-                        <div className="text-left shrink-0">
+                        <div className={language === 'ar' ? 'text-left shrink-0' : 'text-right shrink-0'}>
                           <span className="text-2xl font-light text-[#34D17A]">
                             €{prop.proposedStudentFee}
                           </span>
@@ -290,19 +296,19 @@ export default function StudentPortalPage() {
                               {t('serviceScopeLabel')}
                             </span>
                             <p className="text-sm text-[rgba(255,255,255,0.85)] leading-relaxed">
-                              {prop.description}
+                              {displayDesc}
                             </p>
                           </div>
 
                           <div className="rounded-2xl bg-white/5 p-3.5 text-xs text-[rgba(255,255,255,0.85)] border border-white/10 space-y-1">
                             <strong className="text-white block">{t('deliverablesSummaryLabel')}</strong>
-                            <p>{prop.deliverablesSummary}</p>
+                            <p>{displayDeliverables}</p>
                           </div>
 
-                          {prop.adminFeedback && (
+                          {displayFeedback && (
                             <div className="rounded-2xl bg-[#5B2BE0]/15 p-3 text-xs text-white border border-[#A77BF3]/30">
                               <span className="text-[#A77BF3] font-bold block mb-0.5">{t('brokerApprovalFeedback')}</span>
-                              <p className="text-[rgba(255,255,255,0.85)]">{prop.adminFeedback}</p>
+                              <p className="text-[rgba(255,255,255,0.85)]">{displayFeedback}</p>
                             </div>
                           )}
                         </div>
@@ -314,7 +320,7 @@ export default function StudentPortalPage() {
                         {t('talentDirectoryBadge')}
                       </span>
                       <span className={prop.approvalStatus === 'APPROVED_LIVE' ? 'badge-glass-positive text-xs' : 'badge-glass-neutral text-xs'}>
-                        {formatProposalStatus(prop.approvalStatus)}
+                        {formatProposalStatus(prop.approvalStatus, language)}
                       </span>
                     </div>
                   </div>
@@ -340,6 +346,13 @@ export default function StudentPortalPage() {
                   myDeals.map((deal) => {
                     const task = tasks.find(t => t.id === deal.taskRequestId);
                     const isExpanded = Boolean(expandedDealIds[deal.id]);
+                    const displayTitle = language === 'en'
+                      ? (task?.titleEn || task?.title || 'Verified Task')
+                      : (task?.title || 'مهمة معتمدة');
+                    const displayNotes = language === 'en'
+                      ? (deal.adminSummaryNotesEn || deal.adminSummaryNotes || t('studentDefaultBrokerNotes'))
+                      : (deal.adminSummaryNotes || t('studentDefaultBrokerNotes'));
+
                     return (
                       <div
                         key={deal.id}
@@ -355,17 +368,17 @@ export default function StudentPortalPage() {
                                 {deal.dealReference}
                               </span>
                               <span className="badge-glass-positive text-xs">
-                                {formatDealStatus(deal.status)}
+                                {formatDealStatus(deal.status, language)}
                               </span>
                             </div>
 
                             <h4 className="text-lg font-bold text-white leading-snug">
-                              {task?.title || (t('daysUnit') === 'days' ? 'Verified Task' : 'مهمة معتمدة')}
+                              {displayTitle}
                             </h4>
                           </div>
 
                           <div className="flex items-center gap-4 shrink-0">
-                            <div className="text-left">
+                            <div className={language === 'ar' ? 'text-left' : 'text-right'}>
                               <span className="text-xl font-bold text-[#34D17A]">€{deal.agreedStudentPayout}</span>
                               <span className="block text-[11px] text-[rgba(255,255,255,0.45)]">{t('guaranteedPayout')}</span>
                             </div>
@@ -389,7 +402,7 @@ export default function StudentPortalPage() {
                             <div className="bg-white/5 p-3.5 rounded-2xl border border-white/10 space-y-1">
                               <span className="text-[11px] font-semibold text-[rgba(255,255,255,0.5)] block">{t('brokerNotesLabel')}</span>
                               <p className="text-sm text-[rgba(255,255,255,0.9)] leading-relaxed">
-                                {deal.adminSummaryNotes || t('studentDefaultBrokerNotes')}
+                                {displayNotes}
                               </p>
                             </div>
 
@@ -425,6 +438,10 @@ export default function StudentPortalPage() {
                 {myApplications.map((app) => {
                   const task = tasks.find(t => t.id === app.taskRequestId);
                   const isExpanded = Boolean(expandedApplicationIds[app.id]);
+                  const displayTaskTitle = language === 'en' ? (task?.titleEn || task?.title) : task?.title;
+                  const displayPitch = language === 'en' ? (app.pitchStatementEn || app.pitchStatement) : app.pitchStatement;
+                  const displayAdminNote = language === 'en' ? (app.adminNotesEn || app.adminNotes) : app.adminNotes;
+
                   return (
                     <div
                       key={app.id}
@@ -440,10 +457,10 @@ export default function StudentPortalPage() {
                               {task?.referenceCode}
                             </span>
                             <h4 className="text-base font-semibold text-white">
-                              {task?.title}
+                              {displayTaskTitle}
                             </h4>
                             <span className="badge-glass-neutral text-xs">
-                              {formatApplicationStatus(app.status)}
+                              {formatApplicationStatus(app.status, language)}
                             </span>
                           </div>
                         </div>
@@ -474,7 +491,7 @@ export default function StudentPortalPage() {
                               {t('pitchDetailsLabel')}
                             </span>
                             <p className="text-sm text-[rgba(255,255,255,0.9)] leading-relaxed">
-                              "{app.pitchStatement}"
+                              "{displayPitch}"
                             </p>
                           </div>
 
@@ -487,10 +504,10 @@ export default function StudentPortalPage() {
                             </div>
                           )}
 
-                          {app.adminNotes && (
+                          {displayAdminNote && (
                             <div className="text-xs text-[rgba(255,255,255,0.6)] pt-1">
                               <span>{t('brokerNote')}</span>
-                              <strong className="text-white">{app.adminNotes}</strong>
+                              <strong className="text-white">{displayAdminNote}</strong>
                             </div>
                           )}
                         </div>

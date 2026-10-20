@@ -109,14 +109,19 @@ export interface StudentServiceProposal {
   id: string;
   studentProfileId: string;
   title: string;
+  titleEn?: string;
   category: string;
+  categoryEn?: string;
   description: string;
+  descriptionEn?: string;
   deliverablesSummary: string;
+  deliverablesSummaryEn?: string;
   turnaroundDays: number;
   proposedStudentFee: number;
   approvalStatus: ProposalApprovalStatus;
   isLiveInCatalog: boolean;
   adminFeedback?: string;
+  adminFeedbackEn?: string;
   createdAt: string;
 }
 
@@ -125,9 +130,13 @@ export interface CompanyTaskRequest {
   companyProfileId: string;
   referenceCode: string; // e.g. "TSK-7840"
   title: string;
+  titleEn?: string;
   category: string;
+  categoryEn?: string;
   problemStatement: string;
+  problemStatementEn?: string;
   deliverablesCriteria: string;
+  deliverablesCriteriaEn?: string;
   requiredSkills: string[];
   targetAcademicLevel?: AcademicLevel;
   estimatedDurationDays: number;
@@ -135,6 +144,7 @@ export interface CompanyTaskRequest {
   status: TaskRequestStatus;
   isPubliclyVisible: boolean;
   adminCuratedNotes?: string;
+  adminCuratedNotesEn?: string;
   createdAt: string;
 }
 
@@ -143,11 +153,13 @@ export interface TaskApplication {
   taskRequestId: string;
   studentProfileId: string;
   pitchStatement: string;
+  pitchStatementEn?: string;
   relevantPortfolioUrls: string[];
   availabilityConfirmed: boolean;
   status: ApplicationStatus;
   adminReviewScore?: number;
   adminNotes?: string;
+  adminNotesEn?: string;
   createdAt: string;
 }
 
@@ -198,6 +210,7 @@ export interface MatchmakingDeal {
   agreedDeadlineDate?: string;
   actualDeliveredDate?: string;
   adminSummaryNotes?: string;
+  adminSummaryNotesEn?: string;
   createdAt: string;
   updatedAt: string;
 }

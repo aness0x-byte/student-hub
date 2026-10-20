@@ -9,7 +9,7 @@ import { CompanyTaskRequest } from '@/lib/types';
 import { formatCategoryName } from '@/lib/privacy-shield';
 
 export default function TasksBoardPage() {
-  const { tasks, currentRole } = useStore();
+  const { tasks, currentRole, language, t } = useStore();
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('ALL');
 
@@ -20,10 +20,13 @@ export default function TasksBoardPage() {
   const categories = Array.from(new Set(publicTasks.map(t => t.category)));
 
   const filtered = publicTasks.filter(t => {
-    const matchesSearch = t.referenceCode.toLowerCase().includes(search.toLowerCase()) ||
-      t.title.toLowerCase().includes(search.toLowerCase()) ||
-      t.problemStatement.toLowerCase().includes(search.toLowerCase()) ||
-      t.requiredSkills.some(sk => sk.toLowerCase().includes(search.toLowerCase()));
+    const sLower = search.toLowerCase();
+    const matchesSearch = t.referenceCode.toLowerCase().includes(sLower) ||
+      t.title.toLowerCase().includes(sLower) ||
+      (t.titleEn && t.titleEn.toLowerCase().includes(sLower)) ||
+      t.problemStatement.toLowerCase().includes(sLower) ||
+      (t.problemStatementEn && t.problemStatementEn.toLowerCase().includes(sLower)) ||
+      t.requiredSkills.some(sk => sk.toLowerCase().includes(sLower));
 
     const matchesCategory = categoryFilter === 'ALL' || t.category === categoryFilter;
 
@@ -36,13 +39,13 @@ export default function TasksBoardPage() {
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <div className="badge-glass-violet px-4 py-1.5 text-sm font-semibold">
-          <span>إشراف وتدقيق الوسيط المعتمد • مستحقات مالية مضمونة</span>
+          <span>{t('tasksBoardHeroBadge')}</span>
         </div>
         <h1 className="text-4xl sm:text-5xl font-light tracking-tight text-white">
-          لوحة المشاريع والمهام المعتمدة (تحت إشراف الوسيط)
+          {t('tasksBoardHeroTitle')}
         </h1>
         <p className="text-base sm:text-lg text-[rgba(255,255,255,0.7)] leading-relaxed">
-          قدم عروضك التنفيذية مباشرة لإدارة الوساطة المعتمدة. تضمن المنصة حجب البيانات الشخصية بين الشركات والمنفذين لضمان الالتزام التعاقدي، والحماية المالية، والتحصيل البنكي المباشر.
+          {t('tasksBoardHeroSubtitle')}
         </p>
       </div>
 
@@ -53,14 +56,14 @@ export default function TasksBoardPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="ابحث بالاسم، المهارة، أو الكود المرجعي..."
+            placeholder={t('tasksBoardSearchPlaceholder')}
             className="w-full rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.06)] px-5 py-2.5 text-sm text-white placeholder:text-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#A77BF3]"
           />
         </div>
 
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="text-sm text-[rgba(255,255,255,0.6)] font-semibold">
-            <span>التصنيف:</span>
+            <span>{t('tasksBoardCategoryLabel')}</span>
           </div>
 
           <select
@@ -68,9 +71,9 @@ export default function TasksBoardPage() {
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="rounded-full border border-[rgba(255,255,255,0.12)] bg-[#07070C] px-5 py-2.5 text-sm text-white focus:outline-none focus:border-[#A77BF3] cursor-pointer"
           >
-            <option value="ALL">كافة المجالات والتصنيفات</option>
+            <option value="ALL">{t('tasksBoardAllCategories')}</option>
             {categories.map((cat) => (
-              <option key={cat} value={cat}>{formatCategoryName(cat)}</option>
+              <option key={cat} value={cat}>{formatCategoryName(cat, language)}</option>
             ))}
           </select>
         </div>
@@ -91,7 +94,7 @@ export default function TasksBoardPage() {
 
       {filtered.length === 0 && (
         <div className="glass-card py-20 text-center text-sm text-[rgba(255,255,255,0.5)]">
-          لم يتم العثور على أي مهمة مطابقة لخيارات البحث الحالية.
+          {t('tasksBoardNoResults')}
         </div>
       )}
 

@@ -11,7 +11,8 @@ export default function SignInModal() {
     isSignInModalOpen, 
     closeSignInModal, 
     login, 
-    selectedModalRole 
+    language,
+    t
   } = useStore();
 
   const [email, setEmail] = useState('');
@@ -35,14 +36,14 @@ export default function SignInModal() {
   // Perform automatic sign in and redirect
   const handleAutoSignIn = (role: UserRole) => {
     let path = '/admin';
-    let name = 'إيلينا روستوفا (الوسيط والمدير العام)';
+    let name = language === 'en' ? 'Elena Rostova (Exclusive Broker)' : 'إيلينا روستوفا (الوسيط والمدير العام)';
 
     if (role === 'STUDENT') {
       path = '/student';
-      name = 'أليكس تشين (طالب كفاءة جامعية)';
+      name = language === 'en' ? 'Alex Chen (Student Talent)' : 'أليكس تشين (طالب كفاءة جامعية)';
     } else if (role === 'COMPANY') {
       path = '/company';
-      name = 'ماركوس فانس (شركة تقنية)';
+      name = language === 'en' ? 'Marcus Vance (Tech Enterprise)' : 'ماركوس فانس (شركة تقنية)';
     }
 
     setRedirectingTo({ role, path, name });
@@ -86,24 +87,24 @@ export default function SignInModal() {
         {/* Close Button */}
         <button
           onClick={closeSignInModal}
-          className="absolute top-6 left-6 rounded-full px-3 py-1 text-xs font-semibold bg-white/5 border border-white/10 text-[rgba(255,255,255,0.6)] hover:text-white hover:bg-white/10 transition-colors"
-          title="إغلاق"
+          className={`absolute top-6 ${language === 'ar' ? 'left-6' : 'right-6'} rounded-full px-3 py-1 text-xs font-semibold bg-white/5 border border-white/10 text-[rgba(255,255,255,0.6)] hover:text-white hover:bg-white/10 transition-colors`}
+          title={t('close')}
         >
-          إغلاق
+          {t('close')}
         </button>
 
         {/* Modal Header */}
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.06)] px-4 py-1 text-xs font-semibold text-[#A77BF3]">
-            <span>بوابة تسجيل الدخول والتوجيه المباشر</span>
+            <span>{t('signInModalBadge')}</span>
           </div>
 
           <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            تسجيل الدخول إلى مساحة العمل
+            {t('signInModalTitle')}
           </h2>
 
           <p className="text-sm text-[rgba(255,255,255,0.7)]">
-            اختر صفتك في المنصة وسيتم توجيهك مباشرة وبأمان إلى مساحة العمل المخصصة لك.
+            {t('signInModalSub')}
           </p>
 
           {/* Mode Tabs */}
@@ -116,7 +117,7 @@ export default function SignInModal() {
                   : 'text-[rgba(255,255,255,0.7)] hover:text-white'
               }`}
             >
-              الدخول السريع بنقرة واحدة
+              {t('signInTabCards')}
             </button>
             <button
               onClick={() => setActiveTab('CREDENTIALS')}
@@ -126,7 +127,7 @@ export default function SignInModal() {
                   : 'text-[rgba(255,255,255,0.7)] hover:text-white'
               }`}
             >
-              البريد الإلكتروني وكلمة المرور
+              {t('signInTabCredentials')}
             </button>
           </div>
         </div>
@@ -137,11 +138,11 @@ export default function SignInModal() {
             <div className="flex items-center justify-center gap-3">
               <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-[#A77BF3]" />
               <span className="text-lg font-bold text-white">
-                جاري تسجيل الدخول بصفتك {redirectingTo.name}...
+                {t('signInSigningInAs')} {redirectingTo.name}...
               </span>
             </div>
             <p className="text-sm text-[rgba(255,255,255,0.8)]">
-              يتم تحويلك تلقائياً إلى مساحة العمل المخصصة: <strong className="text-[#3FD0B0] font-mono">{redirectingTo.path}</strong>
+              {t('signInRedirecting')} <strong className="text-[#3FD0B0] font-mono">{redirectingTo.path}</strong>
             </p>
             <div className="w-full max-w-md mx-auto h-1.5 rounded-full bg-white/10 overflow-hidden">
               <div className="h-full bg-gradient-to-r from-[#3FD0B0] to-[#A77BF3] animate-pulse w-full" />
@@ -164,23 +165,23 @@ export default function SignInModal() {
                     AD
                   </span>
                   <span className="badge-glass-violet text-[11px] font-bold">
-                    الوسيط الحصري
+                    {t('signInAdminRoleBadge')}
                   </span>
                 </div>
 
                 <h3 className="text-xl font-bold text-white">
-                  إيلينا روستوفا
+                  {t('signInAdminName')}
                 </h3>
                 <p className="text-xs font-semibold text-[#A77BF3] mt-0.5">
-                  إدارة المنصة والوساطة المعتمدة
+                  {t('signInAdminSub')}
                 </p>
 
                 <p className="text-sm text-[rgba(255,255,255,0.7)] mt-3 leading-relaxed">
-                  تنسيق متطلبات الشركات وعروض الكفاءات الجامعية، مع ضمان عائد الوساطة 20% وحماية كاملة لبيانات الاتصال لمنع التحايل.
+                  {t('signInAdminDesc')}
                 </p>
 
                 <div className="mt-4 pt-3 border-t border-[rgba(255,255,255,0.08)] flex items-center justify-between text-xs text-[#3FD0B0]">
-                  <span>المساحة المخصصة:</span>
+                  <span>{t('assignedWorkspace')}</span>
                   <span className="font-mono font-bold">/admin</span>
                 </div>
               </div>
@@ -190,7 +191,7 @@ export default function SignInModal() {
                   type="button"
                   className="w-full h-11 btn-glass-gradient text-sm font-bold shadow-[0_0_20px_rgba(127,90,240,0.4)] flex items-center justify-center cursor-pointer"
                 >
-                  <span>الدخول بصفتك الوسيط المعتمد (إيلينا)</span>
+                  <span>{t('signInAdminBtn')}</span>
                 </button>
               </div>
             </div>
@@ -206,23 +207,23 @@ export default function SignInModal() {
                     CO
                   </span>
                   <span className="badge-glass-neutral text-[11px] font-bold">
-                    طلب الخدمات والمهام
+                    {t('signInCompanyRoleBadge')}
                   </span>
                 </div>
 
                 <h3 className="text-xl font-bold text-white">
-                  ماركوس فانس
+                  {t('signInCompanyName')}
                 </h3>
                 <p className="text-xs font-semibold text-[rgba(255,255,255,0.7)] mt-0.5">
-                  المدير التقني • فينتك بالس
+                  {t('signInCompanySub')}
                 </p>
 
                 <p className="text-sm text-[rgba(255,255,255,0.7)] mt-3 leading-relaxed">
-                  طلب خدمات وحلول برمجية وتصميمية متقدمة، مع فحص الوسيط لجودة المخرجات وتسوية الفواتير البنكية رسمياً دون مخاطر تشغيلية.
+                  {t('signInCompanyDesc')}
                 </p>
 
                 <div className="mt-4 pt-3 border-t border-[rgba(255,255,255,0.08)] flex items-center justify-between text-xs text-[#3FD0B0]">
-                  <span>المساحة المخصصة:</span>
+                  <span>{t('assignedWorkspace')}</span>
                   <span className="font-mono font-bold">/company</span>
                 </div>
               </div>
@@ -232,7 +233,7 @@ export default function SignInModal() {
                   type="button"
                   className="w-full h-11 btn-glass-ghost text-sm font-bold border-white/20 hover:border-white flex items-center justify-center cursor-pointer"
                 >
-                  <span>الدخول كجهة أعمال (ماركوس)</span>
+                  <span>{t('signInCompanyBtn')}</span>
                 </button>
               </div>
             </div>
@@ -248,23 +249,23 @@ export default function SignInModal() {
                     ST
                   </span>
                   <span className="badge-glass-positive text-[11px] font-bold">
-                    الخبرة الأكاديمية والعائد المالي
+                    {t('signInStudentRoleBadge')}
                   </span>
                 </div>
 
                 <h3 className="text-xl font-bold text-white">
-                  أليكس تشين
+                  {t('signInStudentName')}
                 </h3>
                 <p className="text-xs font-semibold text-[#3FD0B0] mt-0.5">
-                  ماجستير أنظمة موزعة • المدرسة المتعددة التكنولوجية
+                  {t('signInStudentSub')}
                 </p>
 
                 <p className="text-sm text-[rgba(255,255,255,0.7)] mt-3 leading-relaxed">
-                  تقديم العروض للوسيط المعتمد مباشرة، واكتساب سجل خبرة عملي معتمد مع استلام مستحقات مالية نقدية مضمونة.
+                  {t('signInStudentDesc')}
                 </p>
 
                 <div className="mt-4 pt-3 border-t border-[rgba(255,255,255,0.08)] flex items-center justify-between text-xs text-[#3FD0B0]">
-                  <span>المساحة المخصصة:</span>
+                  <span>{t('assignedWorkspace')}</span>
                   <span className="font-mono font-bold">/student</span>
                 </div>
               </div>
@@ -274,7 +275,7 @@ export default function SignInModal() {
                   type="button"
                   className="w-full h-11 btn-glass-primary text-sm font-bold flex items-center justify-center cursor-pointer"
                 >
-                  <span>الدخول ككفاءة جامعية (أليكس)</span>
+                  <span>{t('signInStudentBtn')}</span>
                 </button>
               </div>
             </div>
@@ -287,13 +288,13 @@ export default function SignInModal() {
           <form onSubmit={handleCredentialSubmit} className="max-w-xl mx-auto space-y-5 pt-2">
             <div>
               <label className="text-sm font-medium text-white block mb-2">
-                عنوان البريد الإلكتروني
+                {t('emailLabel')}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@domain.com"
+                placeholder={t('emailPlaceholder')}
                 required
                 dir="ltr"
                 className="w-full rounded-2xl border border-[rgba(255,255,255,0.15)] bg-[rgba(255,255,255,0.05)] px-4 py-3 text-sm text-white placeholder:text-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#A77BF3]"
@@ -301,7 +302,7 @@ export default function SignInModal() {
 
               {/* Dynamic Role Detection Pill */}
               <div className="mt-3 flex items-center justify-between text-xs">
-                <span className="text-[rgba(255,255,255,0.6)]">التحقق والتعرف التلقائي:</span>
+                <span className="text-[rgba(255,255,255,0.6)]">{t('signInAutoDetection')}</span>
                 <span className={`px-3 py-1 rounded-full font-semibold border ${
                   detectedRole === 'SUPER_ADMIN' 
                     ? 'bg-[#5B2BE0]/30 text-[#A77BF3] border-[#5B2BE0]/50'
@@ -309,14 +310,14 @@ export default function SignInModal() {
                     ? 'bg-[#3FD0B0]/20 text-[#3FD0B0] border-[#3FD0B0]/40'
                     : 'bg-white/10 text-white border-white/20'
                 }`}>
-                  ← التوجيه المباشر إلى: {detectedRole === 'SUPER_ADMIN' ? 'لوحة تحكم الوسيط (/admin)' : detectedRole === 'STUDENT' ? 'مساحة الكفاءات الجامعية (/student)' : 'بوابة جهات الأعمال والشركات (/company)'}
+                  ← {t('signInRoutingTo')} {detectedRole === 'SUPER_ADMIN' ? t('signInAdminDest') : detectedRole === 'STUDENT' ? t('signInStudentDest') : t('signInCompanyDest')}
                 </span>
               </div>
             </div>
 
             <div>
               <label className="text-sm font-medium text-white block mb-2">
-                كلمة المرور
+                {t('passwordLabel')}
               </label>
               <input
                 type="password"
@@ -324,7 +325,7 @@ export default function SignInModal() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 dir="ltr"
-                placeholder="اكتب كلمة المرور..."
+                placeholder={t('passwordPlaceholder')}
                 className="w-full rounded-2xl border border-[rgba(255,255,255,0.15)] bg-[rgba(255,255,255,0.05)] px-4 py-3 text-sm text-white placeholder:text-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#A77BF3]"
               />
             </div>
@@ -333,15 +334,15 @@ export default function SignInModal() {
               type="submit"
               className="w-full h-12 btn-glass-gradient text-base font-semibold shadow-[0_0_24px_rgba(127,90,240,0.5)]"
             >
-              <span>تسجيل الدخول والتوجيه للمساحة المخصصة</span>
+              <span>{t('signInSubmitBtn')}</span>
             </button>
           </form>
         )}
 
         {/* Footer Note */}
         <div className="pt-4 border-t border-[rgba(255,255,255,0.08)] flex items-center justify-between text-xs text-[rgba(255,255,255,0.5)]">
-          <span>محمي ببروتوكول خصوصية الوساطة الكاملة</span>
-          <span>تسوية بنكية مباشرة • بدون احتجاز أموال</span>
+          <span>{t('signInPrivacyFooter')}</span>
+          <span>{t('signInDirectWireFooter')}</span>
         </div>
 
       </div>

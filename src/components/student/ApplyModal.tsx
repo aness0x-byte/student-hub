@@ -11,12 +11,14 @@ interface Props {
 }
 
 export default function ApplyModal({ task, isOpen, onClose }: Props) {
-  const { applyToTask } = useStore();
+  const { applyToTask, language, t } = useStore();
   const [pitch, setPitch] = useState('');
   const [portfolioUrl, setPortfolioUrl] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   if (!isOpen || !task) return null;
+
+  const displayTitle = language === 'en' ? (task.titleEn || task.title) : task.title;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,18 +46,18 @@ export default function ApplyModal({ task, isOpen, onClose }: Props) {
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute left-6 top-6 rounded-full px-3 py-1 text-xs font-semibold bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition-colors"
+          className={`absolute ${language === 'ar' ? 'left-6' : 'right-6'} top-6 rounded-full px-3 py-1 text-xs font-semibold bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition-colors`}
         >
-          إغلاق
+          {t('close')}
         </button>
 
         {isSubmitted ? (
           <div className="py-10 text-center">
             <h3 className="mt-4 text-2xl font-light text-white">
-              تم إرسال عرضك التنفيذي بنجاح!
+              {t('applySuccessTitle')}
             </h3>
             <p className="mt-2 text-sm text-[rgba(255,255,255,0.7)] max-w-sm mx-auto leading-relaxed">
-              تم رفع عرضك للمهمة ذات الكود المرجعي <strong className="text-white font-mono">{task.referenceCode}</strong> مباشرة إلى الوسيط المعتمد لمراجعته وتنسيق الصفقة.
+              {t('applySuccessSub')} (<strong className="text-white font-mono">{task.referenceCode}</strong>).
             </p>
           </div>
         ) : (
@@ -66,32 +68,32 @@ export default function ApplyModal({ task, isOpen, onClose }: Props) {
                   {task.referenceCode}
                 </span>
                 <span className="text-xs text-[rgba(255,255,255,0.6)]">
-                  المكافأة الصافية المضمونة: <strong className="text-[#34D17A]">€{Math.round(task.proposedBudget * 0.8)}</strong> • مدة التسليم: {task.estimatedDurationDays} أيام
+                  {t('applyNetReward')} <strong className="text-[#34D17A]">€{Math.round(task.proposedBudget * 0.8)}</strong> • {t('applyTurnaround')} {task.estimatedDurationDays} {t('daysUnit')}
                 </span>
               </div>
               <h2 className="mt-2 text-xl font-bold text-white">
-                التقدم لتنفيذ المهمة: {task.title}
+                {t('applyTaskTitlePrefix')} {displayTitle}
               </h2>
             </div>
 
             {/* Privacy Reminder */}
             <div className="glass-card p-4 text-xs text-[rgba(255,255,255,0.8)] flex items-start gap-3 border-[#3FD0B0]/20 bg-[#3FD0B0]/5">
               <span className="leading-relaxed">
-                <strong>ضمانات الوساطة الحصرية:</strong> يُرفع عرضك مباشرة إلى الوسيط المعتمد. تبقى هويتك وبياناتك الشخصية محمية بالكامل، ومستحقاتك المالية مودعة ومضمونة سلفاً وتُصرف فور اعتماد المخرجات.
+                {t('applyGuaranteeNotice')}
               </span>
             </div>
 
             {/* Pitch Textarea */}
             <div>
               <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                منهجية التنفيذ وعرضك المباشر للوسيط *
+                {t('applyPitchLabel')}
               </label>
               <textarea
                 value={pitch}
                 onChange={(e) => setPitch(e.target.value)}
                 required
                 rows={4}
-                placeholder="اشرح منهجية التنفيذ وسوابق خبرتك لتنفيذ متطلبات هذه المهمة باحترافية..."
+                placeholder={t('applyPitchPlaceholder')}
                 className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
               />
             </div>
@@ -99,7 +101,7 @@ export default function ApplyModal({ task, isOpen, onClose }: Props) {
             {/* Portfolio / Attachment Link */}
             <div>
               <label className="block text-xs font-semibold text-[rgba(255,255,255,0.8)] mb-1">
-                رابط نموذج عمل أو ملف إثبات المهارة (اختياري)
+                {t('applyPortfolioLabel')}
               </label>
               <input
                 type="url"
@@ -110,7 +112,7 @@ export default function ApplyModal({ task, isOpen, onClose }: Props) {
                 className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2.5 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
               />
               <p className="mt-1 text-xs text-[rgba(255,255,255,0.45)]">
-                يقوم الوسيط المعتمد بالتحقق من جودة النماذج المرفقة لتعزيز أولوية الترشيح وتدشين الصفقة.
+                {t('applyPortfolioTip')}
               </p>
             </div>
 
@@ -121,13 +123,13 @@ export default function ApplyModal({ task, isOpen, onClose }: Props) {
                 onClick={onClose}
                 className="btn-glass-ghost px-5 py-2 text-xs font-semibold"
               >
-                إلغاء
+                {t('cancel')}
               </button>
               <button
                 type="submit"
                 className="btn-glass-primary px-6 py-2.5 text-xs font-bold"
               >
-                <span>إرسال العرض للوسيط</span>
+                <span>{t('applySubmitBtn')}</span>
               </button>
             </div>
           </form>

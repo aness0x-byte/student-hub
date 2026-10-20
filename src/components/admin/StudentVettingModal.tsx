@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function StudentVettingModal({ student, isOpen, onClose }: Props) {
-  const { verifyStudent } = useStore();
+  const { verifyStudent, language, t } = useStore();
 
   const [status, setStatus] = useState<VerificationStatus>(
     student?.verificationStatus || 'VERIFIED'
@@ -39,18 +39,18 @@ export default function StudentVettingModal({ student, isOpen, onClose }: Props)
         
         <button
           onClick={onClose}
-          className="absolute left-6 top-6 rounded-full px-3 py-1 text-xs font-semibold bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition-colors"
+          className={`absolute ${language === 'ar' ? 'left-6' : 'right-6'} top-6 rounded-full px-3 py-1 text-xs font-semibold bg-white/5 text-white/60 hover:bg-white/10 hover:text-white transition-colors`}
         >
-          إغلاق
+          {t('close')}
         </button>
 
         {isSaved ? (
           <div className="py-10 text-center">
             <h3 className="mt-4 text-2xl font-light text-white">
-              تم تحديث توثيق الطالب بنجاح!
+              {t('vettingSavedTitle')}
             </h3>
             <p className="mt-2 text-sm text-[rgba(255,255,255,0.65)]">
-              تم حفظ قرار الاعتماد والتقييم الإداري وملاحظات الوسيط.
+              {t('vettingSavedSub')}
             </p>
           </div>
         ) : (
@@ -58,31 +58,31 @@ export default function StudentVettingModal({ student, isOpen, onClose }: Props)
             <div className="border-b border-white/10 pb-4">
               <div className="flex items-center gap-2">
                 <span className="badge-glass-violet text-xs">
-                  <span>مركز فحص وتوثيق الكفاءات الأكاديمية</span>
+                  <span>{t('vettingCenter')}</span>
                 </span>
                 <span className="text-xs font-mono font-bold text-white/50">
                   {student.anonymousCode}
                 </span>
               </div>
               <h2 className="mt-2 text-xl font-bold text-white">
-                مراجعة واعتماد: {student.fullName}
+                {t('vettingReview')} {student.fullName}
               </h2>
               <p className="text-xs text-[rgba(255,255,255,0.6)] mt-1">
-                {student.university} • {formatAcademicLevel(student.academicLevel)}
+                {student.university} • {formatAcademicLevel(student.academicLevel, language)}
               </p>
             </div>
 
             {/* Document Verification Proof */}
             <div className="glass-card p-4 space-y-2.5">
               <span className="text-xs font-semibold text-[rgba(255,255,255,0.6)]">
-                الإثبات الأكاديمي المرفوع
+                {t('vettingUploadedProof')}
               </span>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-xs text-white font-semibold">
-                  <span>بطاقة الطالب الجامعية / شهادة القيد الرسمية</span>
+                  <span>{t('vettingCardDoc')}</span>
                 </div>
                 <span className="badge-glass-neutral text-xs cursor-pointer hover:border-white">
-                  <span>معاينة المستند</span>
+                  <span>{t('vettingPreviewDoc')}</span>
                 </span>
               </div>
               <p className="text-xs text-[rgba(255,255,255,0.5)] pt-1 border-t border-white/10" dir="ltr">
@@ -93,7 +93,7 @@ export default function StudentVettingModal({ student, isOpen, onClose }: Props)
             {/* Verification Status */}
             <div>
               <label className="block text-xs font-semibold text-[rgba(255,255,255,0.7)] mb-2">
-                قرار الاعتماد والتوثيق
+                {t('vettingDecision')}
               </label>
               <div className="grid grid-cols-3 gap-2">
                 <button
@@ -105,7 +105,7 @@ export default function StudentVettingModal({ student, isOpen, onClose }: Props)
                       : 'glass-card text-[rgba(255,255,255,0.6)] hover:text-white'
                   }`}
                 >
-                  <span>معتمد وموثق</span>
+                  <span>{t('vettingStatusVerified')}</span>
                 </button>
 
                 <button
@@ -117,7 +117,7 @@ export default function StudentVettingModal({ student, isOpen, onClose }: Props)
                       : 'glass-card text-[rgba(255,255,255,0.6)] hover:text-white'
                   }`}
                 >
-                  <span>قيد المراجعة</span>
+                  <span>{t('vettingStatusPending')}</span>
                 </button>
 
                 <button
@@ -129,7 +129,7 @@ export default function StudentVettingModal({ student, isOpen, onClose }: Props)
                       : 'glass-card text-[rgba(255,255,255,0.6)] hover:text-white'
                   }`}
                 >
-                  <span>مرفوض</span>
+                  <span>{t('vettingStatusRejected')}</span>
                 </button>
               </div>
             </div>
@@ -138,7 +138,7 @@ export default function StudentVettingModal({ student, isOpen, onClose }: Props)
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-semibold text-[rgba(255,255,255,0.7)]">
-                  التقييم الداخلي للوسيط (من 3.0 إلى 5.0)
+                  {t('vettingInternalRating')}
                 </label>
                 <span className="font-bold text-amber-300 text-xs bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/20">
                   <span>{rating.toFixed(1)} / 5.0</span>
@@ -158,13 +158,13 @@ export default function StudentVettingModal({ student, isOpen, onClose }: Props)
             {/* Admin Private Notes */}
             <div>
               <label className="block text-xs font-semibold text-[rgba(255,255,255,0.7)] mb-1.5">
-                ملاحظات الوسيط السرية وسجل المقابلة
+                {t('vettingSecretNotes')}
               </label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
-                placeholder="اكتب نقاط القوة، النماذج وسوابق الأعمال، تقييم الكفاءة والالتزام..."
+                placeholder={t('vettingNotesPlaceholder')}
                 className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-xs text-white placeholder-white/40 focus:border-[#A77BF3] focus:outline-none focus:bg-white/10"
               />
             </div>
@@ -176,13 +176,13 @@ export default function StudentVettingModal({ student, isOpen, onClose }: Props)
                 onClick={onClose}
                 className="btn-glass-ghost px-5 py-2 text-xs font-semibold"
               >
-                إلغاء
+                {t('cancel')}
               </button>
               <button
                 type="submit"
-                className="btn-glass-primary px-6 py-2.5 text-xs font-bold"
+                className="btn-glass-primary px-6 py-2 text-xs font-bold"
               >
-                <span>حفظ التوثيق</span>
+                <span>{t('save')}</span>
               </button>
             </div>
           </form>
