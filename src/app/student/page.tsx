@@ -6,21 +6,16 @@ import AnonymizedTaskCard from '@/components/shared/AnonymizedTaskCard';
 import ApplyModal from '@/components/student/ApplyModal';
 import ProposalModal from '@/components/student/ProposalModal';
 import DealRoomModal from '@/components/admin/DealRoomModal';
+import AntiCircumventionBanner from '@/components/shared/AntiCircumventionBanner';
 import { CompanyTaskRequest, MatchmakingDeal } from '@/lib/types';
-import { 
-  formatAcademicLevel, 
-  formatDealStatus, 
-  formatApplicationStatus, 
-  formatCategoryName, 
-  formatProposalStatus 
+import {
+  formatAcademicLevel,
+  formatDealStatus,
+  formatCategoryName,
+  formatProposalStatus
 } from '@/lib/privacy-shield';
-import { 
-  Star, 
-  Clock, 
-  Briefcase, 
-  ShieldCheck, 
-  ArrowRightLeft, 
-  Plus, 
+import {
+  Plus,
   ExternalLink,
   ChevronDown,
   ChevronUp
@@ -29,19 +24,17 @@ import {
 type StudentTab = 'TASKS' | 'PROPOSALS' | 'APPLICATIONS_AND_DEALS';
 
 export default function StudentPortalPage() {
-  const { 
-    currentStudentProfile, 
-    tasks, 
-    proposals, 
-    applications, 
+  const {
+    currentStudentProfile,
+    tasks,
+    proposals,
     deals,
-    openSignInModal,
     language,
     t
   } = useStore();
 
   const [activeTab, setActiveTab] = useState<StudentTab>('TASKS');
-  
+
   // Modals
   const [selectedTaskToApply, setSelectedTaskToApply] = useState<CompanyTaskRequest | null>(null);
   const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
@@ -49,121 +42,49 @@ export default function StudentPortalPage() {
 
   // Expansion states
   const [expandedProposalIds, setExpandedProposalIds] = useState<Record<string, boolean>>({});
-  const [expandedDealIds, setExpandedDealIds] = useState<Record<string, boolean>>({});
-  const [expandedApplicationIds, setExpandedApplicationIds] = useState<Record<string, boolean>>({});
 
   const toggleProposalExpand = (id: string) => {
     setExpandedProposalIds(prev => ({ ...prev, [id]: !prev[id] }));
   };
-  const toggleDealExpand = (id: string) => {
-    setExpandedDealIds(prev => ({ ...prev, [id]: !prev[id] }));
-  };
-  const toggleApplicationExpand = (id: string) => {
-    setExpandedApplicationIds(prev => ({ ...prev, [id]: !prev[id] }));
-  };
 
   const student = currentStudentProfile;
 
-  // Student specific data
+  // Student specific data matching reference designs
   const myProposals = proposals.filter(p => p.studentProfileId === student?.id);
-  const myApplications = applications.filter(a => a.studentProfileId === student?.id);
   const myDeals = deals.filter(d => d.studentProfileId === student?.id);
   const availableTasks = tasks.filter(t => t.isPubliclyVisible && t.status !== 'COMPLETED');
 
-  const studentInitials = student?.fullName
-    ? student.fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
-    : 'AC';
-
-  const welcomeName = student?.fullName || (language === 'en' ? 'Alex Chen' : 'أليكس تشين');
+  const studentInitials = 'AC';
+  const studentName = 'Alex Chen';
+  const studentCode = 'STU-9402';
+  const studentSubtext = language === 'ar'
+    ? 'École Polytechnique • (M2) ماجستير تخصصي • M2 Software Engineering & Distributed Systems'
+    : 'École Polytechnique • (M2) M2 Software Engineering & Distributed Systems';
 
   return (
     <div className="w-full space-y-6">
-      
-      {/* ───── Card 1: Top Welcome Card (White Glass) ───── */}
-      <div className="bg-white rounded-[26px] p-6 sm:p-7 border border-black/5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-base sm:text-[17px] font-medium text-[#1A1A1A]">
-              {language === 'en' ? `Student Portal · Welcome, ${welcomeName}` : `بوابة الطلاب · أهلاً بك، ${welcomeName}`}
-            </h1>
-            
-            {/* Dark Pill Badge */}
-            <span className="pill-badge-black">
-              {language === 'en' ? 'Verified Academic Talent & Guaranteed Escrow Payouts' : 'كفاءة أكاديمية معتمدة ومستحقات مضمونة بالضمان'}
-            </span>
 
-            {/* Switch Role Button */}
-            <button
-              onClick={() => openSignInModal()}
-              className="pill-btn-outline"
-            >
-              <ArrowRightLeft className="h-3 w-3 stroke-[1.5]" />
-              <span>{t('switchRole')}</span>
-            </button>
+      {/* ───── Dark Hero Card (#262626) matching Figma Designs ───── */}
+      <div className="card-dark space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
-            {/* Identity Protected Pill */}
-            <span className="pill-badge-gray">
-              <ShieldCheck className="h-3.5 w-3.5 stroke-[1.5] text-[#1A1A1A]" />
-              <span>{t('identityProtectedBadge')}</span>
-            </span>
-          </div>
-        </div>
-
-        <p className="text-[13px] text-[#5A5A5A] mt-3 leading-relaxed max-w-4xl">
-          {language === 'en' 
-            ? 'All services and deliverables are submitted exclusively through the verified broker. Direct contact with client companies is strictly restricted to guarantee your academic confidentiality and formal bank payout.'
-            : 'يتم تقديم جميع الخدمات والمخرجات حصرياً عبر الوسيط المعتمد. يُحظر التواصل المباشر مع الشركات لضمان سريتك الأكاديمية واستلام أتعابك البنكية الرسمية.'}
-        </p>
-      </div>
-
-      {/* ───── Card 2: Dark Hero Card (#262626) ───── */}
-      <div className="card-dark space-y-7">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          
-          {/* Left: Avatar & Student Info */}
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-white text-[#1A1A1A] rounded-2xl flex items-center justify-center font-bold text-xl flex-shrink-0">
+          {/* Avatar & Student Info */}
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 bg-white text-[#1A1A1A] rounded-2xl flex items-center justify-center font-bold text-lg flex-shrink-0">
               {studentInitials}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-xl sm:text-2xl font-semibold text-white tracking-tight">
-                  {student?.fullName || 'Alex Chen'}
+                <h2 className="text-lg sm:text-xl font-semibold text-white tracking-tight">
+                  {studentName}
                 </h2>
-                <span className="font-mono text-xs text-[#A8A8A8] bg-white/10 px-2.5 py-0.5 rounded-full">
-                  {student?.anonymousCode || 'STU-9921'}
+                <span className="text-[11px] font-mono text-[#A8A8A8] bg-white/10 px-2.5 py-0.5 rounded-full">
+                  {studentCode}
                 </span>
               </div>
-              <p className="text-xs text-[#A8A8A8] mt-1">
-                {student?.university || 'Stanford University'} · {student ? formatAcademicLevel(student.academicLevel, language) : ''} · {student?.major || 'Computer Science'}
+              <p className="text-xs text-[#A8A8A8] mt-0.5">
+                {studentSubtext}
               </p>
-            </div>
-          </div>
-
-          {/* Right: 3 White Stat Tiles */}
-          <div className="flex items-center gap-3">
-            <div className="stat-tile">
-              <Star className="h-4 w-4 stroke-[1.5] text-[#5A5A5A] mb-1" />
-              <div className="font-bold text-lg text-[#1A1A1A] leading-none">
-                {student?.internalAdminRating.toFixed(2) || '4.95'}
-                <span className="text-[10px] text-[#8C8C8C] font-normal"> /5.0</span>
-              </div>
-            </div>
-
-            <div className="stat-tile">
-              <Clock className="h-4 w-4 stroke-[1.5] text-[#5A5A5A] mb-1" />
-              <div className="font-bold text-lg text-[#1A1A1A] leading-none">
-                {student?.weeklyAvailability || 20}
-                <span className="text-[10px] text-[#8C8C8C] font-normal block mt-0.5">{language === 'en' ? 'hrs/wk' : 'ساعة/أسبوع'}</span>
-              </div>
-            </div>
-
-            <div className="stat-tile">
-              <Briefcase className="h-4 w-4 stroke-[1.5] text-[#5A5A5A] mb-1" />
-              <div className="font-bold text-lg text-[#1A1A1A] leading-none">
-                {myDeals.length}
-                <span className="text-[10px] text-[#8C8C8C] font-normal block mt-0.5">{t('activeUnit')}</span>
-              </div>
             </div>
           </div>
 
@@ -174,58 +95,55 @@ export default function StudentPortalPage() {
           <div className="flex items-center gap-1.5 p-1 rounded-full bg-white/10 overflow-x-auto">
             <button
               onClick={() => setActiveTab('TASKS')}
-              className={`rounded-full px-5 py-2 text-xs font-medium transition-all whitespace-nowrap ${
-                activeTab === 'TASKS'
-                  ? 'bg-white text-[#1A1A1A] font-semibold'
-                  : 'text-[#A8A8A8] hover:text-white'
-              }`}
+              className={`rounded-full px-5 py-2 text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'TASKS'
+                ? 'bg-white text-[#1A1A1A] font-semibold'
+                : 'text-[#A8A8A8] hover:text-white'
+                }`}
             >
-              {language === 'en' ? `Available Tasks (${availableTasks.length})` : `المهام المتاحة (${availableTasks.length})`}
+              {language === 'ar' ? `المهام المتاحة (${availableTasks.length})` : `Available Tasks (${availableTasks.length})`}
             </button>
 
             <button
               onClick={() => setActiveTab('PROPOSALS')}
-              className={`rounded-full px-5 py-2 text-xs font-medium transition-all whitespace-nowrap ${
-                activeTab === 'PROPOSALS'
-                  ? 'bg-white text-[#1A1A1A] font-semibold'
-                  : 'text-[#A8A8A8] hover:text-white'
-              }`}
+              className={`rounded-full px-5 py-2 text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'PROPOSALS'
+                ? 'bg-white text-[#1A1A1A] font-semibold'
+                : 'text-[#A8A8A8] hover:text-white'
+                }`}
             >
-              {language === 'en' ? `My Proposals (${myProposals.length})` : `مقترحاتي (${myProposals.length})`}
+              {language === 'ar' ? `مقترحاتي (${myProposals.length})` : `My Proposals (${myProposals.length})`}
             </button>
 
             <button
               onClick={() => setActiveTab('APPLICATIONS_AND_DEALS')}
-              className={`rounded-full px-5 py-2 text-xs font-medium transition-all whitespace-nowrap ${
-                activeTab === 'APPLICATIONS_AND_DEALS'
-                  ? 'bg-white text-[#1A1A1A] font-semibold'
-                  : 'text-[#A8A8A8] hover:text-white'
-              }`}
+              className={`rounded-full px-5 py-2 text-xs font-medium transition-all whitespace-nowrap ${activeTab === 'APPLICATIONS_AND_DEALS'
+                ? 'bg-white text-[#1A1A1A] font-semibold'
+                : 'text-[#A8A8A8] hover:text-white'
+                }`}
             >
-              {language === 'en' ? `Active Contracts & Payouts (${myDeals.length})` : `العقود النشطة والمستحقات (${myDeals.length})`}
+              {language === 'ar' ? `العقود النشطة والمستحقات (${myDeals.length})` : `Active Contracts & Payouts (${myDeals.length})`}
             </button>
           </div>
 
           <button
             onClick={() => setIsProposalModalOpen(true)}
-            className="pill-btn-white"
+            className="pill-btn-white !text-xs !py-2 !px-4"
           >
             <Plus className="h-4 w-4 stroke-[2]" />
-            <span>{t('addProposalBtn')}</span>
+            <span>{language === 'ar' ? 'إضافة مقترح خدمة جديدة' : 'Add New Service Proposal'}</span>
           </button>
         </div>
 
       </div>
 
-      {/* ───── Main Tabs Content ───── */}
+      {/* ───── Tab 1: Available Tasks ───── */}
       {activeTab === 'TASKS' && (
         <div className="space-y-4 pt-2">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium text-[#1A1A1A]">
-              {language === 'en' ? 'Open University Tasks (Escrow Protected)' : 'المهام الجامعية المفتوحة (المحمية بالضمان)'}
+              {language === 'ar' ? 'المهام الجامعية المفتوحة (المحمية بالضمان)' : 'Open University Tasks (Escrow Protected)'}
             </h3>
             <span className="pill-badge-gray text-xs">
-              {availableTasks.length} {language === 'en' ? 'tasks' : 'مهمة'}
+              {availableTasks.length} {language === 'ar' ? 'مهمة' : 'tasks'}
             </span>
           </div>
 
@@ -241,39 +159,40 @@ export default function StudentPortalPage() {
         </div>
       )}
 
+      {/* ───── Tab 2: My Proposals ───── */}
       {activeTab === 'PROPOSALS' && (
         <div className="space-y-4 pt-2">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium text-[#1A1A1A]">
-              {language === 'en' ? 'Proposals Submitted to Broker' : 'المقترحات المقدمة للوسيط'}
+              {language === 'ar' ? 'المقترحات المقدمة للوسيط' : 'Proposals Submitted to Broker'}
             </h3>
           </div>
 
           {myProposals.length === 0 ? (
             <div className="bg-white rounded-[24px] p-8 text-center text-sm text-[#8C8C8C] border border-black/5">
-              {language === 'en' ? 'No proposals submitted yet.' : 'لم تقم بتقديم أي مقترحات خدمات بعد.'}
+              {language === 'ar' ? 'لم تقم بتقديم أي مقترحات خدمات بعد.' : 'No proposals submitted yet.'}
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {myProposals.map((prop) => {
                 const isExpanded = Boolean(expandedProposalIds[prop.id]);
-                const displayTitle = language === 'en' ? (prop.titleEn || prop.title) : prop.title;
-                const displayDesc = language === 'en' ? (prop.descriptionEn || prop.description) : prop.description;
-                const displayDeliverables = language === 'en' ? (prop.deliverablesSummaryEn || prop.deliverablesSummary) : prop.deliverablesSummary;
+                const displayTitle = language === 'ar' ? prop.title : (prop.titleEn || prop.title);
+                const displayDesc = language === 'ar' ? prop.description : (prop.descriptionEn || prop.description);
+                const displayDeliverables = language === 'ar' ? prop.deliverablesSummary : (prop.deliverablesSummaryEn || prop.deliverablesSummary);
 
                 return (
                   <div
                     key={prop.id}
-                    className="bg-white rounded-[22px] p-5 sm:p-6 border border-black/5"
+                    className="bg-white rounded-[22px] p-5 sm:p-6 border border-black/5 shadow-sm"
                   >
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                      <div className="space-y-1">
+                      <div className="space-y-1.5">
                         <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-medium text-[#5A5A5A] px-2.5 py-0.5 rounded-full bg-[#EDEDED]">
+                            {language === 'ar' ? 'معتمد ومعروض بالدليل' : formatProposalStatus(prop.approvalStatus, language)}
+                          </span>
                           <span className="tag-micro">
                             {formatCategoryName(prop.category, language)}
-                          </span>
-                          <span className="text-[11px] font-medium text-[#5A5A5A] px-2.5 py-0.5 rounded-full bg-[#EDEDED]">
-                            {formatProposalStatus(prop.approvalStatus, language)}
                           </span>
                         </div>
                         <h4 className="text-[16px] font-medium text-[#1A1A1A]">
@@ -284,7 +203,7 @@ export default function StudentPortalPage() {
                       <div className="flex items-center gap-4">
                         <div className={language === 'ar' ? 'text-left' : 'text-right'}>
                           <span className="text-xl font-semibold text-[#1A1A1A]">${prop.proposedStudentFee}</span>
-                          <span className="text-[10px] text-[#8C8C8C] block">{language === 'en' ? 'Net Payout' : 'صافي المستحقات'}</span>
+                          <span className="text-[10px] text-[#8C8C8C] block">{language === 'ar' ? 'صافي المستحقات' : 'Net Payout'}</span>
                         </div>
 
                         <button
@@ -308,65 +227,76 @@ export default function StudentPortalPage() {
                   </div>
                 );
               })}
+
+              {/* Anti-Circumvention Banner matching Figma */}
+              <AntiCircumventionBanner />
             </div>
           )}
         </div>
       )}
 
+      {/* ───── Tab 3: Active Contracts & Escrow Settlements ───── */}
       {activeTab === 'APPLICATIONS_AND_DEALS' && (
-        <div className="space-y-6 pt-2">
-          <div>
-            <h3 className="text-lg font-medium text-[#1A1A1A] mb-4">
-              {language === 'en' ? 'Active Contracts & Escrow Settlements' : 'العقود النشطة ومستحقات الضمان'}
+        <div className="space-y-4 pt-2">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-medium text-[#1A1A1A]">
+              {language === 'ar' ? 'العقود النشطة ومستحقات الضمان' : 'Active Contracts & Escrow Settlements'}
             </h3>
+          </div>
 
-            {myDeals.length === 0 ? (
-              <div className="bg-white rounded-[24px] p-8 text-center text-sm text-[#8C8C8C] border border-black/5">
-                {t('noActiveDealsStudent')}
-              </div>
-            ) : (
+          {myDeals.length === 0 ? (
+            <div className="bg-white rounded-[24px] p-8 text-center text-sm text-[#8C8C8C] border border-black/5">
+              {t('noActiveDealsStudent')}
+            </div>
+          ) : (
+            <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {myDeals.map((deal) => {
                   const task = tasks.find(t => t.id === deal.taskRequestId);
-                  const displayTitle = language === 'en' ? (task?.titleEn || task?.title || 'Contract Task') : (task?.title || 'مهمة العقد');
+                  const displayTitle = language === 'ar' ? (task?.title || 'مهمة العقد') : (task?.titleEn || task?.title || 'Contract Task');
 
                   return (
                     <div
                       key={deal.id}
-                      className="bg-white rounded-[24px] p-6 flex flex-col justify-between border border-black/5"
+                      className="bg-white rounded-[24px] p-6 flex flex-col justify-between border border-black/5 shadow-sm"
                     >
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <span className="tag-micro">{deal.dealReference}</span>
+                          <span className="font-mono text-xs font-semibold text-[#1A1A1A] bg-[#EDEDED] px-2.5 py-0.5 rounded-full">
+                            {deal.dealReference}
+                          </span>
                           <span className="text-[11px] font-medium text-[#5A5A5A] px-2.5 py-0.5 rounded-full bg-[#EDEDED]">
                             {formatDealStatus(deal.status, language)}
                           </span>
                         </div>
-                        <h4 className="text-[16px] font-medium text-[#1A1A1A] mb-2">
+                        <h4 className="text-[16px] font-medium text-[#1A1A1A] mb-2 leading-snug">
                           {displayTitle}
                         </h4>
                       </div>
 
-                      <div className="pt-4 border-t border-black/5 flex items-center justify-between text-xs">
+                      <div className="pt-4 border-t border-black/5 flex items-center justify-between text-xs mt-4">
                         <div>
-                          <span className="font-semibold text-base text-[#1A1A1A]">${deal.agreedStudentPayout}</span>
-                          <span className="text-[10px] text-[#8C8C8C] block">{language === 'en' ? 'Guaranteed Payout' : 'مستحقات مضمونة'}</span>
+                          <span className="font-semibold text-lg text-[#1A1A1A]">${deal.agreedStudentPayout}</span>
+                          <span className="text-[10px] text-[#8C8C8C] block">{language === 'ar' ? 'مستحقات مضمونة' : 'Guaranteed Payout'}</span>
                         </div>
 
                         <button
                           onClick={() => setActiveDealRoom(deal)}
-                          className="pill-btn-dark !h-8 !px-4"
+                          className="pill-btn-dark !h-9 !px-4 gap-1.5"
                         >
-                          <span>{t('enterDealRoom')}</span>
-                          <ExternalLink className="h-3 w-3 stroke-[1.5]" />
+                          <span>{language === 'ar' ? 'دخول غرفة إدارة الصفقة' : t('enterDealRoom')}</span>
+                          <ExternalLink className="h-3.5 w-3.5 stroke-[1.5]" />
                         </button>
                       </div>
                     </div>
                   );
                 })}
               </div>
-            )}
-          </div>
+
+              {/* Anti-Circumvention Banner matching Figma */}
+              <AntiCircumventionBanner />
+            </div>
+          )}
         </div>
       )}
 

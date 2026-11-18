@@ -4,7 +4,6 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useStore } from '@/lib/store';
-import { ShieldCheck } from 'lucide-react';
 
 export default function Footer() {
   const pathname = usePathname();
@@ -13,33 +12,10 @@ export default function Footer() {
   if (pathname === '/') return null;
 
   return (
-    <footer className="mt-8 border-t border-black/5 pt-8 text-[#5A5A5A]">
+    <footer className="mt-12 border-t border-black/5 pt-8 pb-10 text-[#5A5A5A]">
       <div className="w-full space-y-8">
         
-        {/* Anti-Circumvention Banner */}
-        <div className="bg-white rounded-[24px] border border-black/5 p-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div>
-              <h4 className="text-sm font-semibold text-[#1A1A1A] flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 stroke-[1.5] text-[#1A1A1A]" />
-                <span>{t('footerProtocolTitle')}</span>
-                <span className="pill-badge-black !text-[10px] !py-0.5">
-                  {t('footerProtectedBadge')}
-                </span>
-              </h4>
-              <p className="text-xs text-[#5A5A5A] mt-1 max-w-2xl leading-relaxed">
-                {t('footerProtocolDesc')}
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-2 text-xs font-medium text-[#1A1A1A] shrink-0">
-              <span className="pill-badge-gray !text-[11px]">{t('footerDirectWire')}</span>
-              <span className="pill-badge-gray !text-[11px]">{t('footerNoEscrowCustody')}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* 4 Column Clean Grid */}
+        {/* 4 Column Clean Grid matching Figma */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-xs">
           <div>
             <span className="font-semibold text-base text-[#1A1A1A] tracking-tight">
@@ -87,6 +63,7 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Bottom copyright and protocol notes */}
         <div className="border-t border-black/5 pt-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#8C8C8C]">
           <p>{t('allRightsReserved')}</p>
           <p className="mt-1 sm:mt-0">{t('footerTagline')}</p>
